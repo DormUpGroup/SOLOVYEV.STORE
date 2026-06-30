@@ -2,6 +2,9 @@
   "name": "solovyev-store",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev --port 3000",
     "dev:fresh": "node scripts/dev-fresh.mjs",
