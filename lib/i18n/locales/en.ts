@@ -1,0 +1,184 @@
+import type { Dictionary } from "../types";
+
+export const en: Dictionary = {
+  hero: {
+    subtitle: "SOLOVYEV STORE",
+    titleLine1: "CURATED",
+    titleLine2: "HEAT.",
+    description:
+      "Premium streetwear & sneakers consignment store in Israel. Buy, sell, and trade 100% authentic items.",
+    shopAll: "SHOP ALL.",
+    sellTrade: "SELL / TRADE.",
+    badgeAuthentic: "AUTHENTIC",
+    badgeIsrael: "ISRAEL",
+    photoAlt: "Featured streetwear and sneakers",
+  },
+  stats: {
+    fastShippingTitle: "FAST SHIPPING",
+    fastShippingDesc: "Shipping out every weekday",
+    competitivePricesTitle: "COMPETITIVE PRICES",
+    competitivePricesDesc: "Below market rate",
+    authenticityTitle: "AUTHENTICITY GUARANTEED",
+    authenticityDesc: "Or your money back",
+  },
+  announcement: {
+    freeShipping: "FREE SHIPPING ON ORDERS OVER ₪1000",
+    authenticity: "100% AUTHENTICITY GUARANTEED",
+    newDrops: "NEW DROPS EVERY FRIDAY",
+  },
+  header: {
+    allDrops: "ALL DROPS",
+    brands: "BRANDS",
+    aboutUs: "ABOUT US",
+    sellTrade: "SELL / TRADE",
+    openCart: "Open cart",
+    toggleMenu: "Toggle menu",
+    instagram: "Instagram",
+  },
+  categories: {
+    sneakers: "SNEAKERS",
+    clothing: "CLOTHING",
+    accessories: "ACCESSORIES",
+  },
+  catalog: {
+    newestArrivals: "NEWEST ARRIVALS.",
+    shopLatest: "SHOP LATEST.",
+    theDrops: "THE DROPS",
+    all: "ALL",
+    allBrands: "ALL BRANDS",
+    shopByBrand: "SHOP BY BRAND →",
+    searchPlaceholder: "Search drops...",
+    allSizes: "All Sizes",
+    sortByPrice: "Sort by Price",
+    sortLowToHigh: "Price: Low to High",
+    sortHighToLow: "Price: High to Low",
+    noResults: "No items match your filters.",
+  },
+  cart: {
+    title: "YOUR CART.",
+    empty: "Your cart is empty.",
+    size: "Size",
+    oneSize: "One Size",
+    subtotal: "Subtotal",
+    checkout: "CHECKOUT VIA WHATSAPP",
+    close: "Close cart",
+    added: "Added to cart.",
+    selectSize: "Please select a size before adding to cart.",
+  },
+  product: {
+    condition: "Condition",
+    brand: "Brand",
+    selectSize: "Select Size",
+    outOfStock: "OUT OF STOCK",
+    dmForSize: "DM FOR SIZE",
+    addToCart: "ADD TO CART",
+    orderWhatsApp: "ORDER VIA WHATSAPP",
+    dmInstagram: "DM ON INSTAGRAM",
+    statusNewDrop: "NEW DROP",
+    statusReserved: "RESERVED",
+    statusSold: "SOLD",
+  },
+  footer: {
+    style: "STYLE",
+    dark: "DARK",
+    light: "LIGHT",
+    privacy: "Privacy Policy",
+    faq: "F.A.Q.",
+    cart: "CART",
+    shopTitle: "SHOP",
+    infoTitle: "INFO",
+    contactTitle: "CONTACT",
+    tagline: "Premium streetwear & sneakers consignment in Israel.",
+    rights: "All rights reserved.",
+  },
+  consent: {
+    text: "We use local storage to save your theme preferences and cart items. By continuing, you agree to our",
+    privacy: "Privacy Policy",
+    accept: "GOT IT",
+  },
+  sellTrade: {
+    title: "SELL OR TRADE YOUR HEAT",
+    intro:
+      "Turn your sneakers and apparel into cash or swap them for new grails. We make it simple, transparent, and fast.",
+    step1Title: "Submit Details",
+    step1Desc:
+      "Fill out the form with item name, size, condition, and your wanted price.",
+    step2Title: "Get Offer",
+    step2Desc:
+      "We review your submission and message you on WhatsApp with an estimate within 2 hours.",
+    step3Title: "Get Paid / Swapped",
+    step3Desc:
+      "Drop the item in Tel Aviv/Haifa, or ship it to us. Get instant cash or trade value.",
+    portalTitle: "VALUATION PORTAL",
+    category: "Item Category",
+    selectCategory: "Select category",
+    sneakers: "Sneakers",
+    clothing: "Clothing",
+    accessories: "Accessories",
+    brandModel: "Brand & Model Name",
+    size: "Size (US / EU)",
+    condition: "Condition",
+    wantedPrice: "Wanted Price (ILS ₪)",
+    notes: "Notes / Box / Receipt",
+    submit: "SUBMIT VIA WHATSAPP",
+    required: "Required",
+    close: "Close",
+  },
+  faq: {
+    title: "F.A.Q.",
+    close: "Close",
+    items: [
+      {
+        question: "Are all items authentic?",
+        answer:
+          "Yes, 100%. We verify every item (sneakers, clothing, accessories) using expert checks (tags, stitching, smells, UV inspection) before listing. We stand behind our authenticity guarantee.",
+      },
+      {
+        question: "How does Buy-Sell-Trade work?",
+        answer:
+          "You submit your item via our Valuation Portal. If we are interested, we give you a quote for two options: buy-outright cash price or trade-in store credit value (which is usually higher). If you accept, we arrange shipping or meetup.",
+      },
+      {
+        question: "What are your shipping rates and pickup options?",
+        answer:
+          "We ship all over Israel. Standard delivery via locker terminals (Boxit/Cheetah) takes 2-4 business days and costs ₪25. Door-to-door courier is ₪50. We also support free hand-to-hand pickup in Tel Aviv and Haifa by arrangement.",
+      },
+      {
+        question: "Do you accept returns or exchanges?",
+        answer:
+          "As standard in the aftermarket streetwear consignment industry, all sales are final (no returns or refunds). Please make sure of your size before purchasing. If you have questions about sizing, DM us and we will help you out!",
+      },
+      {
+        question: "How fast do you respond to Sell/Trade submissions?",
+        answer:
+          "We review every submission and reply on WhatsApp with an estimate within 2 hours during business hours (Sun–Thu 10:00–20:00, Fri until 14:00).",
+      },
+      {
+        question: "When do new drops go live?",
+        answer:
+          "New drops every Friday. Follow @solovyev.store on Instagram for first access. Items marked NEW DROP on the site are from the latest release.",
+      },
+      {
+        question: "How do you verify authenticity?",
+        answer:
+          "Every item passes a multi-point check: box labels, tags, stitching, materials, UV light where applicable, and comparison with known authentic references. If we cannot verify 100%, we do not list it.",
+      },
+    ],
+  },
+  about: {
+    title: "ABOUT US.",
+    backLink: "← BACK TO STORE",
+    lead:
+      "Premium streetwear & sneakers consignment in Israel — buy, sell, and trade 100% authentic heat.",
+    paragraphs: [
+      "Every drop is hand-picked: authenticity checks, honest condition grading, and prices below market.",
+      "We ship nationwide on weekdays. Sell / Trade submissions get a WhatsApp estimate within 2 hours.",
+      "A local store built for rare pairs and streetwear — from Jordan and Travis Scott to vintage luxury.",
+    ],
+    photoAlt: "Featured streetwear and sneakers at SOLOVYEV STORE",
+    contactsTitle: "CONTACT",
+    locationTitle: "LOCATION",
+    openInMaps: "Open in Maps",
+    instagramHandle: "@solovyev.store",
+  },
+};

@@ -1,0 +1,184 @@
+import type { Dictionary } from "../types";
+
+export const he: Dictionary = {
+  hero: {
+    subtitle: "SOLOVYEV STORE",
+    titleLine1: "מאוצר",
+    titleLine2: "חם.",
+    description:
+      "חנות קונסיגנציה פרימיום לסטריטוור וסניקרס בישראל. קנו, מכרו והחליפו פריטים אותנטיים ב-100%.",
+    shopAll: "לכל המוצרים.",
+    sellTrade: "מכירה / החלפה.",
+    badgeAuthentic: "אותנטי",
+    badgeIsrael: "ישראל",
+    photoAlt: "סטריטוור וסניקרס נבחרים",
+  },
+  stats: {
+    fastShippingTitle: "משלוח מהיר",
+    fastShippingDesc: "שולחים בכל יום עבודה",
+    competitivePricesTitle: "מחירים תחרותיים",
+    competitivePricesDesc: "מתחת למחיר השוק",
+    authenticityTitle: "אחריות לאותנטיות",
+    authenticityDesc: "או החזר כספי",
+  },
+  announcement: {
+    freeShipping: "משלוח חינם בהזמנות מעל ₪1000",
+    authenticity: "100% אחריות לאותנטיות",
+    newDrops: "דרופים חדשים כל שישי",
+  },
+  header: {
+    allDrops: "כל הדרופים",
+    brands: "מותגים",
+    aboutUs: "אודותינו",
+    sellTrade: "מכירה / החלפה",
+    openCart: "פתיחת עגלה",
+    toggleMenu: "תפריט",
+    instagram: "אינסטגרם",
+  },
+  categories: {
+    sneakers: "סניקרס",
+    clothing: "בגדים",
+    accessories: "אביזרים",
+  },
+  catalog: {
+    newestArrivals: "הגעות חדשות.",
+    shopLatest: "לחדשים.",
+    theDrops: "הדרופים",
+    all: "הכל",
+    allBrands: "כל המותגים",
+    shopByBrand: "לפי מותג →",
+    searchPlaceholder: "חיפוש...",
+    allSizes: "כל המידות",
+    sortByPrice: "מיון לפי מחיר",
+    sortLowToHigh: "מחיר: נמוך לגבוה",
+    sortHighToLow: "מחיר: גבוה לנמוך",
+    noResults: "לא נמצאו פריטים.",
+  },
+  cart: {
+    title: "העגלה שלך.",
+    empty: "העגלה ריקה.",
+    size: "מידה",
+    oneSize: "מידה אחת",
+    subtotal: "סכום ביניים",
+    checkout: "תשלום ב-WhatsApp",
+    close: "סגירת עגלה",
+    added: "נוסף לעגלה.",
+    selectSize: "בחרו מידה לפני ההוספה.",
+  },
+  product: {
+    condition: "מצב",
+    brand: "מותג",
+    selectSize: "בחירת מידה",
+    outOfStock: "אזל מהמלאי",
+    dmForSize: "פנו לגבי מידה",
+    addToCart: "הוספה לעגלה",
+    orderWhatsApp: "הזמנה ב-WhatsApp",
+    dmInstagram: "פנייה באינסטגרם",
+    statusNewDrop: "דרופ חדש",
+    statusReserved: "שמור",
+    statusSold: "נמכר",
+  },
+  footer: {
+    style: "סגנון",
+    dark: "כהה",
+    light: "בהיר",
+    privacy: "מדיניות פרטיות",
+    faq: "שאלות",
+    cart: "עגלה",
+    shopTitle: "חנות",
+    infoTitle: "מידע",
+    contactTitle: "צור קשר",
+    tagline: "קונסיגנציה פרימיום לסטריטוור וסניקרס בישראל.",
+    rights: "כל הזכויות שמורות.",
+  },
+  consent: {
+    text: "אנו משתמשים באחסון מקומי לשמירת ערכת הנושא והעגלה. בהמשך השימוש אתם מסכימים ל",
+    privacy: "מדיניות הפרטיות",
+    accept: "הבנתי",
+  },
+  sellTrade: {
+    title: "מכירה או החלפת היט שלך",
+    intro:
+      "הפכו סניקרס ובגדים למזומן או החליפו בגריילים חדשים. פשוט, שקוף ומהיר.",
+    step1Title: "שליחת פרטים",
+    step1Desc:
+      "מלאו את הטופס: שם פריט, מידה, מצב ומחיר רצוי.",
+    step2Title: "קבלת הצעה",
+    step2Desc:
+      "נבדוק את הבקשה ונשלח הערכה ב-WhatsApp תוך שעתיים.",
+    step3Title: "תשלום / החלפה",
+    step3Desc:
+      "מסירה בתל אביב/חיפה או משלוח אלינו. מזומן מיידי או קרדיט חנות.",
+    portalTitle: "פורטל הערכה",
+    category: "קטגוריית פריט",
+    selectCategory: "בחירת קטגוריה",
+    sneakers: "סניקרס",
+    clothing: "בגדים",
+    accessories: "אביזרים",
+    brandModel: "מותג ודגם",
+    size: "מידה (US / EU)",
+    condition: "מצב",
+    wantedPrice: "מחיר רצוי (ILS ₪)",
+    notes: "הערות / קופסה / קבלה",
+    submit: "שליחה ב-WhatsApp",
+    required: "שדה חובה",
+    close: "סגירה",
+  },
+  faq: {
+    title: "שאלות",
+    close: "סגירה",
+    items: [
+      {
+        question: "האם כל הפריטים אותנטיים?",
+        answer:
+          "כן, 100%. אנו מאמתים כל פריט (סניקרס, בגדים, אביזרים) בבדיקות מומחים (תגיות, תפרים, ריח, UV) לפני פרסום. אנו עומדים מאחורי אחריות האותנטיות.",
+      },
+      {
+        question: "איך עובד קנה-מכור-החלף?",
+        answer:
+          "שולחים את הפריט דרך פורטל ההערכה. אם מעניין אותנו, נציע שתי אפשרויות: רכישה במזומן או החלפה בקרדיט חנות (לרוב גבוה יותר). בהסכמה נארגן משלוח או מפגש.",
+      },
+      {
+        question: "משלוח ואיסוף?",
+        answer:
+          "משלוחים בכל ישראל. משלוח סטנדרטי ללוקרים (Boxit/Cheetah) 2–4 ימי עסקים — ₪25. שליח עד הבית — ₪50. מסירה מיד ביד בתל אביב וחיפה בתיאום.",
+      },
+      {
+        question: "החזרות והחלפות?",
+        answer:
+          "כמקובל בשוק הריסייל, כל המכירות סופיות (ללא החזרות). ודאו מידה לפני רכישה. לשאלות מידה — פנו אלינו ב-DM!",
+      },
+      {
+        question: "כמה מהר עונים על בקשות מכירה/החלפה?",
+        answer:
+          "בודקים כל בקשה ועונים ב-WhatsApp תוך שעתיים בשעות פעילות (א׳–ה׳ 10:00–20:00, ו׳ עד 14:00).",
+      },
+      {
+        question: "מתי יוצאים דרופים חדשים?",
+        answer:
+          "דרופים חדשים כל שישי. עקבו אחרי @solovyev.store באינסטגרם. פריטים עם תווית NEW DROP — מהריליס האחרון.",
+      },
+      {
+        question: "איך מאמתים אותנטיות?",
+        answer:
+          "בדיקה רב-שלבית: קופסה, תגיות, תפרים, חומרים, UV במידת הצורך, השוואה לדגמים אותנטיים. אם לא מאמתים 100% — לא מפרסמים.",
+      },
+    ],
+  },
+  about: {
+    title: "אודותינו.",
+    backLink: "← חזרה לחנות",
+    lead:
+      "קונסיגנציה פרימיום לסטריטוור וסניקרס בישראל — קנו, מכרו והחליפו פריטים אותנטיים ב-100%.",
+    paragraphs: [
+      "כל דרופ נבחר ביד: בדיקות אותנטיות, דירוג מצב כנה ומחירים מתחת לשוק.",
+      "משלוחים בכל הארץ בימי חול. בקשות מכירה / החלפה — הערכה ב-WhatsApp תוך שעתיים.",
+      "חנות מקומית לזוגות נדירים וסטריטוור — מ-Jordan ו-Travis Scott ועד וינטג' יוקרה.",
+    ],
+    photoAlt: "סטריטוור וסניקרס ב-SOLOVYEV STORE",
+    contactsTitle: "צור קשר",
+    locationTitle: "מיקום",
+    openInMaps: "פתח במפות",
+    instagramHandle: "@solovyev.store",
+  },
+};

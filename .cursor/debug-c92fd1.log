@@ -1,0 +1,2 @@
+{"sessionId":"c92fd1","location":"FooterBars.tsx:ConsentBanner","message":"ConsentBanner mounted - no useHydrated","data":{"hydrated":true,"version":"inline-v2"},"timestamp":1782818256309,"hypothesisId":"A"}
+{"sessionId":"c92fd1","location":"AppProviders.tsx","message":"AppProviders client hydrated","data":{"ok":true},"timestamp":1782818256311,"hypothesisId":"B"}

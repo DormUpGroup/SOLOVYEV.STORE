@@ -1,0 +1,37 @@
+import type { Metadata } from "next";
+import { faqItems } from "@/lib/products";
+import { FaqPageClient } from "@/components/pages/FaqPageClient";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
+
+export const metadata: Metadata = {
+  title: "F.A.Q.",
+  description:
+    "Frequently asked questions about authenticity, shipping, returns, and Sell/Trade at SOLOVYEV STORE Israel.",
+  alternates: { canonical: `${siteUrl}/faq` },
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+};
+
+export default function FaqPage() {
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <FaqPageClient />
+    </>
+  );
+}

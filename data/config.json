@@ -1,0 +1,52 @@
+{
+  "storeName": "SOLOVYEV STORE",
+  "contacts": {
+    "whatsappPhone": "972548234858",
+    "instagramUrl": "https://www.instagram.com/solovyev.store",
+    "managerName": "Gosha"
+  },
+  "location": {
+    "city": "Haifa",
+    "country": "Israel",
+    "lat": 32.794,
+    "lng": 34.99
+  },
+  "currency": {
+    "code": "ILS",
+    "symbol": "₪"
+  },
+  "categories": [
+    { "id": "sneakers", "label": "SNEAKERS" },
+    { "id": "clothing", "label": "CLOTHING" },
+    { "id": "accessories", "label": "ACCESSORIES" }
+  ],
+  "badges": [
+    { "id": "hype", "label": "HYPE" },
+    { "id": "sale", "label": "SALE" },
+    { "id": "classic", "label": "CLASSIC" },
+    { "id": "rare", "label": "RARE" },
+    { "id": "essential", "label": "ESSENTIAL" },
+    { "id": "hot", "label": "HOT" },
+    { "id": "clean", "label": "CLEAN" },
+    { "id": "comfort", "label": "COMFORT" }
+  ],
+  "sizes": {
+    "standard": [
+      "36", "37", "38", "39", "40", "40.5", "41", "42", "42.5", "43", "44", "45", "46",
+      "US 7", "US 8", "US 9", "US 10", "US 11", "US 12",
+      "S", "M", "L", "XL", "XXL", "O/S"
+    ],
+    "clothingOrder": ["S", "M", "L", "XL", "XXL", "One Size", "O/S"]
+  },
+  "images": {
+    "heroPhoto": "/assets/hiro_photo.png",
+    "heroVideo": "",
+    "instagramPosts": [
+      "/assets/instagram/ig_post_1.png",
+      "/assets/instagram/ig_post_2.png",
+      "/assets/instagram/ig_post_3.png",
+      "/assets/instagram/ig_post_4.png",
+      "/assets/instagram/ig_post_5.png"
+    ]
+  }
+}
