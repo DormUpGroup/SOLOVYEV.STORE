@@ -134,6 +134,9 @@ function Header() {
   const mobileDropsHref = (category: "all" | ProductCategory) =>
     category === "all" ? "/drops" : `/drops?category=${category}`;
 
+  const sectionLinkClass = (href: string) =>
+    `nav-link${pathname === href || pathname.startsWith(`${href}?`) ? " active" : ""}`;
+
   const shellClassName = [
     "site-header-shell",
     hidden ? "header-hidden" : "",
@@ -159,6 +162,12 @@ function Header() {
               {categories[categoryKeys[cat.id]]}
             </Link>
           ))}
+          <Link href="/brand-new" className="mobile-nav-link" onClick={closeMenu}>
+            {header.brandNew}
+          </Link>
+          <Link href="/made-to-order" className="mobile-nav-link" onClick={closeMenu}>
+            {header.madeToOrder}
+          </Link>
           <Link href="/brands" className="mobile-nav-link" onClick={closeMenu}>
             {header.brands}
           </Link>
@@ -218,6 +227,12 @@ function Header() {
                     {categories[categoryKeys[cat.id]]}
                   </Link>
                 ))}
+                <Link href="/brand-new" className={sectionLinkClass("/brand-new")}>
+                  {header.brandNew}
+                </Link>
+                <Link href="/made-to-order" className={sectionLinkClass("/made-to-order")}>
+                  {header.madeToOrder}
+                </Link>
                 <Link
                   href="/brands"
                   className={`nav-link${pathname === "/brands" || pathname.startsWith("/brand/") ? " active" : ""}`}
