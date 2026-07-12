@@ -352,7 +352,6 @@ export async function updateProduct(id: number, input: UpdateProductInput): Prom
   if (error) throw error;
 
   if (input.imageIds?.length) {
-    const images = existing.images ?? [];
     await Promise.all(
       input.imageIds.map((imageId, index) =>
         supabase
@@ -362,10 +361,9 @@ export async function updateProduct(id: number, input: UpdateProductInput): Prom
           .eq("product_id", id),
       ),
     );
-    const first = images.find((img) => img.id === input.imageIds![0]);
-    if (first) {
-      await supabase.from("products").update({ img: first.imageUrl }).eq("id", id);
-    }
+    await syncProductPrimaryImage(id);
+  } else if (input.images?.length) {
+    await syncProductPrimaryImage(id);
   }
 
   const updated = await fetchProductById(id);
@@ -400,6 +398,22 @@ export async function reorderProducts(ids: number[]): Promise<void> {
   );
 }
 
+async function syncProductPrimaryImage(productId: number): Promise<void> {
+  const supabase = getSupabaseAdmin();
+  const { data } = await supabase
+    .from("product_images")
+    .select("image_url")
+    .eq("product_id", productId)
+    .order("sort_order", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  await supabase
+    .from("products")
+    .update({ img: data?.image_url ?? "" })
+    .eq("id", productId);
+}
+
 export async function addProductImage(
   productId: number,
   imageUrl: string,
@@ -430,9 +444,7 @@ export async function addProductImage(
 
   if (error) throw error;
 
-  if (sortOrder === 0) {
-    await supabase.from("products").update({ img: imageUrl }).eq("id", productId);
-  }
+  await syncProductPrimaryImage(productId);
 
   return mapImage(data as DbProductImage);
 }
@@ -449,16 +461,7 @@ export async function reorderProductImages(productId: number, imageIds: number[]
     ),
   );
 
-  if (imageIds.length) {
-    const { data } = await supabase
-      .from("product_images")
-      .select("image_url")
-      .eq("id", imageIds[0]!)
-      .maybeSingle();
-    if (data?.image_url) {
-      await supabase.from("products").update({ img: data.image_url }).eq("id", productId);
-    }
-  }
+  await syncProductPrimaryImage(productId);
 }
 
 export async function updateProductImagePosition(
@@ -495,11 +498,7 @@ export async function deleteProductImage(productId: number, imageId: number): Pr
     void deleteImageUrl(data.image_url);
   }
 
-  const product = await fetchProductById(productId);
-  if (product) {
-    const primary = product.images?.[0]?.imageUrl ?? "";
-    await supabase.from("products").update({ img: primary }).eq("id", productId);
-  }
+  await syncProductPrimaryImage(productId);
 }
 
 export async function getProductImageUrls(productId: number): Promise<string[]> {

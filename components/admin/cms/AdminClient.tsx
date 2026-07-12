@@ -62,6 +62,10 @@ export function AdminClient({
     setTimeout(() => setMessage(null), 3500);
   };
 
+  const publishSite = async () => {
+    await fetch("/api/admin/publish", { method: "POST" });
+  };
+
   const visibleProducts = useMemo(() => {
     if (mode === "made_to_order") {
       return products.filter((p) => p.status === "made_to_order");
@@ -185,7 +189,8 @@ export function AdminClient({
       setIsFormDirty(false);
       setHighlightedId(json.product.id);
       setTimeout(() => setHighlightedId(null), 2200);
-      flash("Product saved");
+      await publishSite();
+      flash("Product saved — live on site");
     } finally {
       setIsBusy(false);
     }
@@ -236,6 +241,7 @@ export function AdminClient({
     setFormProduct(json.product);
     setFormImages(productToTempImages(json.product));
     updateProducts((prev) => prev.map((p) => (p.id === json.product.id ? json.product : p)));
+    await publishSite();
     return json.image;
   };
 
@@ -250,6 +256,7 @@ export function AdminClient({
     const json = (await res.json()) as { product: Product };
     setFormProduct(json.product);
     setFormImages(productToTempImages(json.product));
+    await publishSite();
   };
 
   const persistPosition = async (imageId: number, objectPosition: string) => {
@@ -271,6 +278,7 @@ export function AdminClient({
     const json = (await res.json()) as { product: Product };
     setFormProduct(json.product);
     setFormImages(productToTempImages(json.product));
+    await publishSite();
   };
 
   const handleMarkSold = async (id: number) => {
