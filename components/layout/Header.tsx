@@ -123,16 +123,15 @@ function Header() {
     setMenuOpen((prev) => !prev);
   };
 
-  const dropsLinkClass = (category: "all" | ProductCategory) => {
-    if (!onDropsPage) return "nav-link";
-    if (category === "all") {
-      return `nav-link${!categoryParam || categoryParam === "all" ? " active" : ""}`;
-    }
-    return `nav-link${activeCategory === category ? " active" : ""}`;
-  };
+  const dropsNavActive = onDropsPage;
 
-  const mobileDropsHref = (category: "all" | ProductCategory) =>
-    category === "all" ? "/drops" : `/drops?category=${category}`;
+  const dropsParentClass = `nav-link${dropsNavActive ? " active" : ""}`;
+
+  const dropsCategoryClass = (category: ProductCategory) =>
+    `nav-dropdown-link${onDropsPage && activeCategory === category ? " active" : ""}`;
+
+  const mobileDropsCategoryClass = (category: ProductCategory) =>
+    `mobile-nav-sublink${onDropsPage && activeCategory === category ? " active" : ""}`;
 
   const sectionLinkClass = (href: string) =>
     `nav-link${pathname === href || pathname.startsWith(`${href}?`) ? " active" : ""}`;
@@ -149,19 +148,27 @@ function Header() {
     <div className={`mobile-nav-overlay ${menuOpen ? "open" : ""}`}>
       <div className="mobile-nav-container">
         <nav className="mobile-nav" aria-label="Mobile navigation">
-          <Link href="/drops" className="mobile-nav-link" onClick={closeMenu}>
-            {header.allDrops}
-          </Link>
-          {config.categories.map((cat) => (
+          <div className="mobile-nav-group">
             <Link
-              key={cat.id}
-              href={mobileDropsHref(cat.id)}
-              className="mobile-nav-link"
+              href="/drops"
+              className={`mobile-nav-link${dropsNavActive && activeCategory === "all" ? " active" : ""}`}
               onClick={closeMenu}
             >
-              {categories[categoryKeys[cat.id]]}
+              {header.allDrops}
             </Link>
-          ))}
+            <div className="mobile-nav-sub">
+              {config.categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={`/drops?category=${cat.id}`}
+                  className={mobileDropsCategoryClass(cat.id)}
+                  onClick={closeMenu}
+                >
+                  {categories[categoryKeys[cat.id]]}
+                </Link>
+              ))}
+            </div>
+          </div>
           <Link href="/brand-new" className="mobile-nav-link" onClick={closeMenu}>
             {header.brandNew}
           </Link>
@@ -215,18 +222,23 @@ function Header() {
               </Link>
 
               <nav className="desktop-nav" aria-label="Main navigation">
-                <Link href="/drops" className={dropsLinkClass("all")}>
-                  {header.allDrops}
-                </Link>
-                {config.categories.map((cat) => (
-                  <Link
-                    key={cat.id}
-                    href={`/drops?category=${cat.id}`}
-                    className={dropsLinkClass(cat.id)}
-                  >
-                    {categories[categoryKeys[cat.id]]}
+                <div className="nav-dropdown">
+                  <Link href="/drops" className={dropsParentClass}>
+                    {header.allDrops}
                   </Link>
-                ))}
+                  <div className="nav-dropdown-panel" role="menu">
+                    {config.categories.map((cat) => (
+                      <Link
+                        key={cat.id}
+                        href={`/drops?category=${cat.id}`}
+                        className={dropsCategoryClass(cat.id)}
+                        role="menuitem"
+                      >
+                        {categories[categoryKeys[cat.id]]}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
                 <Link href="/brand-new" className={sectionLinkClass("/brand-new")}>
                   {header.brandNew}
                 </Link>
