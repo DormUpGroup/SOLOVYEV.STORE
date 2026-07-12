@@ -16,6 +16,7 @@
     "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true}); require('fs').rmSync('out',{recursive:true,force:true});\"",
     "import:instagram": "node scripts/import-instagram-products.mjs from-raw data/instagram-raw.json && node scripts/import-instagram-products.mjs merge",
     "import:brand-logos": "node scripts/download-brand-logos.mjs",
+    "import:catalog": "node scripts/import-catalog.mjs",
     "seed:supabase": "node scripts/seed-supabase.mjs",
     "setup:supabase": "node scripts/setup-supabase.mjs"
   },
