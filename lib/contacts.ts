@@ -1,4 +1,7 @@
-import { config } from "./products";
+import configData from "@/data/config.json";
+import type { StoreConfig } from "./types";
+
+const defaultConfig = configData as StoreConfig;
 
 export function formatDisplayPhone(phone: string): string {
   const digits = phone.replace(/\D/g, "");
@@ -20,7 +23,7 @@ export function buildMapsSearchUrl(query: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
 
-export function getStoreLocationLabel(): string {
-  const { city, country } = config.location;
+export function getStoreLocationLabel(cfg: StoreConfig = defaultConfig): string {
+  const { city, country } = cfg.location;
   return country ? `${city}, ${country}` : city;
 }

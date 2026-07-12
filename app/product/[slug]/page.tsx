@@ -3,14 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  config,
   formatPrice,
   formatPriceOrDm,
   getProductBySlug,
   getStatusLabel,
   isProductUnavailable,
-  products,
 } from "@/lib/products";
+import { getConfig, getProductBySlugFromStore, getProducts } from "@/lib/data/store";
 import { ProductPageClient } from "@/components/product/ProductPageClient";
 import { ProductPurchasePanel } from "@/components/product/ProductPurchasePanel";
 
@@ -18,13 +17,15 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const products = await getProducts();
   return products.map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const products = await getProducts();
+  const product = getProductBySlug(products, slug);
   if (!product) return {};
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
@@ -50,9 +51,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const [product, config] = await Promise.all([
+    getProductBySlugFromStore(slug),
+    getConfig(),
+  ]);
   if (!product) notFound();
 
+  const sym = config.currency.symbol;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
   const unavailable = isProductUnavailable(product);
   const statusLabel = getStatusLabel(product.status);
@@ -104,13 +109,13 @@ export default async function ProductPage({ params }: PageProps) {
             <div className="product-page-details">
               <p className="product-page-brand">{product.brand}</p>
               <h1>{product.title}</h1>
-              <p className="modal-price">{formatPriceOrDm(product.price)}</p>
+              <p className="modal-price">{formatPriceOrDm(product.price, sym)}</p>
               {product.description ? (
                 <p className="product-description">{product.description}</p>
               ) : null}
               {product.originalPrice ? (
                 <p className="original-price-inline">
-                  Was {formatPrice(product.originalPrice)}
+                  Was {formatPrice(product.originalPrice, sym)}
                 </p>
               ) : null}
               <p>

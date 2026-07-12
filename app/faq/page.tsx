@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { faqItems } from "@/lib/products";
+import { getFaqItems } from "@/lib/data/store";
 import { FaqPageClient } from "@/components/pages/FaqPageClient";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
@@ -11,20 +11,22 @@ export const metadata: Metadata = {
   alternates: { canonical: `${siteUrl}/faq` },
 };
 
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqItems.map((item) => ({
-    "@type": "Question",
-    name: item.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.answer,
-    },
-  })),
-};
+export default async function FaqPage() {
+  const faqItems = await getFaqItems();
 
-export default function FaqPage() {
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
   return (
     <>
       <script

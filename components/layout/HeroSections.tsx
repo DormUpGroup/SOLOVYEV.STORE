@@ -3,11 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { config } from "@/lib/products";
+import { useStore } from "@/components/providers/StoreProvider";
 import { useUI } from "@/components/providers/UIProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
 
 export function HeroSection() {
+  const { config } = useStore();
   const { openSellTrade } = useUI();
   const { dict } = useI18n();
   const { hero } = dict;
@@ -132,6 +133,7 @@ export function TrustSection() {
 }
 
 export function InstagramStrip() {
+  const { config } = useStore();
   return (
     <section className="horizontal-section">
       <div className="horizontal-header">

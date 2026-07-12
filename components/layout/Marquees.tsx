@@ -1,17 +1,20 @@
 "use client";
 
 import { useI18n } from "@/components/providers/I18nProvider";
+import { useStore } from "@/components/providers/StoreProvider";
 
 export function AnnouncementBar() {
   const { dict } = useI18n();
+  const { config } = useStore();
   const { announcement } = dict;
+  const ann = config.announcements;
   const items = [
-    announcement.freeShipping,
-    announcement.authenticity,
-    announcement.newDrops,
-    announcement.freeShipping,
-    announcement.authenticity,
-    announcement.newDrops,
+    ann?.freeShipping ?? announcement.freeShipping,
+    ann?.authenticity ?? announcement.authenticity,
+    ann?.newDrops ?? announcement.newDrops,
+    ann?.freeShipping ?? announcement.freeShipping,
+    ann?.authenticity ?? announcement.authenticity,
+    ann?.newDrops ?? announcement.newDrops,
   ];
 
   return (

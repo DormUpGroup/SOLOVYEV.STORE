@@ -3,16 +3,16 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
-  config,
   filterProducts,
   getAvailableSizes,
   getNewestArrivals,
-  products,
 } from "@/lib/products";
+import { useStore } from "@/components/providers/StoreProvider";
 import { trackFilterApply } from "@/lib/analytics";
 import { useI18n } from "@/components/providers/I18nProvider";
 import { ProductCard } from "./ProductCard";
-import type { ActiveFilters, ProductCategory } from "@/lib/types";
+import { StoreLogoMark } from "@/components/layout/StoreLogo";
+import type { ActiveFilters, Product, ProductCategory } from "@/lib/types";
 
 const categoryKeys: Record<ProductCategory, "sneakers" | "clothing" | "accessories"> = {
   sneakers: "sneakers",
@@ -25,9 +25,12 @@ interface CatalogSectionProps {
   onCategoryChange: (category: "all" | ProductCategory) => void;
   initialBrand?: string;
   brandPageTitle?: string;
+  productsOverride?: Product[];
+  sectionTitle?: string;
 }
 
 export function NewestArrivals() {
+  const { products } = useStore();
   const items = getNewestArrivals(products, 5);
   const carouselItems = [...items, ...items];
   const { dict } = useI18n();
@@ -64,7 +67,11 @@ export function CatalogSection({
   onCategoryChange,
   initialBrand = "",
   brandPageTitle,
+  productsOverride,
+  sectionTitle,
 }: CatalogSectionProps) {
+  const { products: storeProducts, config } = useStore();
+  const products = productsOverride ?? storeProducts;
   const { dict } = useI18n();
   const { catalog, categories } = dict;
   const [filters, setFilters] = useState<ActiveFilters>({
@@ -82,10 +89,13 @@ export function CatalogSection({
 
   const filtered = useMemo(
     () => filterProducts(products, mergedFilters),
-    [mergedFilters],
+    [mergedFilters, products],
   );
 
-  const availableSizes = useMemo(() => getAvailableSizes(products), []);
+  const availableSizes = useMemo(
+    () => getAvailableSizes(products, config),
+    [products, config],
+  );
 
   const setCategory = (cat: "all" | ProductCategory) => {
     onCategoryChange(cat);
@@ -96,10 +106,13 @@ export function CatalogSection({
     <section className="catalog-section" id="catalog">
       <div className="catalog-header">
         <h2 className="section-title">
-          {brandPageTitle ? `${brandPageTitle.toUpperCase()}.` : catalog.theDrops}
+          {brandPageTitle ? `${brandPageTitle.toUpperCase()}.` : sectionTitle ?? catalog.theDrops}
         </h2>
         <Link href="/" className="logo-area">
-          SOLOVYEV.STORE
+          <StoreLogoMark size={32} />
+          <span className="logo-text catalog-logo-text">
+            SOLOVYEV<span>.STORE</span>
+          </span>
         </Link>
       </div>
 

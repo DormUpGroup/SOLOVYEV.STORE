@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { config } from "@/lib/products";
+import { useStore } from "@/components/providers/StoreProvider";
 import {
   buildSellTradeMessage,
   buildWhatsAppUrl,
@@ -11,6 +11,7 @@ import { useUI } from "@/components/providers/UIProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
 
 export function SellTradeModal() {
+  const { config } = useStore();
   const { activeModal, closeAll } = useUI();
   const { dict } = useI18n();
   const { sellTrade } = dict;
@@ -48,15 +49,18 @@ export function SellTradeModal() {
 
     setErrors({});
     trackSellTradeSubmit();
-    const message = buildSellTradeMessage({
-      category: String(data.get("item-type")),
-      name: String(data.get("item-name")),
-      size: String(data.get("item-size")),
-      condition: String(data.get("item-condition")),
-      price: String(data.get("item-price")),
-      notes: String(data.get("item-notes") || ""),
-    });
-    window.open(buildWhatsAppUrl(message), "_blank", "noopener,noreferrer");
+    const message = buildSellTradeMessage(
+      {
+        category: String(data.get("item-type")),
+        name: String(data.get("item-name")),
+        size: String(data.get("item-size")),
+        condition: String(data.get("item-condition")),
+        price: String(data.get("item-price")),
+        notes: String(data.get("item-notes") || ""),
+      },
+      config,
+    );
+    window.open(buildWhatsAppUrl(message, config), "_blank", "noopener,noreferrer");
   };
 
   const steps = [

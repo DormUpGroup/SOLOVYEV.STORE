@@ -8,6 +8,7 @@ import {
   getStatusLabel,
   isProductUnavailable,
 } from "@/lib/products";
+import { useStore } from "@/components/providers/StoreProvider";
 import { useUI } from "@/components/providers/UIProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
 import { ProductImageLoupe } from "@/components/ui/ProductImageLoupe";
@@ -37,8 +38,10 @@ function EyeIcon() {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { config } = useStore();
   const { openQuickView } = useUI();
   const { dict } = useI18n();
+  const sym = config.currency.symbol;
   const unavailable = isProductUnavailable(product);
   const statusLabel = getStatusLabel(product.status);
   const categoryLabel = dict.categories[product.category];
@@ -74,10 +77,10 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <div className="product-footer">
           <div className="product-price-block">
-            <span className="product-price">{formatPriceOrDm(product.price)}</span>
+            <span className="product-price">{formatPriceOrDm(product.price, sym)}</span>
             {product.originalPrice ? (
               <span className="original-price">
-                {formatPrice(product.originalPrice)}
+                {formatPrice(product.originalPrice, sym)}
               </span>
             ) : null}
           </div>

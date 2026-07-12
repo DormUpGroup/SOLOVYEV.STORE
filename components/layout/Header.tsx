@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { config } from "@/lib/products";
+import { useStore } from "@/components/providers/StoreProvider";
 import { useCart } from "@/components/providers/CartProvider";
 import { useUI } from "@/components/providers/UIProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { AnnouncementBar } from "@/components/layout/Marquees";
+import { StoreLogoMark } from "@/components/layout/StoreLogo";
 import type { ProductCategory } from "@/lib/types";
 
 const categoryKeys: Record<ProductCategory, "sneakers" | "clothing" | "accessories"> = {
@@ -23,6 +24,7 @@ function isProductCategory(value: string | null): value is ProductCategory {
 }
 
 function Header() {
+  const { config } = useStore();
   const { cartCount, openCart, isHydrated } = useCart();
   const displayCount = isHydrated ? cartCount : 0;
   const { openSellTrade } = useUI();
@@ -197,24 +199,7 @@ function Header() {
           <header>
             <div className="header-container">
               <Link href="/" className="logo-area">
-                <svg
-                  className="store-logo"
-                  viewBox="0 0 100 100"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <rect width="100" height="100" fill="currentColor" />
-                  <text
-                    x="50"
-                    y="62"
-                    textAnchor="middle"
-                    fontSize="42"
-                    fontWeight="700"
-                    fill="#000"
-                  >
-                    S
-                  </text>
-                </svg>
+                <StoreLogoMark />
                 <div className="logo-text">
                   SOLOVYEV<span>.STORE</span>
                 </div>

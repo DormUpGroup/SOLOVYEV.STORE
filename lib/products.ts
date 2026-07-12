@@ -1,33 +1,31 @@
-import configData from "@/data/config.json";
 import brandLogosData from "@/data/brand-logos.json";
-import productsData from "@/data/products.json";
-import faqData from "@/data/faq.json";
 import type {
   ActiveFilters,
-  FaqItem,
   Product,
   ProductStatus,
   StoreConfig,
 } from "./types";
 
-export const config = configData as StoreConfig;
 export const brandLogos = brandLogosData as Record<string, string>;
-export const faqItems = faqData as FaqItem[];
-export const products = (productsData as Product[]).filter(
-  (p) => p.source === "instagram",
-);
 
-export function getProductBySlug(slug: string): Product | undefined {
-  return products.find((p) => p.slug === slug);
+export function getProductBySlug(
+  items: Product[],
+  slug: string,
+): Product | undefined {
+  return items.find((p) => p.slug === slug);
 }
 
-export function getProductById(id: number): Product | undefined {
-  return products.find((p) => p.id === id);
+export function getProductById(
+  items: Product[],
+  id: number,
+): Product | undefined {
+  return items.find((p) => p.id === id);
 }
 
 export function isProductUnavailable(product: Product): boolean {
   if (product.sold === true) return true;
   if (product.status === "sold" || product.status === "reserved") return true;
+  if (product.status === "draft") return true;
   if (product.source === "instagram" && product.status === "available") {
     return false;
   }
@@ -40,8 +38,19 @@ export function getStatusLabel(status: ProductStatus): string {
     new_drop: "NEW DROP",
     reserved: "RESERVED",
     sold: "SOLD",
+    draft: "DRAFT",
+    made_to_order: "MADE TO ORDER",
+    brand_new: "BRAND NEW",
   };
   return labels[status];
+}
+
+export function isBrandNewCondition(condition: string): boolean {
+  return /10\s*\/\s*10|DS|deadstock|brand\s*new|חדש/i.test(condition.trim());
+}
+
+export function isBrandNewProduct(product: Product): boolean {
+  return product.status === "brand_new" || isBrandNewCondition(product.condition);
 }
 
 export function formatConditionScore(condition: string): string {
@@ -75,8 +84,11 @@ export function getAvailableBrands(items: Product[]): string[] {
   return Array.from(brands).sort((a, b) => a.localeCompare(b));
 }
 
-export function getBrandBySlug(slug: string): string | undefined {
-  return getAvailableBrands(products).find(
+export function getBrandBySlug(
+  items: Product[],
+  slug: string,
+): string | undefined {
+  return getAvailableBrands(items).find(
     (brand) => brandToSlug(brand) === slug,
   );
 }
@@ -86,7 +98,7 @@ export function getBrandLogoPath(brand: string): string {
   return brandLogos[slug] || `/assets/brands/${slug}.svg`;
 }
 
-export function getBrandProductCount(brand: string, items: Product[] = products): number {
+export function getBrandProductCount(brand: string, items: Product[]): number {
   return items.filter((p) => p.brand.trim() === brand).length;
 }
 
@@ -97,7 +109,7 @@ export interface BrandDirectoryEntry {
   logo: string;
 }
 
-export function getBrandsDirectory(items: Product[] = products): BrandDirectoryEntry[] {
+export function getBrandsDirectory(items: Product[]): BrandDirectoryEntry[] {
   return getAvailableBrands(items).map((name) => ({
     name,
     slug: brandToSlug(name),
@@ -144,7 +156,10 @@ export function filterProducts(
   return result;
 }
 
-export function getAvailableSizes(items: Product[]): string[] {
+export function getAvailableSizes(
+  items: Product[],
+  config: StoreConfig,
+): string[] {
   const sizeSet = new Set<string>();
   items.forEach((p) => p.sizes.forEach((s) => sizeSet.add(s)));
   const order = config.sizes.standard;
@@ -158,11 +173,11 @@ export function getNewestArrivals(items: Product[], limit = 5): Product[] {
   return (available.length > 0 ? available : items).slice(0, limit);
 }
 
-export function formatPrice(price: number): string {
-  return `${config.currency.symbol}${price.toLocaleString("en-IL")}`;
+export function formatPrice(price: number, symbol = "₪"): string {
+  return `${symbol}${price.toLocaleString("en-IL")}`;
 }
 
-export function formatPriceOrDm(price: number): string {
-  if (price <= 0) return "DM for price";
-  return formatPrice(price);
+export function formatPriceOrDm(price: number, symbol = "₪"): string {
+  if (price <= 0) return "Contact for price";
+  return formatPrice(price, symbol);
 }

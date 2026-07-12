@@ -6,25 +6,29 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 import { useCart } from "@/components/providers/CartProvider";
 import { useUI } from "@/components/providers/UIProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
-import { config } from "@/lib/products";
+import { useStore } from "@/components/providers/StoreProvider";
 import {
   buildMapsSearchUrl,
   formatDisplayPhone,
   getStoreLocationLabel,
 } from "@/lib/contacts";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { StoreLogoMark } from "@/components/layout/StoreLogo";
 
 export function MinimalFooter() {
+  const { config } = useStore();
   const { toggleTheme, isHydrated, theme } = useTheme();
   const { dict } = useI18n();
   const { footer, header, categories } = dict;
   const themeLabel = theme === "dark" ? footer.dark : footer.light;
   const phoneDisplay = formatDisplayPhone(config.contacts.whatsappPhone);
-  const locationLabel = getStoreLocationLabel();
+  const locationLabel = getStoreLocationLabel(config);
   const year = new Date().getFullYear();
 
   const shopLinks = [
     { href: "/drops", label: header.allDrops },
+    { href: "/made-to-order", label: header.madeToOrder },
+    { href: "/brand-new", label: header.brandNew },
     { href: "/drops?category=sneakers", label: categories.sneakers },
     { href: "/drops?category=clothing", label: categories.clothing },
     { href: "/drops?category=accessories", label: categories.accessories },
@@ -44,7 +48,7 @@ export function MinimalFooter() {
         <div className="footer-grid">
           <div className="footer-brand-col">
             <Link href="/" className="footer-logo">
-              <span className="footer-logo-mark" aria-hidden="true" />
+              <StoreLogoMark size={28} className="footer-logo-mark" />
               <span className="footer-logo-text">
                 SOLOVYEV<span>.STORE</span>
               </span>
@@ -93,7 +97,7 @@ export function MinimalFooter() {
               </li>
               <li>
                 <a
-                  href={buildWhatsAppUrl(`Hi ${config.contacts.managerName}!`)}
+                  href={buildWhatsAppUrl(`Hi ${config.contacts.managerName}!`, config)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footer-contact-link"
@@ -139,6 +143,7 @@ export function MinimalFooter() {
 }
 
 export function FixedBottomBar() {
+  const { config } = useStore();
   const { cartCount, openCart, isHydrated } = useCart();
   const displayCount = isHydrated ? cartCount : 0;
   const { openSellTrade, openFaq } = useUI();

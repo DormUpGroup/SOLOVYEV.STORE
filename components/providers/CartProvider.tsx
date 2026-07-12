@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { getProductById } from "@/lib/products";
+import { useStore } from "@/components/providers/StoreProvider";
 import { trackAddToCart } from "@/lib/analytics";
 import { useI18n } from "@/components/providers/I18nProvider";
 import type { CartItem } from "@/lib/types";
@@ -43,6 +44,7 @@ function normalizeCart(raw: CartItem[]): CartItem[] {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { products } = useStore();
   const { dict } = useI18n();
   const { cart: cartText } = dict;
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -77,7 +79,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = useCallback(
     (id: number, size: string): boolean => {
-      const product = getProductById(id);
+      const product = getProductById(products, id);
       if (!product) return false;
 
       if (product.sizes.length > 0 && !size) {
@@ -110,7 +112,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       showToast(cartText.added);
       return true;
     },
-    [showToast, cartText.added, cartText.selectSize],
+    [showToast, cartText.added, cartText.selectSize, products],
   );
 
   const updateQuantity = useCallback((id: number, size: string, delta: number) => {

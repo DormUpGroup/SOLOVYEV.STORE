@@ -13,7 +13,7 @@ import { FaqModal } from "@/components/modals/FaqModal";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { QuickViewModal } from "@/components/modals/QuickViewModal";
 import { useI18n } from "@/components/providers/I18nProvider";
-import { config } from "@/lib/products";
+import { useStore } from "@/components/providers/StoreProvider";
 import {
   buildMapEmbedUrl,
   buildMapsSearchUrl,
@@ -23,11 +23,12 @@ import {
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export function AboutPageClient() {
+  const { config } = useStore();
   const { dict } = useI18n();
   const { about, hero } = dict;
   const phone = config.contacts.whatsappPhone;
   const phoneDisplay = formatDisplayPhone(phone);
-  const locationLabel = getStoreLocationLabel();
+  const locationLabel = getStoreLocationLabel(config);
   const mapEmbedUrl = buildMapEmbedUrl(config.location.lat, config.location.lng);
   const mapsUrl = buildMapsSearchUrl(locationLabel);
 
@@ -95,7 +96,7 @@ export function AboutPageClient() {
                   <span>{about.instagramHandle}</span>
                 </a>
                 <a
-                  href={buildWhatsAppUrl(`Hi ${config.contacts.managerName}!`)}
+                  href={buildWhatsAppUrl(`Hi ${config.contacts.managerName}!`, config)}
                   className="about-contact-link"
                   target="_blank"
                   rel="noopener noreferrer"

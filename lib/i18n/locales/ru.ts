@@ -28,6 +28,8 @@ export const ru: Dictionary = {
   },
   header: {
     allDrops: "ВСЕ ДРОПЫ",
+    madeToOrder: "ПОД ЗАКАЗ",
+    brandNew: "BRAND NEW",
     brands: "БРЕНДЫ",
     aboutUs: "О НАС",
     sellTrade: "ПРОДАТЬ / ОБМЕН",
@@ -53,6 +55,12 @@ export const ru: Dictionary = {
     sortLowToHigh: "Цена: по возрастанию",
     sortHighToLow: "Цена: по убыванию",
     noResults: "Ничего не найдено.",
+    madeToOrderTitle: "ПОД ЗАКАЗ.",
+    madeToOrderIntro:
+      "Товары под заказ — напишите нам в WhatsApp. Срок поставки зависит от позиции.",
+    brandNewTitle: "BRAND NEW.",
+    brandNewIntro:
+      "Deadstock и новые вещи — состояние 10/10. Аутентичность проверена перед публикацией.",
   },
   cart: {
     title: "КОРЗИНА.",
@@ -70,13 +78,14 @@ export const ru: Dictionary = {
     brand: "Бренд",
     selectSize: "Выберите размер",
     outOfStock: "НЕТ В НАЛИЧИИ",
-    dmForSize: "НАПИСАТЬ ПО РАЗМЕРУ",
+    contactForSize: "УТОЧНИТЕ РАЗМЕР",
     addToCart: "В КОРЗИНУ",
     orderWhatsApp: "ЗАКАЗАТЬ В WHATSAPP",
-    dmInstagram: "НАПИСАТЬ В INSTAGRAM",
     statusNewDrop: "НОВЫЙ ДРОП",
     statusReserved: "ЗАБРОНИРОВАНО",
     statusSold: "ПРОДАНО",
+    statusMadeToOrder: "ПОД ЗАКАЗ",
+    statusBrandNew: "BRAND NEW",
   },
   footer: {
     style: "СТИЛЬ",
@@ -141,12 +150,12 @@ export const ru: Dictionary = {
       {
         question: "Доставка и самовывоз?",
         answer:
-          "Доставляем по всему Израилю. Стандарт через постаматы (Boxit/Cheetah) 2–4 рабочих дня — ₪25. Курьер до двери — ₪50. Бесплатная передача из рук в руки в Тель-Авиве и Хайфе по договорённости.",
+          "Доставляем по всему Израилю. Стандарт через постаматы (Boxit/Cheetah) 2–4 рабочих дня — минимум 50 шекелей. Курьер до двери — минимум 50 шекелей. Бесплатная передача из рук в руки в Тель-Авиве и Хайфе по договорённости.",
       },
       {
         question: "Возвраты и обмены?",
         answer:
-          "Как принято на рынке ресейла стритвира, все продажи окончательные (без возвратов). Уточните размер до покупки. По размерам — напишите нам в DM, поможем!",
+          "Как принято на рынке ресейла стритвира, все продажи окончательные (без возвратов). Уточните размер до покупки. По размерам — напишите нам в WhatsApp, поможем!",
       },
       {
         question: "Как быстро отвечаете на заявки Sell/Trade?",

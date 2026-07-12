@@ -2,11 +2,12 @@
 
 import { useCart } from "@/components/providers/CartProvider";
 import { useUI } from "@/components/providers/UIProvider";
+import { useI18n } from "@/components/providers/I18nProvider";
 import {
-  config,
   formatPriceOrDm,
   isProductUnavailable,
 } from "@/lib/products";
+import { useStore } from "@/components/providers/StoreProvider";
 import {
   buildSingleItemMessage,
   buildWhatsAppUrl,
@@ -27,8 +28,11 @@ export function ProductPurchasePanel({
   product,
   showQuickView = true,
 }: ProductPurchasePanelProps) {
+  const { config } = useStore();
   const { openQuickView } = useUI();
   const { addToCart } = useCart();
+  const { dict } = useI18n();
+  const { product: copy } = dict;
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const unavailable = isProductUnavailable(product);
 
@@ -38,7 +42,8 @@ export function ProductPurchasePanel({
     trackBeginCheckout(product.price, 1);
     window.open(
       buildWhatsAppUrl(
-        buildSingleItemMessage(product, selectedSize, SITE_URL),
+        buildSingleItemMessage(product, selectedSize, SITE_URL, config),
+        config,
       ),
       "_blank",
       "noopener,noreferrer",
@@ -47,14 +52,14 @@ export function ProductPurchasePanel({
 
   return (
     <div className="product-purchase-panel">
-      <h4>Select Size:</h4>
+      <h4>{copy.selectSize}:</h4>
       <div className="size-options">
         {unavailable ? (
           <button type="button" className="size-pill disabled" disabled>
-            OUT OF STOCK
+            {copy.outOfStock}
           </button>
         ) : product.sizes.length === 0 ? (
-          <span className="size-pill disabled">DM FOR SIZE</span>
+          <span className="size-pill disabled">{copy.contactForSize}</span>
         ) : (
           product.sizes.map((size) => (
             <button
@@ -75,7 +80,7 @@ export function ProductPurchasePanel({
           disabled={unavailable}
           onClick={() => addToCart(product.id, selectedSize || "")}
         >
-          ADD TO CART
+          {copy.addToCart}
         </button>
         <button
           type="button"
@@ -83,7 +88,7 @@ export function ProductPurchasePanel({
           disabled={unavailable}
           onClick={handleWhatsApp}
         >
-          ORDER VIA WHATSAPP
+          {copy.orderWhatsApp}
         </button>
         {showQuickView ? (
           <button
@@ -94,16 +99,8 @@ export function ProductPurchasePanel({
             QUICK VIEW
           </button>
         ) : null}
-        <a
-          href={config.contacts.instagramUrl}
-          className="btn-secondary"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          DM ON INSTAGRAM
-        </a>
       </div>
-      <p className="product-page-price-note">{formatPriceOrDm(product.price)}</p>
+      <p className="product-page-price-note">{formatPriceOrDm(product.price, config.currency.symbol)}</p>
     </div>
   );
 }

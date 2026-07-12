@@ -28,6 +28,8 @@ export const en: Dictionary = {
   },
   header: {
     allDrops: "ALL DROPS",
+    madeToOrder: "MADE TO ORDER",
+    brandNew: "BRAND NEW",
     brands: "BRANDS",
     aboutUs: "ABOUT US",
     sellTrade: "SELL / TRADE",
@@ -53,6 +55,12 @@ export const en: Dictionary = {
     sortLowToHigh: "Price: Low to High",
     sortHighToLow: "Price: High to Low",
     noResults: "No items match your filters.",
+    madeToOrderTitle: "MADE TO ORDER.",
+    madeToOrderIntro:
+      "Items sourced on request — message us on WhatsApp to order. Delivery time varies by item.",
+    brandNewTitle: "BRAND NEW.",
+    brandNewIntro:
+      "Deadstock and unworn pieces — 10/10 condition. Authenticity verified before listing.",
   },
   cart: {
     title: "YOUR CART.",
@@ -70,13 +78,14 @@ export const en: Dictionary = {
     brand: "Brand",
     selectSize: "Select Size",
     outOfStock: "OUT OF STOCK",
-    dmForSize: "DM FOR SIZE",
+    contactForSize: "CONTACT FOR SIZE",
     addToCart: "ADD TO CART",
     orderWhatsApp: "ORDER VIA WHATSAPP",
-    dmInstagram: "DM ON INSTAGRAM",
     statusNewDrop: "NEW DROP",
     statusReserved: "RESERVED",
     statusSold: "SOLD",
+    statusMadeToOrder: "MADE TO ORDER",
+    statusBrandNew: "BRAND NEW",
   },
   footer: {
     style: "STYLE",
@@ -141,12 +150,12 @@ export const en: Dictionary = {
       {
         question: "What are your shipping rates and pickup options?",
         answer:
-          "We ship all over Israel. Standard delivery via locker terminals (Boxit/Cheetah) takes 2-4 business days and costs ₪25. Door-to-door courier is ₪50. We also support free hand-to-hand pickup in Tel Aviv and Haifa by arrangement.",
+          "We ship all over Israel. Standard delivery via locker terminals (Boxit/Cheetah) takes 2-4 business days — minimum ₪50. Door-to-door courier — minimum ₪50. We also support free hand-to-hand pickup in Tel Aviv and Haifa by arrangement.",
       },
       {
         question: "Do you accept returns or exchanges?",
         answer:
-          "As standard in the aftermarket streetwear consignment industry, all sales are final (no returns or refunds). Please make sure of your size before purchasing. If you have questions about sizing, DM us and we will help you out!",
+          "As standard in the aftermarket streetwear consignment industry, all sales are final (no returns or refunds). Please make sure of your size before purchasing. If you have questions about sizing, message us on WhatsApp and we will help you out!",
       },
       {
         question: "How fast do you respond to Sell/Trade submissions?",

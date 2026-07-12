@@ -4,12 +4,48 @@ declare global {
   }
 }
 
+const pendingEvents: Array<{ type: string; productId?: number }> = [];
+let flushTimer: ReturnType<typeof setTimeout> | null = null;
+
+function flushAnalytics(): void {
+  if (typeof window === "undefined" || pendingEvents.length === 0) return;
+  const batch = pendingEvents.splice(0, pendingEvents.length);
+  fetch("/api/analytics", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ events: batch }),
+    keepalive: true,
+  }).catch(() => {});
+}
+
+function queueAnalyticsEvent(type: string, productId?: number): void {
+  if (typeof window === "undefined") return;
+  pendingEvents.push({ type, productId });
+  if (flushTimer) clearTimeout(flushTimer);
+  flushTimer = setTimeout(flushAnalytics, 1500);
+}
+
 export function trackEvent(
   eventName: string,
   params?: Record<string, string | number | boolean>,
 ): void {
-  if (typeof window === "undefined" || !window.gtag) return;
-  window.gtag("event", eventName, params);
+  if (typeof window !== "undefined" && window.gtag) {
+    window.gtag("event", eventName, params);
+  }
+
+  const productId =
+    params?.item_id != null ? Number(params.item_id) : undefined;
+  if (
+    eventName === "view_item" ||
+    eventName === "add_to_cart" ||
+    eventName === "begin_checkout" ||
+    eventName === "sell_trade_submit"
+  ) {
+    queueAnalyticsEvent(
+      eventName,
+      Number.isFinite(productId) ? productId : undefined,
+    );
+  }
 }
 
 export function trackViewItem(product: {

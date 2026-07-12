@@ -5,15 +5,16 @@ import {
   filterProducts,
   getAvailableBrands,
   getBrandBySlug,
-  products,
 } from "@/lib/products";
+import { getProducts } from "@/lib/data/store";
 import { BrandCatalogPage } from "@/components/catalog/BrandCatalogPage";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const products = await getProducts();
   return getAvailableBrands(products).map((brand) => ({
     slug: brandToSlug(brand),
   }));
@@ -21,7 +22,8 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const brand = getBrandBySlug(slug);
+  const products = await getProducts();
+  const brand = getBrandBySlug(products, slug);
   if (!brand) return {};
 
   const count = filterProducts(products, {
@@ -50,7 +52,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BrandPage({ params }: PageProps) {
   const { slug } = await params;
-  const brand = getBrandBySlug(slug);
+  const products = await getProducts();
+  const brand = getBrandBySlug(products, slug);
   if (!brand) notFound();
 
   return <BrandCatalogPage brandName={brand} />;

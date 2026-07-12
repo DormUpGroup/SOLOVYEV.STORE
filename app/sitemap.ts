@@ -1,11 +1,14 @@
 import type { MetadataRoute } from "next";
-import { brandToSlug, getAvailableBrands, products } from "@/lib/products";
+import { brandToSlug, getAvailableBrands } from "@/lib/products";
+import { getProducts } from "@/lib/data/store";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const products = await getProducts();
+
   const productUrls = products.map((product) => ({
     url: `${siteUrl}/product/${product.slug}`,
     lastModified: new Date(),
@@ -32,6 +35,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.95,
+    },
+    {
+      url: `${siteUrl}/made-to-order`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${siteUrl}/brand-new`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.85,
     },
     {
       url: `${siteUrl}/brands`,

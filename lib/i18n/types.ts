@@ -32,6 +32,8 @@ export interface Dictionary {
   };
   header: {
     allDrops: string;
+    madeToOrder: string;
+    brandNew: string;
     brands: string;
     aboutUs: string;
     sellTrade: string;
@@ -57,6 +59,10 @@ export interface Dictionary {
     sortLowToHigh: string;
     sortHighToLow: string;
     noResults: string;
+    madeToOrderTitle: string;
+    madeToOrderIntro: string;
+    brandNewTitle: string;
+    brandNewIntro: string;
   };
   cart: {
     title: string;
@@ -74,13 +80,14 @@ export interface Dictionary {
     brand: string;
     selectSize: string;
     outOfStock: string;
-    dmForSize: string;
+    contactForSize: string;
     addToCart: string;
     orderWhatsApp: string;
-    dmInstagram: string;
     statusNewDrop: string;
     statusReserved: string;
     statusSold: string;
+    statusMadeToOrder: string;
+    statusBrandNew: string;
   };
   footer: {
     style: string;

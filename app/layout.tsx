@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "@/styles/globals.css";
 import { AppProviders } from "@/components/providers/AppProviders";
+import { getConfig, getFaqItems, getProducts } from "@/lib/data/store";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
@@ -40,17 +41,29 @@ export const metadata: Metadata = {
   alternates: {
     canonical: siteUrl,
   },
+  icons: {
+    icon: [{ url: "/assets/logo.jpg", type: "image/jpeg" }],
+    apple: [{ url: "/assets/logo.jpg", type: "image/jpeg" }],
+  },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [products, config, faqItems] = await Promise.all([
+    getProducts(),
+    getConfig(),
+    getFaqItems(),
+  ]);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <AppProviders>{children}</AppProviders>
+        <AppProviders store={{ products, config, faqItems }}>
+          {children}
+        </AppProviders>
         {gaId ? (
           <>
             <Script

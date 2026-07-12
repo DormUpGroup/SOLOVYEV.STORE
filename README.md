@@ -1,13 +1,13 @@
 # SOLOVYEV STORE — Next.js
 
-Improved rebuild of [solovyev.store](https://solovyev.store): same streetwear aesthetic, WhatsApp-first checkout, with SEO, GA4, inventory statuses, and structured leads.
+Improved rebuild of [solovyev.store](https://solovyev.store): streetwear aesthetic, WhatsApp-first checkout, SEO, GA4, Supabase-backed admin.
 
 ## Stack
 
-- Next.js 15 (App Router, static export)
-- TypeScript
+- Next.js 15 (App Router)
+- TypeScript + Supabase (catalog, FAQ, config, analytics)
+- Admin panel at `/admin` (brutalist-improved UI)
 - CSS from original site (`styles/globals.css`)
-- JSON catalog in `data/`
 
 ## Quick start
 
@@ -17,57 +17,59 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Admin: [http://localhost:3000/admin](http://localhost:3000/admin).
+
+Without Supabase env vars, the site falls back to [`data/products.json`](data/products.json).
 
 ## Environment
 
 | Variable | Description |
 |----------|-------------|
-| `NEXT_PUBLIC_SITE_URL` | Canonical site URL (default: `https://solovyev.store`) |
-| `NEXT_PUBLIC_GA_ID` | Google Analytics 4 measurement ID |
+| `NEXT_PUBLIC_SITE_URL` | Canonical site URL |
+| `NEXT_PUBLIC_GA_ID` | Google Analytics 4 ID |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable (anon) key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-only — admin API + seed |
+| `ADMIN_PASSWORD` | Password for `/admin` |
 
-## Update catalog
+## Supabase setup
 
-Edit [`data/products.json`](data/products.json):
+1. Add API keys to `.env.local` (Dashboard → Project Settings → API)
+2. Add `SUPABASE_DB_PASSWORD` (Dashboard → Project Settings → Database)
+3. Run: `npm run setup:supabase` — applies migrations + seeds catalog
 
-```json
-{
-  "id": 9,
-  "slug": "item-slug",
-  "title": "Item Name",
-  "category": "sneakers",
-  "price": 1200,
-  "condition": "10/10 DS",
-  "brand": "Nike",
-  "badge": "hype",
-  "sizes": ["42", "43"],
-  "img": "/assets/your-image.png",
-  "status": "available"
-}
-```
+Manual fallback: paste SQL from `supabase/migrations/` into Supabase SQL Editor, then `npm run seed:supabase`
 
-**Status values:** `available` | `new_drop` | `reserved` | `sold`
+## Admin panel
+
+- **Catalog** — CRUD, Sold / Reserved / New Drop, image upload to Storage
+- **FAQ** — edit questions/answers (live on site)
+- **Settings** — contacts, currency, announcements, hero image
+- **Analytics** — views, cart, WhatsApp checkout from `analytics_events`
+- **Publish** — revalidates site cache after changes
+
+## Instagram import
+
+- CLI: `npm run import:instagram` (from `data/instagram-raw.json`)
+- Admin API: `POST /api/admin/instagram/import` (URL + caption + image)
+- Cron stub: `POST /api/cron/instagram-sync` (set `INSTAGRAM_ACCESS_TOKEN`)
 
 ## Deploy
 
 ```bash
 npm run build
+npm start
 ```
 
-Static output is in `out/`. Deploy to Vercel, Cloudflare Pages, or Netlify.
-
-## Google Sheets (Phase 2)
-
-See [`lib/fetchProducts.ts`](lib/fetchProducts.ts) for the planned Sheets → JSON sync schema.
+Deploy to Vercel with Supabase env vars configured.
 
 ## Pages
 
 | Route | Purpose |
 |-------|---------|
 | `/` | Main storefront |
+| `/admin` | Store management |
 | `/product/[slug]` | SEO product page |
-| `/sell-trade` | Valuation portal deep link |
+| `/sell-trade` | Valuation portal |
 | `/faq` | FAQ with JSON-LD |
-| `/privacy` | Privacy policy |
 | `/sitemap.xml` | Auto-generated |
-| `/robots.txt` | Auto-generated |

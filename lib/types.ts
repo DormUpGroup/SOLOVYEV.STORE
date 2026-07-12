@@ -1,5 +1,12 @@
 export type ProductCategory = "sneakers" | "clothing" | "accessories";
-export type ProductStatus = "available" | "reserved" | "sold" | "new_drop";
+export type ProductStatus =
+  | "available"
+  | "reserved"
+  | "sold"
+  | "new_drop"
+  | "draft"
+  | "made_to_order"
+  | "brand_new";
 
 export interface StoreConfig {
   storeName: string;
@@ -29,6 +36,20 @@ export interface StoreConfig {
     heroVideo?: string;
     instagramPosts: string[];
   };
+  announcements?: {
+    freeShipping: string;
+    authenticity: string;
+    newDrops: string;
+  };
+}
+
+export interface ProductImage {
+  id: number;
+  productId: number;
+  imageUrl: string;
+  altText?: string;
+  sortOrder: number;
+  objectPosition: string;
 }
 
 export interface Product {
@@ -43,11 +64,14 @@ export interface Product {
   badge: string;
   sizes: string[];
   img: string;
+  images?: ProductImage[];
   status: ProductStatus;
   sold?: boolean;
   description?: string;
   instagramUrl?: string;
-  source?: "instagram" | "demo";
+  source?: "instagram" | "demo" | "admin";
+  sortOrder?: number;
+  updatedAt?: string;
 }
 
 export interface FaqItem {

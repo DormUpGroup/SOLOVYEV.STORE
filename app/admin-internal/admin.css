@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .admin-cms {
+    @apply bg-admin-bg text-white font-mono text-sm antialiased;
+  }
+}

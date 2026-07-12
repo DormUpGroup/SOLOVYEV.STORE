@@ -13,9 +13,11 @@ import { SellTradeModal } from "@/components/modals/SellTradeModal";
 import { FaqModal } from "@/components/modals/FaqModal";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { getBrandsDirectory } from "@/lib/products";
+import { useStore } from "@/components/providers/StoreProvider";
 
 export function BrandsPageClient() {
-  const brands = getBrandsDirectory();
+  const { products } = useStore();
+  const brands = getBrandsDirectory(products);
 
   return (
     <>

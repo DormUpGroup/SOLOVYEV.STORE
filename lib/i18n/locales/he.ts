@@ -28,6 +28,8 @@ export const he: Dictionary = {
   },
   header: {
     allDrops: "כל הדרופים",
+    madeToOrder: "בהזמנה",
+    brandNew: "BRAND NEW",
     brands: "מותגים",
     aboutUs: "אודותינו",
     sellTrade: "מכירה / החלפה",
@@ -53,6 +55,11 @@ export const he: Dictionary = {
     sortLowToHigh: "מחיר: נמוך לגבוה",
     sortHighToLow: "מחיר: גבוה לנמוך",
     noResults: "לא נמצאו פריטים.",
+    madeToOrderTitle: "בהזמנה.",
+    madeToOrderIntro: "פריטים בהזמנה — שלחו לנו הודעה ב-WhatsApp. זמן אספקה משתנה.",
+    brandNewTitle: "BRAND NEW.",
+    brandNewIntro:
+      "Deadstock ופריטים חדשים — מצב 10/10. אותנטיות מאומתת לפני פרסום.",
   },
   cart: {
     title: "העגלה שלך.",
@@ -70,13 +77,14 @@ export const he: Dictionary = {
     brand: "מותג",
     selectSize: "בחירת מידה",
     outOfStock: "אזל מהמלאי",
-    dmForSize: "פנו לגבי מידה",
+    contactForSize: "צרו קשר לגבי מידה",
     addToCart: "הוספה לעגלה",
     orderWhatsApp: "הזמנה ב-WhatsApp",
-    dmInstagram: "פנייה באינסטגרם",
     statusNewDrop: "דרופ חדש",
     statusReserved: "שמור",
     statusSold: "נמכר",
+    statusMadeToOrder: "בהזמנה",
+    statusBrandNew: "BRAND NEW",
   },
   footer: {
     style: "סגנון",
@@ -141,12 +149,12 @@ export const he: Dictionary = {
       {
         question: "משלוח ואיסוף?",
         answer:
-          "משלוחים בכל ישראל. משלוח סטנדרטי ללוקרים (Boxit/Cheetah) 2–4 ימי עסקים — ₪25. שליח עד הבית — ₪50. מסירה מיד ביד בתל אביב וחיפה בתיאום.",
+          "משלוחים בכל ישראל. משלוח סטנדרטי ללוקרים (Boxit/Cheetah) 2–4 ימי עסקים — מינימום 50 שקל. שליח עד הבית — מינימום 50 שקל. מסירה מיד ביד בתל אביב וחיפה בתיאום.",
       },
       {
         question: "החזרות והחלפות?",
         answer:
-          "כמקובל בשוק הריסייל, כל המכירות סופיות (ללא החזרות). ודאו מידה לפני רכישה. לשאלות מידה — פנו אלינו ב-DM!",
+          "כמקובל בשוק הריסייל, כל המכירות סופיות (ללא החזרות). ודאו מידה לפני רכישה. לשאלות מידה — פנו אלינו ב-WhatsApp!",
       },
       {
         question: "כמה מהר עונים על בקשות מכירה/החלפה?",

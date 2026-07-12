@@ -1,29 +1,37 @@
-import { config, formatPrice, formatPriceOrDm } from "./products";
-import type { CartItem, Product, SellTradeFormData } from "./types";
+import configData from "@/data/config.json";
+import { formatPrice, formatPriceOrDm } from "./products";
+import type { CartItem, Product, SellTradeFormData, StoreConfig } from "./types";
+
+const defaultConfig = configData as StoreConfig;
 
 export function generateOrderRef(): string {
   return `SS-${Date.now().toString(36).toUpperCase()}`;
 }
 
-export function buildWhatsAppUrl(message: string): string {
-  return `https://api.whatsapp.com/send?phone=${config.contacts.whatsappPhone}&text=${encodeURIComponent(message)}`;
+export function buildWhatsAppUrl(
+  message: string,
+  cfg: StoreConfig = defaultConfig,
+): string {
+  return `https://api.whatsapp.com/send?phone=${cfg.contacts.whatsappPhone}&text=${encodeURIComponent(message)}`;
 }
 
 export function buildSingleItemMessage(
   product: Product,
   size: string | null,
   siteUrl: string,
+  cfg: StoreConfig = defaultConfig,
 ): string {
   const ref = generateOrderRef();
+  const sym = cfg.currency.symbol;
   const sizeLine = size ? `\n📐 Size: ${size}` : "";
   const productUrl = `${siteUrl}/product/${product.slug}`;
 
   return (
-    `Hi ${config.contacts.managerName}! I want to order:\n\n` +
+    `Hi ${cfg.contacts.managerName}! I want to order:\n\n` +
     `🆔 Order: ${ref}\n` +
     `🏷️ ${product.title}\n` +
     `🔢 SKU: #${product.id}${sizeLine}\n` +
-    `💰 Price: ${formatPriceOrDm(product.price)}\n` +
+    `💰 Price: ${formatPriceOrDm(product.price, sym)}\n` +
     `🔗 ${productUrl}\n\n` +
     `Please confirm availability.`
   );
@@ -33,10 +41,12 @@ export function buildCartMessage(
   cartItems: CartItem[],
   products: Product[],
   siteUrl: string,
+  cfg: StoreConfig = defaultConfig,
 ): string {
+  const sym = cfg.currency.symbol;
   const ref = generateOrderRef();
   let subtotal = 0;
-  let message = `Hi ${config.contacts.managerName}! I want to order:\n\n🆔 Order: ${ref}\n\n`;
+  let message = `Hi ${cfg.contacts.managerName}! I want to order:\n\n🆔 Order: ${ref}\n\n`;
 
   cartItems.forEach((item, index) => {
     const product = products.find((p) => p.id === item.id);
@@ -45,11 +55,11 @@ export function buildCartMessage(
     subtotal += lineTotal;
     message += `${index + 1}. ${product.title}\n`;
     message += `   Size: ${item.size || "One Size"}\n`;
-    message += `   ${formatPriceOrDm(product.price)} × ${item.quantity} = ${product.price > 0 ? formatPrice(lineTotal) : formatPriceOrDm(0)}\n`;
+    message += `   ${formatPriceOrDm(product.price, sym)} × ${item.quantity} = ${product.price > 0 ? formatPrice(lineTotal, sym) : formatPriceOrDm(0, sym)}\n`;
     message += `   🔗 ${siteUrl}/product/${product.slug}\n\n`;
   });
 
-  message += `💰 Subtotal: ${subtotal > 0 ? formatPrice(subtotal) : formatPriceOrDm(0)}\n`;
+  message += `💰 Subtotal: ${subtotal > 0 ? formatPrice(subtotal, sym) : formatPriceOrDm(0, sym)}\n`;
   if (subtotal >= 1000) {
     message += `🚚 Free shipping (orders over ₪1000)\n`;
   } else {
@@ -60,7 +70,10 @@ export function buildCartMessage(
   return message;
 }
 
-export function buildSellTradeMessage(data: SellTradeFormData): string {
+export function buildSellTradeMessage(
+  data: SellTradeFormData,
+  cfg: StoreConfig = defaultConfig,
+): string {
   const ref = generateOrderRef();
 
   return (
@@ -70,7 +83,7 @@ export function buildSellTradeMessage(data: SellTradeFormData): string {
     `🏷️ Brand & Model: ${data.name}\n` +
     `📐 Size: ${data.size}\n` +
     `✨ Condition: ${data.condition}\n` +
-    `💰 Wanted Price: ${config.currency.symbol}${data.price}\n` +
+    `💰 Wanted Price: ${cfg.currency.symbol}${data.price}\n` +
     `📝 Notes: ${data.notes || "None"}\n\n` +
     `📸 Please send 4 photos: front, back, tag, box`
   );

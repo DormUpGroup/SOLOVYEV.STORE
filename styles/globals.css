@@ -191,11 +191,9 @@ header {
 .store-logo {
   width: 40px;
   height: 40px;
-  background-color: #ffffff;
-  color: #000000;
-  padding: 6px;
-  box-sizing: border-box;
+  object-fit: contain;
   display: block;
+  flex-shrink: 0;
 }
 
 .logo-text {
@@ -1156,6 +1154,10 @@ main {
   grid-column: 2;
   grid-row: 1;
   justify-self: center;
+}
+
+.catalog-logo-text {
+  font-size: clamp(16px, 2vw, 22px);
 }
 
 .section-title {
@@ -2686,7 +2688,7 @@ main {
 .footer-logo-mark {
   width: 28px;
   height: 28px;
-  border: 2px solid var(--text-primary);
+  object-fit: contain;
   flex-shrink: 0;
 }
 

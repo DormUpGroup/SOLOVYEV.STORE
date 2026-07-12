@@ -1,13 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { trackFaqExpand } from "@/lib/analytics";
 import { useUI } from "@/components/providers/UIProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
+import { useStore } from "@/components/providers/StoreProvider";
+import type { FaqItem } from "@/lib/types";
+
+function useFaqItems(): FaqItem[] {
+  const { dict } = useI18n();
+  const { faqItems } = useStore();
+  return useMemo(
+    () => (dict.faq.items.length > 0 ? dict.faq.items : faqItems),
+    [dict.faq.items, faqItems],
+  );
+}
 
 export function FaqModal() {
   const { activeModal, closeAll } = useUI();
   const { dict } = useI18n();
+  const items = useFaqItems();
   const { faq } = dict;
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -30,7 +42,7 @@ export function FaqModal() {
         </button>
         <h2>{faq.title}</h2>
         <div className="faq-list">
-          {faq.items.map((item, index) => {
+          {items.map((item, index) => {
             const isOpen = openIndex === index;
             return (
               <div
@@ -64,13 +76,12 @@ export function FaqModal() {
 }
 
 export function FaqAccordion({ className = "" }: { className?: string }) {
-  const { dict } = useI18n();
-  const { faq } = dict;
+  const items = useFaqItems();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
     <div className={`faq-list ${className}`}>
-      {faq.items.map((item, index) => {
+      {items.map((item, index) => {
         const isOpen = openIndex === index;
         return (
           <div key={item.question} className={`faq-item ${isOpen ? "open" : ""}`}>

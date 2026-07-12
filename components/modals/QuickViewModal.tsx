@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import {
-  config,
   formatPriceOrDm,
   isProductUnavailable,
 } from "@/lib/products";
+import { useStore } from "@/components/providers/StoreProvider";
 import {
   buildSingleItemMessage,
   buildWhatsAppUrl,
@@ -21,6 +21,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
 
 export function QuickViewModal() {
+  const { config } = useStore();
   const { activeModal, selectedProduct, closeAll } = useUI();
   const { addToCart } = useCart();
   const { dict } = useI18n();
@@ -32,6 +33,9 @@ export function QuickViewModal() {
     new_drop: product.statusNewDrop,
     reserved: product.statusReserved,
     sold: product.statusSold,
+    draft: "DRAFT",
+    made_to_order: product.statusMadeToOrder,
+    brand_new: product.statusBrandNew,
   };
 
   useEffect(() => {
@@ -62,8 +66,9 @@ export function QuickViewModal() {
       selectedProduct,
       selectedSize,
       SITE_URL,
+      config,
     );
-    window.open(buildWhatsAppUrl(message), "_blank", "noopener,noreferrer");
+    window.open(buildWhatsAppUrl(message, config), "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -92,7 +97,7 @@ export function QuickViewModal() {
             </span>
             <h2 id="modal-product-title">{selectedProduct.title}</h2>
             <p className="modal-price" id="modal-product-price">
-              {formatPriceOrDm(selectedProduct.price)}
+              {formatPriceOrDm(selectedProduct.price, config.currency.symbol)}
             </p>
 
             <div className="product-specs">
@@ -118,7 +123,7 @@ export function QuickViewModal() {
                   {product.outOfStock}
                 </button>
               ) : selectedProduct.sizes.length === 0 ? (
-                <span className="size-pill disabled">{product.dmForSize}</span>
+                <span className="size-pill disabled">{product.contactForSize}</span>
               ) : (
                 selectedProduct.sizes.map((size) => (
                   <button
@@ -157,15 +162,6 @@ export function QuickViewModal() {
               >
                 {product.orderWhatsApp}
               </button>
-              <a
-                href={config.contacts.instagramUrl}
-                className="btn-secondary"
-                id="instagram-order-btn"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {product.dmInstagram}
-              </a>
             </div>
           </div>
         </div>

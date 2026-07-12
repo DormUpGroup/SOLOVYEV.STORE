@@ -5,8 +5,8 @@ import { useEffect, useMemo } from "react";
 import {
   formatPrice,
   getProductById,
-  products,
 } from "@/lib/products";
+import { useStore } from "@/components/providers/StoreProvider";
 import { buildCartMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { trackBeginCheckout } from "@/lib/analytics";
 import { useCart } from "@/components/providers/CartProvider";
@@ -16,6 +16,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
 
 export function CartDrawer() {
+  const { products, config } = useStore();
   const {
     cart,
     isOpen,
@@ -28,10 +29,10 @@ export function CartDrawer() {
 
   const subtotal = useMemo(() => {
     return cart.reduce((sum, item) => {
-      const product = getProductById(item.id);
+      const product = getProductById(products, item.id);
       return sum + (product ? product.price * item.quantity : 0);
     }, 0);
-  }, [cart]);
+  }, [cart, products]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -49,8 +50,8 @@ export function CartDrawer() {
   const handleCheckout = () => {
     if (cart.length === 0) return;
     trackBeginCheckout(subtotal, cart.length);
-    const message = buildCartMessage(cart, products, SITE_URL);
-    window.open(buildWhatsAppUrl(message), "_blank", "noopener,noreferrer");
+    const message = buildCartMessage(cart, products, SITE_URL, config);
+    window.open(buildWhatsAppUrl(message, config), "_blank", "noopener,noreferrer");
   };
 
   if (!isOpen) return null;
@@ -86,7 +87,7 @@ export function CartDrawer() {
             <p className="cart-empty">{cartText.empty}</p>
           ) : (
             cart.map((item) => {
-              const product = getProductById(item.id);
+              const product = getProductById(products, item.id);
               if (!product) return null;
               return (
                 <div
@@ -109,7 +110,7 @@ export function CartDrawer() {
                       {cartText.size}: {item.size || cartText.oneSize}
                     </p>
                     <div className="cart-item-price">
-                      {formatPrice(product.price)}
+                      {formatPrice(product.price, config.currency.symbol)}
                     </div>
                   </div>
                   <div className="cart-item-actions">
@@ -151,7 +152,7 @@ export function CartDrawer() {
 
         <div className="cart-drawer-footer">
           <div className="cart-subtotal-row">
-            {cartText.subtotal}: <span id="cart-subtotal">{formatPrice(subtotal)}</span>
+            {cartText.subtotal}: <span id="cart-subtotal">{formatPrice(subtotal, config.currency.symbol)}</span>
           </div>
           <button
             type="button"
