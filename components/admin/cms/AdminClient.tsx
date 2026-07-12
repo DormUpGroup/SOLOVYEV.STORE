@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { Product, ProductImage, ProductStatus, StoreConfig } from "@/lib/types";
 import { ProductList } from "./ProductList";
 import { ProductForm, emptyFormProduct, type FormProduct } from "./ProductForm";
@@ -57,6 +58,8 @@ export function AdminClient({
   const [slugError, setSlugError] = useState("");
   const formRef = useRef<HTMLDivElement>(null);
 
+  const router = useRouter();
+
   const flash = (text: string, ok = true) => {
     setMessage({ text, ok });
     setTimeout(() => setMessage(null), 3500);
@@ -64,6 +67,7 @@ export function AdminClient({
 
   const publishSite = async () => {
     await fetch("/api/admin/publish", { method: "POST" });
+    router.refresh();
   };
 
   const visibleProducts = useMemo(() => {

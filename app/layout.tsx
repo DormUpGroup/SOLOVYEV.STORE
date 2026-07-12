@@ -7,6 +7,8 @@ import { getConfig, getFaqItems, getProducts } from "@/lib/data/store";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
+export const dynamic = "force-dynamic";
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,

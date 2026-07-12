@@ -13,6 +13,7 @@ function jsonFallbackProducts(): Product[] {
 
 async function fetchProductsCached(): Promise<Product[]> {
   if (!isSupabaseConfigured() || !hasSupabaseServiceRole()) {
+    console.warn("[store] SUPABASE_SERVICE_ROLE_KEY missing — serving JSON fallback for products");
     return jsonFallbackProducts();
   }
   const products = await fetchProductsForPublic();

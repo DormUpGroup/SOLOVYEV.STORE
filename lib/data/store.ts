@@ -37,7 +37,10 @@ function jsonFallbackFaq(): FaqItem[] {
 }
 
 async function fetchConfigFromDb(): Promise<StoreConfig> {
-  if (!isSupabaseConfigured() || !hasServiceRole()) return jsonFallbackConfig();
+  if (!isSupabaseConfigured() || !hasServiceRole()) {
+    console.warn("[store] SUPABASE_SERVICE_ROLE_KEY missing — serving JSON fallback for config");
+    return jsonFallbackConfig();
+  }
 
   const supabase = createServiceClient();
   const { data, error } = await supabase
