@@ -295,7 +295,10 @@ export async function createProduct(input: CreateProductInput): Promise<Product>
   );
 
   const { data, error } = await supabase.from("products").insert(row).select().single();
-  if (error) throw error;
+  if (error) {
+    console.error("[createProduct] insert error:", JSON.stringify(error));
+    throw error;
+  }
 
   if (input.images?.length) {
     const imageRows = input.images.map((img, i) => ({
@@ -305,12 +308,13 @@ export async function createProduct(input: CreateProductInput): Promise<Product>
       sort_order: i,
       object_position: img.objectPosition ?? "50% 50%",
     }));
-    await supabase.from("product_images").insert(imageRows);
+    const { error: imgErr } = await supabase.from("product_images").insert(imageRows);
+    if (imgErr) console.warn("[createProduct] product_images insert warning:", JSON.stringify(imgErr));
   }
 
   const created = await fetchProductById(data.id);
-  if (!created) throw new Error("Failed to fetch created product");
-  return created;
+  // If refetch fails, fall back to the data returned by insert
+  return created ?? mapProduct(data as DbProduct, []);
 }
 
 export type UpdateProductInput = Partial<CreateProductInput> & {

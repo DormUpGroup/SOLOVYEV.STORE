@@ -61,14 +61,27 @@ export async function PUT(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }
 
+  let product;
   try {
-    const product = await updateProduct(productId, body);
-    revalidateStore(product.slug);
-    return NextResponse.json({ product });
+    product = await updateProduct(productId, body);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Update failed";
+    console.error("[PUT /api/admin/products/:id] updateProduct failed:", JSON.stringify(err));
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "object" && err !== null && "message" in err
+          ? String((err as { message: unknown }).message)
+          : "Update failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
+
+  try {
+    revalidateStore(product.slug);
+  } catch (err) {
+    console.warn("[PUT /api/admin/products/:id] revalidateStore failed (non-fatal):", err);
+  }
+
+  return NextResponse.json({ product });
 }
 
 export async function DELETE(_request: Request, context: RouteContext) {
@@ -77,13 +90,27 @@ export async function DELETE(_request: Request, context: RouteContext) {
   }
 
   const { id } = await context.params;
+  let slug: string | undefined;
   try {
     const existing = await fetchProductById(Number(id));
+    slug = existing?.slug;
     await deleteProduct(Number(id));
-    revalidateStore(existing?.slug);
-    return NextResponse.json({ ok: true });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Delete failed";
+    console.error("[DELETE /api/admin/products/:id] deleteProduct failed:", JSON.stringify(err));
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "object" && err !== null && "message" in err
+          ? String((err as { message: unknown }).message)
+          : "Delete failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
+
+  try {
+    revalidateStore(slug);
+  } catch (err) {
+    console.warn("[DELETE /api/admin/products/:id] revalidateStore failed (non-fatal):", err);
+  }
+
+  return NextResponse.json({ ok: true });
 }

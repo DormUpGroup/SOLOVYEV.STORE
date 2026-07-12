@@ -55,12 +55,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Slug already exists" }, { status: 409 });
   }
 
+  let product;
   try {
-    const product = await createProduct({ ...body, source: "admin" });
-    revalidateStore(product.slug);
-    return NextResponse.json({ product }, { status: 201 });
+    product = await createProduct({ ...body, source: "admin" });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Create failed";
+    console.error("[POST /api/admin/products] createProduct failed:", JSON.stringify(err));
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "object" && err !== null && "message" in err
+          ? String((err as { message: unknown }).message)
+          : "Create failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
+
+  try {
+    revalidateStore(product.slug);
+  } catch (err) {
+    console.warn("[POST /api/admin/products] revalidateStore failed (non-fatal):", err);
+  }
+
+  return NextResponse.json({ product }, { status: 201 });
 }
