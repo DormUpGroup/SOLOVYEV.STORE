@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import type { Product } from "@/lib/types";
+import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 
 type ModalType = "quickView" | "sellTrade" | "faq" | null;
 
@@ -29,23 +30,23 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const closeAll = useCallback(() => {
     setActiveModal(null);
     setSelectedProduct(null);
-    document.body.classList.remove("no-scroll");
+    unlockBodyScroll();
   }, []);
 
   const openQuickView = useCallback((product: Product) => {
     setSelectedProduct(product);
     setActiveModal("quickView");
-    document.body.classList.add("no-scroll");
+    lockBodyScroll();
   }, []);
 
   const openSellTrade = useCallback(() => {
     setActiveModal("sellTrade");
-    document.body.classList.add("no-scroll");
+    lockBodyScroll();
   }, []);
 
   const openFaq = useCallback(() => {
     setActiveModal("faq");
-    document.body.classList.add("no-scroll");
+    lockBodyScroll();
   }, []);
 
   return (

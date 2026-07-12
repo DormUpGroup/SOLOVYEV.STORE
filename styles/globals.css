@@ -1929,6 +1929,7 @@ main {
 .modal.open {
   opacity: 1;
   pointer-events: auto;
+  overscroll-behavior: contain;
 }
 
 .modal-backdrop {
@@ -1939,6 +1940,7 @@ main {
   height: 100%;
   background-color: var(--backdrop-color);
   backdrop-filter: blur(8px);
+  touch-action: none;
 }
 
 .modal-content {
@@ -3740,8 +3742,10 @@ body.style-minimalist .cart-item {
 
 /* --- Next.js enhancements --- */
 
+html.no-scroll,
 body.no-scroll {
-  overflow: hidden;
+  overflow: hidden !important;
+  overscroll-behavior: none;
 }
 
 .desktop-nav .nav-link,

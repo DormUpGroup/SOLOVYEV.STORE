@@ -11,6 +11,7 @@ import { useI18n } from "@/components/providers/I18nProvider";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { AnnouncementBar } from "@/components/layout/Marquees";
 import { StoreLogoMark } from "@/components/layout/StoreLogo";
+import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 import type { ProductCategory } from "@/lib/types";
 
 const categoryKeys: Record<ProductCategory, "sneakers" | "clothing" | "accessories"> = {
@@ -54,8 +55,11 @@ function Header() {
   }, [pathname]);
 
   useEffect(() => {
-    document.body.classList.toggle("no-scroll", menuOpen);
-    return () => document.body.classList.remove("no-scroll");
+    if (menuOpen) {
+      lockBodyScroll();
+      return () => unlockBodyScroll();
+    }
+    return undefined;
   }, [menuOpen]);
 
   useLayoutEffect(() => {

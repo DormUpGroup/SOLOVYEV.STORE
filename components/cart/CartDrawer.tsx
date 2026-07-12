@@ -11,6 +11,7 @@ import { buildCartMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { trackBeginCheckout } from "@/lib/analytics";
 import { useCart } from "@/components/providers/CartProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
+import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
@@ -36,14 +37,14 @@ export function CartDrawer() {
 
   useEffect(() => {
     if (!isOpen) return;
-    document.body.classList.add("no-scroll");
+    lockBodyScroll();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeCart();
     };
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("keydown", onKey);
-      document.body.classList.remove("no-scroll");
+      unlockBodyScroll();
     };
   }, [isOpen, closeCart]);
 
