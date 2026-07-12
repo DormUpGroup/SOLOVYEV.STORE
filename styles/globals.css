@@ -2199,14 +2199,14 @@ main {
 /* Quick view: reference layout — large photo left, details right */
 .quick-view-modal-content {
   overflow: hidden;
-  width: min(94vw, 980px);
-  max-height: min(90vh, 720px);
+  width: min(96vw, 1040px);
+  max-height: min(92vh, 820px);
 }
 
 .quick-view-modal-content .modal-grid {
   height: 100%;
-  min-height: 520px;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  min-height: 620px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
 }
 
 .quick-view-modal-content .modal-image {
@@ -2218,34 +2218,43 @@ main {
 
 .modal-thumbnails {
   display: flex;
-  gap: 6px;
-  padding: 8px;
+  gap: 4px;
+  padding: 10px 12px;
   overflow-x: auto;
-  background: #050505;
+  background: #080808;
+  border-top: 1px solid rgba(255,255,255,0.07);
   flex-shrink: 0;
+  scrollbar-width: none;
+}
+
+.modal-thumbnails::-webkit-scrollbar {
+  display: none;
 }
 
 .modal-thumb-btn {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   flex-shrink: 0;
-  border: 1px solid var(--border-color);
+  border: 1.5px solid transparent;
   overflow: hidden;
   cursor: pointer;
   padding: 0;
-  background: none;
-  opacity: 0.55;
-  transition: opacity 0.15s, border-color 0.15s;
+  background: #111;
+  opacity: 0.5;
+  transition: opacity 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  border-radius: 2px;
 }
 
 .modal-thumb-btn:hover {
-  opacity: 0.85;
+  opacity: 0.8;
+  transform: translateY(-2px);
 }
 
 .modal-thumb-btn.active {
-  border-color: #fff;
+  border-color: rgba(255,255,255,0.85);
   opacity: 1;
+  transform: translateY(-2px);
 }
 
 .quick-view-modal-content .modal-img-loupe {
@@ -2362,7 +2371,7 @@ main {
   }
 
   .quick-view-modal-content .modal-img-loupe {
-    min-height: 280px;
+    min-height: 320px;
   }
 }
 
