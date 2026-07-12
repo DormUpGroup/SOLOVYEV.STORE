@@ -125,8 +125,6 @@ function Header() {
 
   const dropsNavActive = onDropsPage;
 
-  const dropsParentClass = `nav-link${dropsNavActive ? " active" : ""}`;
-
   const dropsCategoryClass = (category: ProductCategory) =>
     `nav-dropdown-link${onDropsPage && activeCategory === category ? " active" : ""}`;
 
@@ -223,8 +221,28 @@ function Header() {
 
               <nav className="desktop-nav" aria-label="Main navigation">
                 <div className="nav-dropdown">
-                  <Link href="/drops" className={dropsParentClass}>
-                    {header.allDrops}
+                  <Link
+                    href="/drops"
+                    className={`nav-link nav-dropdown-trigger${dropsNavActive ? " active" : ""}`}
+                    aria-haspopup="menu"
+                  >
+                    <span>{header.allDrops}</span>
+                    <svg
+                      className="nav-dropdown-chevron"
+                      viewBox="0 0 12 12"
+                      width="10"
+                      height="10"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M2.5 4.5L6 8l3.5-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </Link>
                   <div className="nav-dropdown-panel" role="menu">
                     {config.categories.map((cat) => (
