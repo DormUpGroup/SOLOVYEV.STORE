@@ -36,16 +36,6 @@ function flushAnalytics(): void {
   }).catch(() => {});
 }
 
-function queueAnalyticsEvent(type: string, productId?: number): void {
-  if (typeof window === "undefined") return;
-  void shouldSkipTracking().then((skip) => {
-    if (skip) return;
-    pendingEvents.push({ type, productId });
-    if (flushTimer) clearTimeout(flushTimer);
-    flushTimer = setTimeout(flushAnalytics, 1500);
-  });
-}
-
 export function trackEvent(
   eventName: string,
   params?: Record<string, string | number | boolean>,
