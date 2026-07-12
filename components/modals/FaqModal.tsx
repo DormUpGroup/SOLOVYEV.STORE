@@ -11,7 +11,7 @@ function useFaqItems(): FaqItem[] {
   const { dict } = useI18n();
   const { faqItems } = useStore();
   return useMemo(
-    () => (dict.faq.items.length > 0 ? dict.faq.items : faqItems),
+    () => (faqItems.length > 0 ? faqItems : dict.faq.items),
     [dict.faq.items, faqItems],
   );
 }

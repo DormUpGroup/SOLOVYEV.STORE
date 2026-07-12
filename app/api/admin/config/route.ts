@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/auth";
+import { revalidateStore } from "@/lib/admin-api";
 import { createServiceClient } from "@/utils/supabase/admin";
 import type { StoreConfig } from "@/lib/types";
 
@@ -29,5 +30,6 @@ export async function PUT(request: Request) {
     .select()
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  revalidateStore();
   return NextResponse.json({ config: (data as { data: StoreConfig }).data });
 }

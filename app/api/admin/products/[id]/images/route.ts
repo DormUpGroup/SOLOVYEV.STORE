@@ -36,7 +36,7 @@ export async function POST(request: Request, context: RouteContext) {
     objectPosition: body.objectPosition,
   });
 
-  revalidateStore();
+  revalidateStore(product.slug);
   const updated = await fetchProductById(productId);
   return NextResponse.json({ image, product: updated }, { status: 201 });
 }
@@ -55,7 +55,7 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 
   await reorderProductImages(productId, body.imageIds);
-  revalidateStore();
   const product = await fetchProductById(productId);
+  revalidateStore(product?.slug);
   return NextResponse.json({ product });
 }

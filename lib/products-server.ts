@@ -21,7 +21,7 @@ async function fetchProductsCached(): Promise<Product[]> {
 
 export const getProducts = unstable_cache(fetchProductsCached, ["store-products"], {
   tags: [STORE_TAG],
-  revalidate: 300,
+  revalidate: 60,
 });
 
 export const getMadeToOrderProducts = unstable_cache(
@@ -30,7 +30,7 @@ export const getMadeToOrderProducts = unstable_cache(
     return fetchMadeToOrderProducts();
   },
   ["store-made-to-order"],
-  { tags: [STORE_TAG], revalidate: 300 },
+  { tags: [STORE_TAG], revalidate: 60 },
 );
 
 function jsonFallbackBrandNewProducts(): Product[] {
@@ -48,7 +48,7 @@ export const getBrandNewProducts = unstable_cache(
     return products.length ? products : jsonFallbackBrandNewProducts();
   },
   ["store-brand-new"],
-  { tags: [STORE_TAG], revalidate: 300 },
+  { tags: [STORE_TAG], revalidate: 60 },
 );
 
 export async function getProductBySlugFromStore(slug: string): Promise<Product | undefined> {

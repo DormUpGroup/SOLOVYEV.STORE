@@ -57,7 +57,7 @@ export async function POST(request: Request) {
 
   try {
     const product = await createProduct({ ...body, source: "admin" });
-    revalidateStore();
+    revalidateStore(product.slug);
     return NextResponse.json({ product }, { status: 201 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Create failed";

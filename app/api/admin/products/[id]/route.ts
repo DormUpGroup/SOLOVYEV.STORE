@@ -63,7 +63,7 @@ export async function PUT(request: Request, context: RouteContext) {
 
   try {
     const product = await updateProduct(productId, body);
-    revalidateStore();
+    revalidateStore(product.slug);
     return NextResponse.json({ product });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Update failed";
@@ -78,8 +78,9 @@ export async function DELETE(_request: Request, context: RouteContext) {
 
   const { id } = await context.params;
   try {
+    const existing = await fetchProductById(Number(id));
     await deleteProduct(Number(id));
-    revalidateStore();
+    revalidateStore(existing?.slug);
     return NextResponse.json({ ok: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Delete failed";

@@ -208,7 +208,8 @@ export function AdminClient({
       flash("Delete failed", false);
       return;
     }
-    flash("Product deleted");
+    await publishSite();
+    flash("Product deleted — live on site");
   };
 
   const handleReorder = async (ids: number[]) => {
@@ -226,7 +227,9 @@ export function AdminClient({
     if (!res.ok) {
       updateProducts(prev);
       flash("Reorder failed", false);
+      return;
     }
+    await publishSite();
   };
 
   const persistAddImage = async (url: string) => {
@@ -313,7 +316,8 @@ export function AdminClient({
     if (formProduct?.id === id) {
       setFormProduct(json.product);
     }
-    flash("Marked as sold");
+    await publishSite();
+    flash("Marked as sold — live on site");
   };
 
   return (

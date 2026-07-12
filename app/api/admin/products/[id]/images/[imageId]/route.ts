@@ -22,8 +22,8 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 
   await updateProductImagePosition(Number(id), Number(imageId), body.objectPosition);
-  revalidateStore();
   const product = await fetchProductById(Number(id));
+  revalidateStore(product?.slug);
   return NextResponse.json({ product });
 }
 
@@ -33,8 +33,9 @@ export async function DELETE(_request: Request, context: RouteContext) {
   }
 
   const { id, imageId } = await context.params;
+  const existing = await fetchProductById(Number(id));
   await deleteProductImage(Number(id), Number(imageId));
-  revalidateStore();
+  revalidateStore(existing?.slug);
   const product = await fetchProductById(Number(id));
   return NextResponse.json({ product });
 }
