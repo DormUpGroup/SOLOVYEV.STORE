@@ -3,6 +3,7 @@ import type { FaqItem, StoreConfig } from "@/lib/types";
 import configData from "@/data/config.json";
 import faqData from "@/data/faq.json";
 import { createServiceClient } from "@/utils/supabase/admin";
+import { normalizeStoreConfig } from "@/lib/store-config";
 import { getProducts, getProductBySlugFromStore, STORE_TAG } from "@/lib/products-server";
 
 export { STORE_TAG, getProducts, getProductBySlugFromStore };
@@ -28,7 +29,7 @@ function hasServiceRole(): boolean {
 }
 
 function jsonFallbackConfig(): StoreConfig {
-  return configData as StoreConfig;
+  return normalizeStoreConfig(configData as StoreConfig);
 }
 
 function jsonFallbackFaq(): FaqItem[] {
@@ -46,7 +47,7 @@ async function fetchConfigFromDb(): Promise<StoreConfig> {
     .maybeSingle();
 
   if (error || !data?.data) return jsonFallbackConfig();
-  return data.data as StoreConfig;
+  return normalizeStoreConfig(data.data as StoreConfig);
 }
 
 export const getConfig = unstable_cache(fetchConfigFromDb, ["store-config"], {

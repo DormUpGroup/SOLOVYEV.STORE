@@ -14,6 +14,7 @@ import {
 import { Line } from "react-chartjs-2";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FaqItem, Product, StoreConfig } from "@/lib/types";
+import { normalizeStoreConfig } from "@/lib/store-config";
 import styles from "@/app/admin/admin.module.css";
 
 ChartJS.register(
@@ -59,7 +60,7 @@ export function LegacyTabs({ tab, products, onDirtyChange, showToast }: LegacyTa
       const cJson = await cRes.json();
       const fJson = await fRes.json();
       const aJson = await aRes.json();
-      setConfig(cJson.config ?? null);
+      setConfig(normalizeStoreConfig(cJson.config));
       setFaq(fJson.items ?? []);
       setAnalytics(aJson);
     } catch {
