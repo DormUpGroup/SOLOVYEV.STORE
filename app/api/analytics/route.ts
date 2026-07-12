@@ -1,8 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { isAdminAuthenticatedRequest } from "@/lib/auth";
 import { createServiceClient } from "@/utils/supabase/admin";
 
-export async function POST(request: Request) {
+export async function GET(request: NextRequest) {
+  const admin = await isAdminAuthenticatedRequest(request);
+  return NextResponse.json({ admin });
+}
+
+export async function POST(request: NextRequest) {
   try {
+    if (await isAdminAuthenticatedRequest(request)) {
+      return NextResponse.json({ ok: true, skipped: true, reason: "admin" });
+    }
+
     const body = (await request.json()) as {
       events?: Array<{ type: string; productId?: number }>;
     };
