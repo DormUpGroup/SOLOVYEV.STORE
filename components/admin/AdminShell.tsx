@@ -83,6 +83,9 @@ export function AdminShell({ initialProducts }: AdminShellProps) {
             </button>
           ))}
           <div className={styles.sidebarFoot}>
+            <a href="/" className={styles.navBtn} style={{ display: "block", textAlign: "left" }}>
+              ← Store
+            </a>
             <button type="button" className={`${styles.navBtn} ${styles.btnDanger}`} onClick={logout}>
               Logout
             </button>
