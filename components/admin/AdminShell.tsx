@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import type { Product, StoreConfig } from "@/lib/types";
 import { AdminClient } from "@/components/admin/cms/AdminClient";
 import { LegacyTabs } from "@/components/admin/legacy/LegacyTabs";
@@ -83,9 +84,9 @@ export function AdminShell({ initialProducts }: AdminShellProps) {
             </button>
           ))}
           <div className={styles.sidebarFoot}>
-            <a href="/" className={styles.navBtn} style={{ display: "block", textAlign: "left" }}>
+            <Link href="/" className={styles.navBtn} style={{ display: "block", textAlign: "left" }}>
               ← Store
-            </a>
+            </Link>
             <button type="button" className={`${styles.navBtn} ${styles.btnDanger}`} onClick={logout}>
               Logout
             </button>
