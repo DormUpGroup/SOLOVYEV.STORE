@@ -75,41 +75,43 @@ function SortableRow({
     >
       <button
         type="button"
-        className="cursor-grab px-1 text-admin-muted active:cursor-grabbing"
+        className="cursor-grab shrink-0 px-1 text-admin-muted active:cursor-grabbing"
         {...attributes}
         {...listeners}
       >
         ⋮⋮
       </button>
-      <div className="h-10 w-10 shrink-0 overflow-hidden border border-admin-border">
+      <div className="h-20 w-20 shrink-0 overflow-hidden border border-admin-border">
         {product.img ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={adminProductImageSrc(product.img, "thumb")} alt="" className="h-full w-full object-cover" />
         ) : null}
       </div>
-      <div className="min-w-0 flex-1">
-        <p className="truncate font-bold">{product.title}</p>
-        <p className="text-xs text-admin-muted">
-          #{product.id} · {product.brand}
-        </p>
-      </div>
-      <span className="hidden text-xs sm:inline">{STATUS_LABELS[product.status]}</span>
-      <span className="text-xs">{product.price > 0 ? `₪${product.price}` : "—"}</span>
-      {product.status !== "sold" && onMarkSold ? (
-        <button
-          type="button"
-          className="border border-admin-border px-2 py-0.5 text-xs hover:bg-admin-panel"
-          onClick={onMarkSold}
-        >
-          Sold
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+        <div className="min-w-0">
+          <p className="truncate font-bold">{product.title}</p>
+          <p className="text-xs text-admin-muted">
+            #{product.id} · {product.brand}
+          </p>
+        </div>
+        <span className="text-xs">{STATUS_LABELS[product.status]}</span>
+        <span className="text-xs">{product.price > 0 ? `₪${product.price}` : "—"}</span>
+        {product.status !== "sold" && onMarkSold ? (
+          <button
+            type="button"
+            className="border border-admin-border px-2 py-0.5 text-xs hover:bg-admin-panel"
+            onClick={onMarkSold}
+          >
+            Sold
+          </button>
+        ) : null}
+        <button type="button" className="border border-admin-border px-2 py-0.5 text-xs" onClick={onEdit}>
+          Edit
         </button>
-      ) : null}
-      <button type="button" className="border border-admin-border px-2 py-0.5 text-xs" onClick={onEdit}>
-        Edit
-      </button>
+      </div>
       <button
         type="button"
-        className="border border-admin-danger px-2 py-0.5 text-xs text-admin-danger"
+        className="ml-auto shrink-0 border border-admin-danger px-2 py-0.5 text-xs text-admin-danger"
         onClick={onDelete}
       >
         Del
