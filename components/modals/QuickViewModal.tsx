@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import {
   formatPriceOrDm,
   isProductUnavailable,
@@ -27,6 +28,14 @@ export function QuickViewModal() {
   const { dict } = useI18n();
   const { product, sellTrade } = dict;
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [activeImg, setActiveImg] = useState<string>("");
+
+  const galleryImages = useMemo(() => {
+    if (!selectedProduct) return [];
+    const fromImages = (selectedProduct.images ?? []).map((i) => i.imageUrl).filter(Boolean);
+    if (fromImages.length > 0) return fromImages;
+    return selectedProduct.img ? [selectedProduct.img] : [];
+  }, [selectedProduct]);
 
   const statusLabels: Record<ProductStatus, string> = {
     available: "",
@@ -41,6 +50,7 @@ export function QuickViewModal() {
   useEffect(() => {
     setSelectedSize(null);
     if (selectedProduct && activeModal === "quickView") {
+      setActiveImg(selectedProduct.img || selectedProduct.images?.[0]?.imageUrl || "");
       trackViewItem(selectedProduct);
     }
   }, [selectedProduct, activeModal]);
@@ -81,12 +91,27 @@ export function QuickViewModal() {
         <div className="modal-grid">
           <div className="modal-image">
             <ProductImageLoupe
-              src={selectedProduct.img}
+              src={activeImg || selectedProduct.img}
               alt={selectedProduct.title}
               sizes="(max-width: 768px) 100vw, 580px"
               className="modal-img-loupe"
               lensSize={160}
             />
+            {galleryImages.length > 1 && (
+              <div className="modal-thumbnails">
+                {galleryImages.map((url, idx) => (
+                  <button
+                    key={url + idx}
+                    type="button"
+                    className={`modal-thumb-btn${activeImg === url ? " active" : ""}`}
+                    onClick={() => setActiveImg(url)}
+                    aria-label={`Photo ${idx + 1}`}
+                  >
+                    <Image src={url} alt={`${selectedProduct.title} ${idx + 1}`} fill sizes="64px" style={{ objectFit: "cover" }} />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <div className="modal-details">
             <span
