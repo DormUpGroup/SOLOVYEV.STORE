@@ -16,6 +16,7 @@ export {
 
 /** @deprecated Use verifyAdminCredentials(login, password) */
 export function verifyAdminPassword(password: string): boolean {
-  const expected = process.env.ADMIN_PASSWORD ?? "gosha2026";
-  return password === expected;
+  const expected = process.env.ADMIN_PASSWORD;
+  if (process.env.NODE_ENV === "production" && !expected) return false;
+  return password === (expected ?? "gosha2026");
 }

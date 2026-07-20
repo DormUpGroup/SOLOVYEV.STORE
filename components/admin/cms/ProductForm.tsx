@@ -10,10 +10,7 @@ const STATUSES: ProductStatus[] = [
   "available",
   "reserved",
   "sold",
-  "new_drop",
   "draft",
-  "made_to_order",
-  "brand_new",
 ];
 const CATEGORIES: ProductCategory[] = ["sneakers", "clothing", "accessories"];
 
@@ -56,9 +53,28 @@ export function ProductForm({
   const isNew = !product.id;
 
   const isPublished = product.status !== "draft";
-  const isNewDrop = product.status === "new_drop";
-  const isMadeToOrder = product.status === "made_to_order";
-  const isBrandNew = product.status === "brand_new";
+  const specialStatus: "none" | "new_drop" | "made_to_order" | "brand_new" =
+    product.status === "new_drop" ||
+    product.status === "made_to_order" ||
+    product.status === "brand_new"
+      ? product.status
+      : "none";
+
+  const setSpecialStatus = (next: "none" | "new_drop" | "made_to_order" | "brand_new") => {
+    if (next === "none") {
+      onChange({
+        ...product,
+        status:
+          product.status === "sold" || product.status === "reserved"
+            ? product.status
+            : isPublished
+              ? "available"
+              : "draft",
+      });
+      return;
+    }
+    onChange({ ...product, status: next });
+  };
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
@@ -148,7 +164,7 @@ export function ProductForm({
               onChange={(e) =>
                 onChange({
                   ...product,
-                  originalPrice: Number(e.target.value) || undefined,
+                  originalPrice: e.target.value === "" ? undefined : Number(e.target.value) || undefined,
                 })
               }
             />
@@ -157,7 +173,13 @@ export function ProductForm({
             <span className="text-xs text-admin-muted">Status</span>
             <select
               className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
-              value={product.status}
+              value={
+                product.status === "new_drop" ||
+                product.status === "made_to_order" ||
+                product.status === "brand_new"
+                  ? "available"
+                  : product.status
+              }
               onChange={(e) => onChange({ ...product, status: e.target.value as ProductStatus })}
             >
               {STATUSES.map((s) => (
@@ -248,48 +270,37 @@ export function ProductForm({
           </label>
           <label className="flex items-center gap-2 text-xs">
             <input
-              type="checkbox"
-              checked={isNewDrop}
-              onChange={(e) =>
-                onChange({
-                  ...product,
-                  status: e.target.checked ? "new_drop" : isPublished ? "available" : "draft",
-                })
-              }
+              type="radio"
+              name="special-status"
+              checked={specialStatus === "none"}
+              onChange={() => setSpecialStatus("none")}
+            />
+            Regular catalog
+          </label>
+          <label className="flex items-center gap-2 text-xs">
+            <input
+              type="radio"
+              name="special-status"
+              checked={specialStatus === "new_drop"}
+              onChange={() => setSpecialStatus("new_drop")}
             />
             New drop
           </label>
           <label className="flex items-center gap-2 text-xs">
             <input
-              type="checkbox"
-              checked={isMadeToOrder}
-              onChange={(e) =>
-                onChange({
-                  ...product,
-                  status: e.target.checked
-                    ? "made_to_order"
-                    : isPublished
-                      ? "available"
-                      : "draft",
-                })
-              }
+              type="radio"
+              name="special-status"
+              checked={specialStatus === "made_to_order"}
+              onChange={() => setSpecialStatus("made_to_order")}
             />
             Made to order (shows on /made-to-order page)
           </label>
           <label className="flex items-center gap-2 text-xs">
             <input
-              type="checkbox"
-              checked={isBrandNew}
-              onChange={(e) =>
-                onChange({
-                  ...product,
-                  status: e.target.checked
-                    ? "brand_new"
-                    : isPublished
-                      ? "available"
-                      : "draft",
-                })
-              }
+              type="radio"
+              name="special-status"
+              checked={specialStatus === "brand_new"}
+              onChange={() => setSpecialStatus("brand_new")}
             />
             Brand new (shows on /brand-new page)
           </label>

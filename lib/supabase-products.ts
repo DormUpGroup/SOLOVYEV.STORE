@@ -109,7 +109,11 @@ async function attachImages(products: DbProduct[]): Promise<Product[]> {
 }
 
 export function productToDbRow(
-  p: Partial<Product> & { slug: string; title: string },
+  p: Omit<Partial<Product>, "originalPrice"> & {
+    slug: string;
+    title: string;
+    originalPrice?: number | null;
+  },
   primaryImg?: string,
 ) {
   const shortcode = p.instagramUrl?.match(/\/p\/([^/]+)/)?.[1] ?? null;
@@ -259,7 +263,7 @@ export type CreateProductInput = {
   badge?: string;
   sizes?: string[];
   price?: number;
-  originalPrice?: number;
+  originalPrice?: number | null;
   condition?: string;
   description?: string;
   status?: ProductStatus;
@@ -309,7 +313,11 @@ export async function createProduct(input: CreateProductInput): Promise<Product>
       object_position: img.objectPosition ?? "50% 50%",
     }));
     const { error: imgErr } = await supabase.from("product_images").insert(imageRows);
-    if (imgErr) console.warn("[createProduct] product_images insert warning:", JSON.stringify(imgErr));
+    if (imgErr) {
+      console.error("[createProduct] product_images insert error:", JSON.stringify(imgErr));
+      await supabase.from("products").delete().eq("id", data.id);
+      throw imgErr;
+    }
   }
 
   const created = await fetchProductById(data.id);
@@ -333,7 +341,10 @@ export async function updateProduct(id: number, input: UpdateProductInput): Prom
     badge: input.badge ?? existing.badge,
     sizes: input.sizes ?? existing.sizes,
     price: input.price ?? existing.price,
-    originalPrice: input.originalPrice ?? existing.originalPrice,
+    originalPrice:
+      "originalPrice" in input
+        ? (input.originalPrice ?? undefined)
+        : existing.originalPrice,
     condition: input.condition ?? existing.condition,
     description: input.description ?? existing.description,
     status: input.status ?? existing.status,

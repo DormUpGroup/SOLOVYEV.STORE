@@ -1348,6 +1348,14 @@ main {
   cursor: zoom-in;
 }
 
+.product-img-placeholder {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, #ececec 25%, #e0e0e0 25%, #e0e0e0 50%, #ececec 50%, #ececec 75%, #e0e0e0 75%);
+  background-size: 16px 16px;
+}
+
 .product-img-wrapper img {
   position: absolute;
   inset: 0 !important;

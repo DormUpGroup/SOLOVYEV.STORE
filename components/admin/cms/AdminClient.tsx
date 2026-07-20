@@ -149,7 +149,7 @@ export function AdminClient({
         badge: formProduct.badge,
         sizes: formProduct.sizes,
         price: formProduct.price,
-        originalPrice: formProduct.originalPrice,
+        originalPrice: formProduct.originalPrice ?? null,
         condition: formProduct.condition,
         description: formProduct.description,
         status: formProduct.status,
@@ -268,11 +268,12 @@ export function AdminClient({
 
   const persistPosition = async (imageId: number, objectPosition: string) => {
     if (!formProduct?.id) return;
-    await fetch(`/api/admin/products/${formProduct.id}/images/${imageId}`, {
+    const res = await fetch(`/api/admin/products/${formProduct.id}/images/${imageId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ objectPosition }),
     });
+    if (!res.ok) throw new Error("Failed to save image position");
     setIsFormDirty(true);
   };
 

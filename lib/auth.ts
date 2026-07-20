@@ -19,10 +19,13 @@ export function constantTimeEqual(a: string, b: string): boolean {
 
 function getSessionSecret(): string {
   const secret = process.env.ADMIN_SESSION_SECRET;
-  if (!secret || secret.length < 16) {
-    return "dev-insecure-secret-change-me!!";
+  if (secret && secret.length >= 16) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "ADMIN_SESSION_SECRET is required in production (min 16 characters)",
+    );
   }
-  return secret;
+  return "dev-insecure-secret-change-me!!";
 }
 
 function base64UrlEncode(data: Uint8Array | ArrayBuffer): string {
@@ -98,11 +101,17 @@ export async function verifyAdminJwt(token: string): Promise<boolean> {
 }
 
 export function verifyAdminCredentials(login: string, password: string): boolean {
-  const expectedLogin = process.env.ADMIN_LOGIN ?? "admin";
-  const expectedPassword = process.env.ADMIN_PASSWORD ?? "gosha2026";
-  return (
-    constantTimeEqual(login, expectedLogin) && constantTimeEqual(password, expectedPassword)
-  );
+  const expectedLogin = process.env.ADMIN_LOGIN;
+  const expectedPassword = process.env.ADMIN_PASSWORD;
+  if (process.env.NODE_ENV === "production") {
+    if (!expectedLogin || !expectedPassword) {
+      console.error("[auth] ADMIN_LOGIN and ADMIN_PASSWORD are required in production");
+      return false;
+    }
+  }
+  const loginOk = expectedLogin ?? "admin";
+  const passwordOk = expectedPassword ?? "gosha2026";
+  return constantTimeEqual(login, loginOk) && constantTimeEqual(password, passwordOk);
 }
 
 export async function isAdminAuthenticated(): Promise<boolean> {

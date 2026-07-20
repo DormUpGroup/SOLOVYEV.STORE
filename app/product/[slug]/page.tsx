@@ -9,6 +9,7 @@ import {
   getStatusLabel,
   isProductUnavailable,
 } from "@/lib/products";
+import { absoluteProductImageUrl, productImageSrc } from "@/lib/product-image";
 import { getConfig, getProductBySlugFromStore, getProducts } from "@/lib/data/store";
 import { ProductPageClient } from "@/components/product/ProductPageClient";
 import { ProductPurchasePanel } from "@/components/product/ProductPurchasePanel";
@@ -29,6 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!product) return {};
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
+  const ogImage = absoluteProductImageUrl(siteUrl, product.img);
 
   return {
     title: product.title,
@@ -40,7 +42,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: product.description
         ? product.description.slice(0, 160)
         : `${product.brand} — ${formatPriceOrDm(product.price)}`,
-      images: [{ url: product.img, width: 800, height: 800 }],
+      images: ogImage ? [{ url: ogImage, width: 800, height: 800 }] : [],
       url: `${siteUrl}/product/${product.slug}`,
     },
     alternates: {
@@ -62,11 +64,14 @@ export default async function ProductPage({ params }: PageProps) {
   const unavailable = isProductUnavailable(product);
   const statusLabel = getStatusLabel(product.status);
 
+  const imageUrl = absoluteProductImageUrl(siteUrl, product.img);
+  const safeImg = productImageSrc(product.img);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.title,
-    image: `${siteUrl}${product.img}`,
+    ...(imageUrl ? { image: imageUrl } : {}),
     description: product.description || `${product.brand} — ${product.condition}`,
     brand: { "@type": "Brand", name: product.brand },
     offers: {
@@ -93,13 +98,17 @@ export default async function ProductPage({ params }: PageProps) {
           </Link>
           <div className="product-page-grid">
             <div className="product-page-image">
-              <Image
-                src={product.img}
-                alt={product.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                priority
-              />
+              {safeImg ? (
+                <Image
+                  src={safeImg}
+                  alt={product.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
+              ) : (
+                <div className="product-img-placeholder" aria-hidden="true" />
+              )}
               {statusLabel ? (
                 <span className={`product-status-badge status-${product.status}`}>
                   {statusLabel}

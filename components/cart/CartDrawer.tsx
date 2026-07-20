@@ -6,6 +6,7 @@ import {
   formatPrice,
   getProductById,
 } from "@/lib/products";
+import { productImageSrc } from "@/lib/product-image";
 import { useStore } from "@/components/providers/StoreProvider";
 import { buildCartMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { trackBeginCheckout } from "@/lib/analytics";
@@ -98,12 +99,16 @@ export function CartDrawer() {
                   data-size={item.size}
                 >
                   <div className="cart-item-img">
-                    <Image
-                      src={product.img}
-                      alt={product.title}
-                      width={80}
-                      height={80}
-                    />
+                    {productImageSrc(product.img) ? (
+                      <Image
+                        src={product.img}
+                        alt={product.title}
+                        width={80}
+                        height={80}
+                      />
+                    ) : (
+                      <div className="product-img-placeholder" aria-hidden="true" />
+                    )}
                   </div>
                   <div className="cart-item-details">
                     <h4 className="cart-item-title">{product.title}</h4>

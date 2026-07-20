@@ -13,13 +13,18 @@ const REVALIDATE_PATHS = [
 ];
 
 export function revalidateStore(productSlug?: string): void {
-  revalidateTag(STORE_TAG);
-  revalidatePath("/", "layout");
-  revalidatePath("/product", "layout");
-  for (const path of REVALIDATE_PATHS) {
-    revalidatePath(path);
-  }
-  if (productSlug) {
-    revalidatePath(`/product/${productSlug}`);
+  try {
+    revalidateTag(STORE_TAG);
+    revalidatePath("/", "layout");
+    revalidatePath("/product", "layout");
+    for (const path of REVALIDATE_PATHS) {
+      revalidatePath(path);
+    }
+    if (productSlug) {
+      revalidatePath(`/product/${productSlug}`);
+    }
+  } catch (err) {
+    // Never turn a successful mutation into a 500 because cache invalidation failed
+    console.warn("[revalidateStore] non-fatal:", err);
   }
 }

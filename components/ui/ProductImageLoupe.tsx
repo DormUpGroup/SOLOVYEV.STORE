@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
+import { productImageSrc } from "@/lib/product-image";
 
 const DEFAULT_LENS_SIZE = 112;
 const DEFAULT_LENS_ZOOM = 2.25;
@@ -34,11 +35,12 @@ export function ProductImageLoupe({
 }: ProductImageLoupeProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [lens, setLens] = useState<LensState | null>(null);
+  const safeSrc = productImageSrc(src);
 
   const updateLens = useCallback(
     (clientX: number, clientY: number) => {
       const el = wrapperRef.current;
-      if (!el) return;
+      if (!el || !safeSrc) return;
 
       const rect = el.getBoundingClientRect();
       const x = clientX - rect.left;
@@ -58,7 +60,7 @@ export function ProductImageLoupe({
         bgY: -(clampedY * lensZoom - half),
       });
     },
-    [lensSize, lensZoom],
+    [lensSize, lensZoom, safeSrc],
   );
 
   const handleMouseMove = useCallback(
@@ -80,8 +82,12 @@ export function ProductImageLoupe({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <Image src={src} alt={alt} fill sizes={sizes} />
-      {lens ? (
+      {safeSrc ? (
+        <Image src={safeSrc} alt={alt} fill sizes={sizes} />
+      ) : (
+        <div className="product-img-placeholder" aria-hidden="true" />
+      )}
+      {safeSrc && lens ? (
         <div
           className="product-img-lens"
           aria-hidden="true"
@@ -90,7 +96,7 @@ export function ProductImageLoupe({
             top: lens.y,
             width: lensSize,
             height: lensSize,
-            backgroundImage: `url(${src})`,
+            backgroundImage: `url(${safeSrc})`,
             backgroundSize: `${lens.bgW}px ${lens.bgH}px`,
             backgroundPosition: `${lens.bgX}px ${lens.bgY}px`,
           }}

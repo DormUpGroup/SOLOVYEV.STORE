@@ -26,6 +26,10 @@ export function isProductUnavailable(product: Product): boolean {
   if (product.sold === true) return true;
   if (product.status === "sold" || product.status === "reserved") return true;
   if (product.status === "draft") return true;
+  // Made-to-order / brand-new: inquire via WhatsApp — sizes optional
+  if (product.status === "made_to_order" || product.status === "brand_new") {
+    return false;
+  }
   if (product.source === "instagram" && product.status === "available") {
     return false;
   }

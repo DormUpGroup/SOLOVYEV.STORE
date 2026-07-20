@@ -26,7 +26,7 @@ type PostBody = {
   badge?: string;
   sizes?: string[];
   price?: number;
-  originalPrice?: number;
+  originalPrice?: number | null;
   condition?: string;
   description?: string;
   status?: ProductStatus;
