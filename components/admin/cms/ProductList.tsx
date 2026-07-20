@@ -31,6 +31,16 @@ const STATUS_LABELS: Record<Product["status"], string> = {
   brand_new: "BRAND NEW",
 };
 
+const STATUS_BADGE_CLASS: Record<Product["status"], string> = {
+  available: "border-admin-success/60 bg-admin-success/15 text-admin-success",
+  new_drop: "border-admin-accent/70 bg-admin-accent/20 text-admin-accent",
+  reserved: "border-amber-400/70 bg-amber-400/15 text-amber-300",
+  sold: "border-admin-danger/70 bg-admin-danger/15 text-admin-danger",
+  draft: "border-admin-border bg-admin-panel text-admin-muted",
+  made_to_order: "border-sky-400/70 bg-sky-400/15 text-sky-300",
+  brand_new: "border-emerald-400/70 bg-emerald-400/15 text-emerald-300",
+};
+
 interface ProductListProps {
   products: Product[];
   highlightedId: number | null;
@@ -38,7 +48,6 @@ interface ProductListProps {
   onDelete: (id: number) => void;
   onReorder: (ids: number[]) => void;
   onAdd: () => void;
-  onMarkSold?: (id: number) => void;
   addLabel?: string;
 }
 
@@ -47,13 +56,11 @@ function SortableRow({
   highlighted,
   onEdit,
   onDelete,
-  onMarkSold,
 }: {
   product: Product;
   highlighted: boolean;
   onEdit: () => void;
   onDelete: () => void;
-  onMarkSold?: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: String(product.id),
@@ -94,28 +101,29 @@ function SortableRow({
             #{product.id} · {product.brand}
           </p>
         </div>
-        <span className="text-xs">{STATUS_LABELS[product.status]}</span>
-        <span className="text-xs">{product.price > 0 ? `₪${product.price}` : "—"}</span>
-        {product.status !== "sold" && onMarkSold ? (
-          <button
-            type="button"
-            className="border border-admin-border px-2 py-0.5 text-xs hover:bg-admin-panel"
-            onClick={onMarkSold}
-          >
-            Sold
-          </button>
-        ) : null}
-        <button type="button" className="border border-admin-border px-2 py-0.5 text-xs" onClick={onEdit}>
+        <span
+          className={`shrink-0 border px-2 py-0.5 text-[10px] font-bold tracking-wide ${STATUS_BADGE_CLASS[product.status]}`}
+        >
+          {STATUS_LABELS[product.status]}
+        </span>
+        <span className="text-xs font-medium">{product.price > 0 ? `₪${product.price}` : "—"}</span>
+      </div>
+      <div className="ml-auto flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          className="border border-admin-border px-2 py-0.5 text-xs hover:bg-admin-panel"
+          onClick={onEdit}
+        >
           Edit
         </button>
+        <button
+          type="button"
+          className="border border-admin-danger px-2 py-0.5 text-xs text-admin-danger hover:bg-admin-danger/10"
+          onClick={onDelete}
+        >
+          Delete
+        </button>
       </div>
-      <button
-        type="button"
-        className="ml-auto shrink-0 border border-admin-danger px-2 py-0.5 text-xs text-admin-danger"
-        onClick={onDelete}
-      >
-        Del
-      </button>
     </div>
   );
 }
@@ -127,7 +135,6 @@ export function ProductList({
   onDelete,
   onReorder,
   onAdd,
-  onMarkSold,
   addLabel,
 }: ProductListProps) {
   const [brandFilter, setBrandFilter] = useState("");
@@ -243,7 +250,6 @@ export function ProductList({
                         highlighted={highlightedId === p.id}
                         onEdit={() => onEdit(p)}
                         onDelete={() => onDelete(p.id)}
-                        onMarkSold={onMarkSold ? () => onMarkSold(p.id) : undefined}
                       />
                     ))}
                   </div>

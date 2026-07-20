@@ -289,42 +289,6 @@ export function AdminClient({
     await publishSite();
   };
 
-  const handleMarkSold = async (id: number) => {
-    const product = products.find((p) => p.id === id);
-    if (!product || product.status === "sold") return;
-    if (!confirm(`Mark "${product.title}" as sold?`)) return;
-
-    const prev = products;
-    updateProducts((list) =>
-      list.map((p) =>
-        p.id === id ? { ...p, status: "sold" as ProductStatus, sold: true, price: 0 } : p,
-      ),
-    );
-    if (formProduct?.id === id) {
-      setFormProduct((p) =>
-        p ? { ...p, status: "sold", sold: true, price: 0 } : p,
-      );
-    }
-
-    const res = await fetch(`/api/admin/products/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "sold", sold: true, price: 0 }),
-    });
-    if (!res.ok) {
-      updateProducts(prev);
-      flash("Failed to mark as sold", false);
-      return;
-    }
-    const json = (await res.json()) as { product: Product };
-    updateProducts((list) => list.map((p) => (p.id === id ? json.product : p)));
-    if (formProduct?.id === id) {
-      setFormProduct(json.product);
-    }
-    await publishSite();
-    flash("Marked as sold — live on site");
-  };
-
   return (
     <div className="space-y-6">
       {mode === "made_to_order" ? (
@@ -353,7 +317,6 @@ export function AdminClient({
         onDelete={handleDelete}
         onReorder={handleReorder}
         onAdd={openAdd}
-        onMarkSold={handleMarkSold}
         addLabel={
           mode === "made_to_order"
             ? "+ Add made-to-order item"
