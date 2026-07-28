@@ -96,8 +96,13 @@ function SortableRow({
       </div>
       <div className="min-w-0 shrink">
         <p className="truncate font-bold">{product.title}</p>
-        <p className="text-xs text-admin-muted">
-          #{product.id} · {product.brand}
+        <p className="flex flex-wrap items-baseline gap-x-2 text-xs text-admin-muted">
+          <span>
+            #{product.id} · {product.brand}
+          </span>
+          <span className="text-base font-bold tabular-nums text-white">
+            {product.price > 0 ? `₪${product.price}` : "—"}
+          </span>
         </p>
       </div>
       <div className="flex flex-1 items-center justify-center pr-[12%]">
@@ -107,9 +112,6 @@ function SortableRow({
           {STATUS_LABELS[product.status]}
         </span>
       </div>
-      <span className="shrink-0 px-4 py-2 text-lg font-bold tabular-nums">
-        {product.price > 0 ? `₪${product.price}` : "—"}
-      </span>
       <div className="flex shrink-0 items-center gap-2">
         <button
           type="button"
