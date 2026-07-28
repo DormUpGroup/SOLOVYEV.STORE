@@ -5,10 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useState } from "react";
 import { createClient, hasSupabaseBrowserConfig } from "@/utils/supabase/client";
 import { useI18n } from "@/components/providers/I18nProvider";
-
-function safeNext(value: string | null) {
-  return value?.startsWith("/") && !value.startsWith("//") ? value : "/account";
-}
+import { AuthCard } from "@/components/account/AuthCard";
+import { normalizeEmail, safeAuthNext } from "@/lib/customer-auth";
 
 function LoginForm() {
   const router = useRouter();
@@ -16,97 +14,67 @@ function LoginForm() {
   const copy = dict.account;
   const params = useSearchParams();
   const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [step, setStep] = useState<"email" | "code">("email");
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(() =>
+    params.get("error") ? copy.invalidResetLink : "",
+  );
+  const message = params.get("reset") === "success" ? copy.resetSuccess : "";
   const configured = hasSupabaseBrowserConfig();
 
-  const sendCode = async (event: FormEvent) => {
+  const signIn = async (event: FormEvent) => {
     event.preventDefault();
     if (!configured) return setError(copy.configError);
     setBusy(true);
     setError("");
     const supabase = createClient();
-    const { error: otpError } = await supabase.auth.signInWithOtp({
-      email: email.trim().toLowerCase(),
-      options: { shouldCreateUser: true },
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: normalizeEmail(email),
+      password,
     });
     setBusy(false);
-    if (otpError) return setError(otpError.message);
-    setStep("code");
-  };
-
-  const verifyCode = async (event: FormEvent) => {
-    event.preventDefault();
-    setBusy(true);
-    setError("");
-    const supabase = createClient();
-    const { error: verifyError } = await supabase.auth.verifyOtp({
-      email: email.trim().toLowerCase(),
-      token: code.replace(/\D/g, ""),
-      type: "email",
-    });
-    setBusy(false);
-    if (verifyError) return setError(verifyError.message);
-    router.replace(safeNext(params.get("next")));
+    if (signInError) return setError(copy.invalidCredentials);
+    router.replace(safeAuthNext(params.get("next")));
     router.refresh();
   };
 
   return (
-    <main className="account-auth-shell">
-      <section className="account-auth-card">
-        <Link href="/" className="account-auth-logo">SOLOVYEV<span>.STORE</span></Link>
-        <p className="account-eyebrow">PERSONAL ACCOUNT</p>
-        <h1>{step === "email" ? copy.signIn : copy.enterCode}</h1>
-        <p className="account-muted">
-          {step === "email"
-            ? copy.emailHelp
-            : `${copy.sentTo} ${email}.`}
-        </p>
-
-        <form onSubmit={step === "email" ? sendCode : verifyCode} className="account-form">
-          {step === "email" ? (
-            <label>
-              Email
-              <input
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="you@example.com"
-              />
-            </label>
-          ) : (
-            <label>
-              {copy.code}
-              <input
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                required
-                minLength={6}
-                maxLength={6}
-                value={code}
-                onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
-                placeholder="000000"
-                className="account-otp-input"
-              />
-            </label>
-          )}
+    <AuthCard title={copy.signIn} description={copy.signInHelp}>
+        <form onSubmit={signIn} className="account-form">
+          <label>
+            {copy.email}
+            <input
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+            />
+          </label>
+          <label>
+            {copy.password}
+            <input
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </label>
           {error ? <p className="account-error" role="alert">{error}</p> : null}
+          {message ? <p className="account-success" role="status">{message}</p> : null}
           <button className="btn-primary" type="submit" disabled={busy}>
-            {busy ? copy.wait : step === "email" ? copy.sendCode : copy.verify}
+            {busy ? copy.wait : copy.loginButton}
           </button>
-          {step === "code" ? (
-            <button type="button" className="btn-secondary" onClick={() => { setStep("email"); setCode(""); setError(""); }}>
-              {copy.changeEmail}
-            </button>
-          ) : null}
+          <Link href="/forgot-password" className="account-auth-link">
+            {copy.forgotPassword}
+          </Link>
         </form>
-      </section>
-    </main>
+        <p className="account-auth-switch">
+          {copy.noAccount} <Link href="/register">{copy.createAccount}</Link>
+        </p>
+    </AuthCard>
   );
 }
 

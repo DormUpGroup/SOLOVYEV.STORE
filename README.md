@@ -7,7 +7,7 @@ Improved rebuild of [solovyev.store](https://solovyev.store): streetwear aesthet
 - Next.js 15 (App Router)
 - TypeScript + Supabase (catalog, FAQ, config, analytics)
 - Admin panel at `/admin` (brutalist-improved UI)
-- Passwordless customer accounts (email OTP, favorites, synced cart, order history)
+- Email/password customer accounts (favorites, synced cart, order history)
 - CSS from original site (`styles/globals.css`)
 
 ## Quick start
@@ -46,9 +46,12 @@ Manual fallback: paste SQL from `supabase/migrations/` into Supabase SQL Editor,
 1. Apply `supabase/migrations/006_customer_accounts.sql` (or run the full setup).
 2. In Supabase Authentication → URL Configuration, set the Site URL and add
    `https://your-domain/auth/callback` as an allowed redirect.
-3. Configure the email OTP template to include `{{ .Token }}` so customers
-   receive the six-digit code.
-4. Customer login is `/login`; authenticated account data is available at
+3. In Authentication → Providers → Email, enable email/password and disable
+   **Confirm email** so registration creates an active session immediately.
+4. Configure the Reset Password email template and keep
+   `{{ .ConfirmationURL }}` as the recovery link.
+5. Customer login is `/login`, registration is `/register`, and password
+   recovery starts at `/forgot-password`; authenticated account data is available at
    `/account`. Checkout requires a customer session and persists an order before
    opening WhatsApp.
 
@@ -85,7 +88,9 @@ Deploy to Vercel with Supabase env vars configured.
 | `/` | Main storefront |
 | `/admin` | Store management |
 | `/product/[slug]` | SEO product page |
-| `/login` | Passwordless email OTP |
+| `/login` | Email/password sign in |
+| `/register` | Customer registration |
+| `/forgot-password` | Password recovery |
 | `/account` | Profile, favorites, cart and WhatsApp order history |
 | `/sell-trade` | Valuation portal |
 | `/faq` | FAQ with JSON-LD |
