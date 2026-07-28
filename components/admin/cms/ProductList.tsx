@@ -94,21 +94,23 @@ function SortableRow({
           <img src={adminProductImageSrc(product.img, "thumb")} alt="" className="h-full w-full object-cover" />
         ) : null}
       </div>
-      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
-        <div className="min-w-0">
-          <p className="truncate font-bold">{product.title}</p>
-          <p className="text-xs text-admin-muted">
-            #{product.id} · {product.brand}
-          </p>
-        </div>
+      <div className="min-w-0 shrink">
+        <p className="truncate font-bold">{product.title}</p>
+        <p className="text-xs text-admin-muted">
+          #{product.id} · {product.brand}
+        </p>
+      </div>
+      <div className="flex flex-1 items-center justify-center pr-[12%]">
         <span
           className={`shrink-0 border px-2 py-0.5 text-[10px] font-bold tracking-wide ${STATUS_BADGE_CLASS[product.status]}`}
         >
           {STATUS_LABELS[product.status]}
         </span>
-        <span className="text-xs font-medium">{product.price > 0 ? `₪${product.price}` : "—"}</span>
       </div>
-      <div className="ml-auto flex shrink-0 items-center gap-2">
+      <span className="shrink-0 px-4 py-2 text-lg font-bold tabular-nums">
+        {product.price > 0 ? `₪${product.price}` : "—"}
+      </span>
+      <div className="flex shrink-0 items-center gap-2">
         <button
           type="button"
           className="border border-admin-border px-2 py-0.5 text-xs hover:bg-admin-panel"
