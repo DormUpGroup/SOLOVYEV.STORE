@@ -76,7 +76,7 @@ function SortableRow({
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 border border-admin-border bg-admin-bg p-2 ${
+      className={`grid grid-cols-[auto_5rem_minmax(0,1fr)_5rem_7.5rem_auto] items-center gap-3 border border-admin-border bg-admin-bg p-2 ${
         highlighted ? "ring-2 ring-admin-accent" : ""
       }`}
     >
@@ -94,23 +94,23 @@ function SortableRow({
           <img src={adminProductImageSrc(product.img, "thumb")} alt="" className="h-full w-full object-cover" />
         ) : null}
       </div>
-      <div className="min-w-0 shrink">
+      <div className="min-w-0">
         <p className="truncate font-bold">{product.title}</p>
         <p className="text-xs text-admin-muted">
           #{product.id} · {product.brand}
         </p>
       </div>
-      <span className="ml-8 shrink-0 px-3 text-base font-bold tabular-nums text-white">
+      <span className="text-base font-bold tabular-nums text-white">
         {product.price > 0 ? `₪${product.price}` : "—"}
       </span>
-      <div className="flex flex-1 items-center justify-center pr-[12%]">
+      <div className="flex justify-center">
         <span
           className={`shrink-0 border px-2 py-0.5 text-[10px] font-bold tracking-wide ${STATUS_BADGE_CLASS[product.status]}`}
         >
           {STATUS_LABELS[product.status]}
         </span>
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex items-center gap-2">
         <button
           type="button"
           className="border border-admin-border px-2 py-0.5 text-xs hover:bg-admin-panel"
