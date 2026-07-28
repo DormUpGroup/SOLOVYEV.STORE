@@ -46,6 +46,7 @@ export default function AccountPage() {
   const [data, setData] = useState<AccountData | null>(null);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [editingName, setEditingName] = useState(false);
   const [displayName, setDisplayName] = useState("");
 
   useEffect(() => {
@@ -66,9 +67,6 @@ export default function AccountPage() {
   );
 
   const savedName = data?.profile?.display_name?.trim() ?? "";
-  const heading = savedName
-    ? copy.greeting.replace("{name}", savedName)
-    : copy.title;
 
   const itemImage = (item: AccountData["orders"][number]["order_items"][number]) => {
     const fromOrder = productImageSrc(item.product_image);
@@ -77,14 +75,31 @@ export default function AccountPage() {
     return productImageSrc(catalog?.img) ?? productImageSrc(catalog?.images?.[0]?.imageUrl);
   };
 
-  const saveProfile = async (event: FormEvent) => {
+  const startEdit = () => {
+    setDisplayName(savedName);
+    setEditingName(true);
+    setError("");
+  };
+
+  const cancelEdit = () => {
+    setDisplayName(savedName);
+    setEditingName(false);
+    setError("");
+  };
+
+  const saveName = async (event: FormEvent) => {
     event.preventDefault();
+    const next = displayName.trim();
+    if (!next) {
+      setError(copy.nameRequired);
+      return;
+    }
     setSaving(true);
     setError("");
     const response = await fetch("/api/account", {
       method: "PATCH",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ displayName }),
+      body: JSON.stringify({ displayName: next }),
     });
     const body = await response.json() as {
       error?: string;
@@ -95,13 +110,14 @@ export default function AccountPage() {
       setError(body.error || "Could not save profile");
       return;
     }
-    const nextName = body.profile?.display_name?.trim() || displayName.trim();
+    const nextName = body.profile?.display_name?.trim() || next;
     setDisplayName(nextName);
     setData((prev) =>
       prev
         ? { ...prev, profile: { ...prev.profile, display_name: nextName } }
         : prev,
     );
+    setEditingName(false);
   };
 
   const logout = async () => {
@@ -117,7 +133,35 @@ export default function AccountPage() {
         <div className="account-page-header">
           <div>
             <p className="account-eyebrow">SOLOVYEV STORE</p>
-            <h1>{heading}</h1>
+            {editingName ? (
+              <form className="account-name-edit" onSubmit={saveName}>
+                <input
+                  value={displayName}
+                  onChange={(event) => setDisplayName(event.target.value)}
+                  maxLength={80}
+                  autoFocus
+                  aria-label={copy.name}
+                  placeholder={copy.namePlaceholder}
+                />
+                <button type="submit" className="account-name-action" disabled={saving}>
+                  {saving ? copy.saving : copy.save}
+                </button>
+                <button type="button" className="account-name-action" onClick={cancelEdit} disabled={saving}>
+                  {copy.cancelEdit}
+                </button>
+              </form>
+            ) : (
+              <div className="account-greeting-row">
+                <h1>
+                  {savedName
+                    ? copy.greeting.replace("{name}", savedName)
+                    : copy.title}
+                </h1>
+                <button type="button" className="account-edit-name" onClick={startEdit}>
+                  {copy.editName}
+                </button>
+              </div>
+            )}
             <p className="account-muted">{data?.user.email}</p>
           </div>
           <button type="button" className="btn-secondary" onClick={() => void logout()}>{copy.signOut}</button>
@@ -126,14 +170,6 @@ export default function AccountPage() {
         {error ? <p className="account-error" role="alert">{error}</p> : null}
         {!data ? <div className="account-card">{copy.loading}</div> : (
           <div className="account-sections">
-            <section className="account-card">
-              <h2>{copy.profile}</h2>
-              <form className="account-form account-profile-form" onSubmit={saveProfile}>
-                <label>{copy.name}<input value={displayName} onChange={(event) => setDisplayName(event.target.value)} /></label>
-                <button type="submit" className="btn-primary" disabled={saving}>{saving ? copy.saving : copy.save}</button>
-              </form>
-            </section>
-
             <section>
               <div className="account-section-title"><h2>{copy.favorites}</h2><span>{favorites.length}</span></div>
               {favorites.length ? <div className="account-product-grid">{favorites.map((product) => <ProductCard key={product.id} product={product} />)}</div> : <div className="account-card account-empty"><p>{copy.noFavorites}</p><Link href="/drops" className="btn-secondary">{copy.shop}</Link></div>}

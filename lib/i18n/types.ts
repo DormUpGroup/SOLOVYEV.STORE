@@ -122,6 +122,8 @@ export interface Dictionary {
     configError: string;
     title: string;
     greeting: string;
+    editName: string;
+    cancelEdit: string;
     signOut: string;
     loading: string;
     profile: string;
