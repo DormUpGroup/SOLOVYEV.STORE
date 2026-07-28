@@ -49,9 +49,18 @@ export async function middleware(request: NextRequest) {
 
   const { response, user } = await updateSession(request);
 
-  if ((pathname === "/account" || pathname.startsWith("/account/")) && !user) {
+  const needsCustomer =
+    pathname === "/account" ||
+    pathname.startsWith("/account/") ||
+    pathname === "/onboarding" ||
+    pathname === "/welcome";
+
+  if (needsCustomer && !user) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("next", `${pathname}${request.nextUrl.search}`);
+    if (request.nextUrl.searchParams.get("checkout") === "1") {
+      loginUrl.searchParams.set("checkout", "1");
+    }
     return NextResponse.redirect(loginUrl);
   }
 

@@ -34,11 +34,19 @@ export async function PATCH(request: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json() as { displayName?: string; phone?: string };
-  const displayName = body.displayName?.trim().slice(0, 80) || null;
-  const phone = body.phone?.trim().slice(0, 30) || null;
+  const updates: { display_name?: string | null; phone?: string | null } = {};
+  if ("displayName" in body) {
+    updates.display_name = body.displayName?.trim().slice(0, 80) || null;
+  }
+  if ("phone" in body) {
+    updates.phone = body.phone?.trim().slice(0, 30) || null;
+  }
+  if (!Object.keys(updates).length) {
+    return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
+  }
   const { data, error } = await supabase
     .from("profiles")
-    .update({ display_name: displayName, phone })
+    .update(updates)
     .eq("id", user.id)
     .select()
     .single();

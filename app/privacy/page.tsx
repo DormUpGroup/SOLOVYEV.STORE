@@ -40,9 +40,9 @@ export default function PrivacyPage() {
           <p>
             Account authentication is provided by Supabase. Passwords are
             processed and securely hashed by Supabase; SOLOVYEV STORE cannot
-            access your plaintext password. We store your email, optional name
-            and phone number, favorites, cart, and WhatsApp order history so that
-            you can access them across devices. We do not store payment card details.
+            access your plaintext password. We store your email, optional display
+            name, favorites, cart, and WhatsApp order history so that you can
+            access them across devices. We do not store payment card details.
           </p>
 
           <h2>Analytics</h2>

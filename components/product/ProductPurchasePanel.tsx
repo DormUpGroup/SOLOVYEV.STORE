@@ -13,6 +13,7 @@ import type { Product } from "@/lib/types";
 import { useState } from "react";
 import { useFavorites } from "@/components/providers/FavoritesProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { checkoutLoginHref } from "@/lib/customer-auth";
 
 interface ProductPurchasePanelProps {
   product: Product;
@@ -39,7 +40,8 @@ export function ProductPurchasePanel({
     if (unavailable) return;
     if (product.sizes.length > 0 && !selectedSize) return;
     if (!user) {
-      window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+      addToCart(product.id, selectedSize || "");
+      window.location.href = checkoutLoginHref(window.location.pathname);
       return;
     }
     setCheckoutBusy(true);
@@ -53,7 +55,8 @@ export function ProductPurchasePanel({
       });
       const data = await response.json() as { whatsappUrl?: string; error?: string };
       if (response.status === 401) {
-        window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+        addToCart(product.id, selectedSize || "");
+        window.location.href = checkoutLoginHref(window.location.pathname);
         return;
       }
       if (!response.ok || !data.whatsappUrl) throw new Error(data.error || "Checkout failed");

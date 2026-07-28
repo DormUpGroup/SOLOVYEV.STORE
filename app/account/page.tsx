@@ -13,7 +13,7 @@ import { useFavorites } from "@/components/providers/FavoritesProvider";
 
 interface AccountData {
   user: { id: string; email?: string; createdAt: string };
-  profile: { display_name?: string; phone?: string } | null;
+  profile: { display_name?: string } | null;
   favoriteIds: number[];
   orders: Array<{
     id: string;
@@ -44,7 +44,6 @@ export default function AccountPage() {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [displayName, setDisplayName] = useState("");
-  const [phone, setPhone] = useState("");
 
   useEffect(() => {
     fetch("/api/account")
@@ -54,7 +53,6 @@ export default function AccountPage() {
         if (!response.ok) throw new Error(body.error || "Could not load account");
         setData(body);
         setDisplayName(body.profile?.display_name ?? "");
-        setPhone(body.profile?.phone ?? "");
       })
       .catch((reason) => setError(reason instanceof Error ? reason.message : "Could not load account"));
   }, [router]);
@@ -71,7 +69,7 @@ export default function AccountPage() {
     const response = await fetch("/api/account", {
       method: "PATCH",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ displayName, phone }),
+      body: JSON.stringify({ displayName }),
     });
     const body = await response.json();
     setSaving(false);
@@ -104,7 +102,6 @@ export default function AccountPage() {
               <h2>{copy.profile}</h2>
               <form className="account-form account-profile-form" onSubmit={saveProfile}>
                 <label>{copy.name}<input value={displayName} onChange={(event) => setDisplayName(event.target.value)} /></label>
-                <label>{copy.phone}<input value={phone} onChange={(event) => setPhone(event.target.value)} inputMode="tel" /></label>
                 <button type="submit" className="btn-primary" disabled={saving}>{saving ? copy.saving : copy.save}</button>
               </form>
             </section>

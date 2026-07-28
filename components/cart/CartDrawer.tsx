@@ -13,6 +13,7 @@ import { useCart } from "@/components/providers/CartProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
 import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { checkoutLoginHref } from "@/lib/customer-auth";
 
 export function CartDrawer() {
   const { products, config } = useStore();
@@ -53,7 +54,7 @@ export function CartDrawer() {
   const handleCheckout = async () => {
     if (cart.length === 0) return;
     if (!user) {
-      window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+      window.location.href = checkoutLoginHref(window.location.pathname);
       return;
     }
     setCheckingOut(true);
@@ -67,7 +68,7 @@ export function CartDrawer() {
       });
       const data = await response.json() as { whatsappUrl?: string; error?: string };
       if (response.status === 401) {
-        window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+        window.location.href = checkoutLoginHref(window.location.pathname);
         return;
       }
       if (!response.ok || !data.whatsappUrl) throw new Error(data.error || "Checkout failed");

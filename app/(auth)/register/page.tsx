@@ -1,17 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCard } from "@/components/account/AuthCard";
 import { useI18n } from "@/components/providers/I18nProvider";
 import { createClient, hasSupabaseBrowserConfig } from "@/utils/supabase/client";
-import { isValidPassword, normalizeEmail } from "@/lib/customer-auth";
+import {
+  buildAuthQuery,
+  isCheckoutIntent,
+  isValidPassword,
+  normalizeEmail,
+  postAuthPath,
+} from "@/lib/customer-auth";
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const params = useSearchParams();
   const { dict } = useI18n();
   const copy = dict.account;
+  const checkout = isCheckoutIntent(params.get("checkout"));
+  const next = params.get("next");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
@@ -49,7 +58,7 @@ export default function RegisterPage() {
         return;
       }
 
-      router.replace("/account");
+      router.replace(postAuthPath({ hasDisplayName: false, checkout, next }));
       router.refresh();
     } catch {
       setError(copy.configError);
@@ -101,8 +110,19 @@ export default function RegisterPage() {
         </button>
       </form>
       <p className="account-auth-switch">
-        {copy.haveAccount} <Link href="/login">{copy.loginButton}</Link>
+        {copy.haveAccount}{" "}
+        <Link href={`/login${buildAuthQuery({ next, checkout })}`}>
+          {copy.loginButton}
+        </Link>
       </p>
     </AuthCard>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
   );
 }
