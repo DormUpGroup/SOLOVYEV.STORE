@@ -17,31 +17,45 @@ export default function RegisterPage() {
   const [confirmation, setConfirmation] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
 
   const register = async (event: FormEvent) => {
     event.preventDefault();
     setError("");
-    setMessage("");
     if (!hasSupabaseBrowserConfig()) return setError(copy.configError);
     if (!isValidPassword(password)) return setError(copy.passwordRequirements);
     if (password !== confirmation) return setError(copy.passwordsMismatch);
 
     setBusy(true);
-    const supabase = createClient();
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email: normalizeEmail(email),
-      password,
-    });
-    setBusy(false);
+    const normalized = normalizeEmail(email);
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email: normalized, password }),
+      });
+      const payload = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        setError(payload.error || copy.configError);
+        return;
+      }
 
-    if (signUpError) return setError(signUpError.message);
-    if (!data.session) {
-      setMessage(copy.registrationNeedsConfirmation);
-      return;
+      const supabase = createClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: normalized,
+        password,
+      });
+      if (signInError) {
+        setError(signInError.message);
+        return;
+      }
+
+      router.replace("/account");
+      router.refresh();
+    } catch {
+      setError(copy.configError);
+    } finally {
+      setBusy(false);
     }
-    router.replace("/account");
-    router.refresh();
   };
 
   return (
@@ -82,7 +96,6 @@ export default function RegisterPage() {
         </label>
         <p className="account-form-hint">{copy.passwordRequirements}</p>
         {error ? <p className="account-error" role="alert">{error}</p> : null}
-        {message ? <p className="account-success" role="status">{message}</p> : null}
         <button className="btn-primary" type="submit" disabled={busy}>
           {busy ? copy.wait : copy.registerButton}
         </button>

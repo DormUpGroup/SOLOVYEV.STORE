@@ -104,7 +104,6 @@ export const ru: Dictionary = {
     haveAccount: "Уже есть аккаунт?",
     passwordRequirements: "Минимум 8 символов, одна буква и одна цифра.",
     passwordsMismatch: "Пароли не совпадают.",
-    registrationNeedsConfirmation: "Аккаунт создан. Проверьте email перед входом.",
     forgotPassword: "Забыли пароль?",
     forgotTitle: "Восстановление пароля",
     forgotHelp: "Введите email — мы отправим безопасную ссылку для смены пароля.",

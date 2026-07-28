@@ -104,7 +104,6 @@ export const en: Dictionary = {
     haveAccount: "Already have an account?",
     passwordRequirements: "Use at least 8 characters with a letter and a number.",
     passwordsMismatch: "Passwords do not match.",
-    registrationNeedsConfirmation: "Your account was created. Check your email before signing in.",
     forgotPassword: "Forgot password?",
     forgotTitle: "Reset password",
     forgotHelp: "Enter your email and we will send you a secure password reset link.",

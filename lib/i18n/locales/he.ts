@@ -103,7 +103,6 @@ export const he: Dictionary = {
     haveAccount: "כבר יש לכם חשבון?",
     passwordRequirements: "לפחות 8 תווים, אות אחת ומספר אחד.",
     passwordsMismatch: "הסיסמאות אינן תואמות.",
-    registrationNeedsConfirmation: "החשבון נוצר. בדקו את האימייל לפני ההתחברות.",
     forgotPassword: "שכחתם סיסמה?",
     forgotTitle: "איפוס סיסמה",
     forgotHelp: "הזינו אימייל ונשלח קישור מאובטח לאיפוס הסיסמה.",

@@ -46,8 +46,9 @@ Manual fallback: paste SQL from `supabase/migrations/` into Supabase SQL Editor,
 1. Apply `supabase/migrations/006_customer_accounts.sql` (or run the full setup).
 2. In Supabase Authentication → URL Configuration, set the Site URL and add
    `https://your-domain/auth/callback` as an allowed redirect.
-3. In Authentication → Providers → Email, enable email/password and disable
-   **Confirm email** so registration creates an active session immediately.
+3. In Authentication → Providers → Email, enable email/password.
+   Registration creates a confirmed account immediately via the server API
+   (email is only used as the login identifier).
 4. Configure the Reset Password email template and keep
    `{{ .ConfirmationURL }}` as the recovery link.
 5. Customer login is `/login`, registration is `/register`, and password

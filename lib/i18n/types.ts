@@ -106,7 +106,6 @@ export interface Dictionary {
     haveAccount: string;
     passwordRequirements: string;
     passwordsMismatch: string;
-    registrationNeedsConfirmation: string;
     forgotPassword: string;
     forgotTitle: string;
     forgotHelp: string;
