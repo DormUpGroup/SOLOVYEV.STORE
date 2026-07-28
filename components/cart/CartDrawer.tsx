@@ -127,8 +127,8 @@ export function CartDrawer() {
                       <Image
                         src={product.img}
                         alt={product.title}
-                        width={80}
-                        height={80}
+                        width={88}
+                        height={104}
                       />
                     ) : (
                       <div className="product-img-placeholder" aria-hidden="true" />
