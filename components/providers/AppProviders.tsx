@@ -4,6 +4,8 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { CartProvider } from "@/components/providers/CartProvider";
 import { UIProvider } from "@/components/providers/UIProvider";
 import { I18nProvider } from "@/components/providers/I18nProvider";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { FavoritesProvider } from "@/components/providers/FavoritesProvider";
 import {
   StoreProvider,
   type StoreContextValue,
@@ -19,11 +21,15 @@ export function AppProviders({
   return (
     <StoreProvider value={store}>
       <I18nProvider>
-        <ThemeProvider>
-          <CartProvider>
-            <UIProvider>{children}</UIProvider>
-          </CartProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <FavoritesProvider>
+            <ThemeProvider>
+              <CartProvider>
+                <UIProvider>{children}</UIProvider>
+              </CartProvider>
+            </ThemeProvider>
+          </FavoritesProvider>
+        </AuthProvider>
       </I18nProvider>
     </StoreProvider>
   );

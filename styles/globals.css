@@ -4113,6 +4113,242 @@ body.no-scroll {
   }
 }
 
+/* Customer accounts */
+.account-icon-btn,
+.favorite-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.account-icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+.account-icon-btn .icon-svg {
+  width: 19px;
+  height: 19px;
+}
+
+.favorite-btn {
+  position: absolute;
+  z-index: 4;
+  top: 12px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.favorite-btn.active {
+  color: #d9304f;
+}
+
+.account-auth-shell,
+.account-page {
+  min-height: 100vh;
+  padding: clamp(40px, 7vw, 96px) var(--layout-gutter);
+  background: var(--bg-color);
+  color: var(--text-primary);
+}
+
+.account-auth-shell {
+  display: grid;
+  place-items: center;
+}
+
+.account-auth-card,
+.account-card {
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+.account-auth-card {
+  width: min(100%, 520px);
+  padding: clamp(28px, 5vw, 52px);
+}
+
+.account-auth-logo {
+  display: inline-block;
+  margin-bottom: 36px;
+  color: var(--text-primary);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.account-auth-logo span,
+.account-eyebrow {
+  color: var(--accent-color);
+}
+
+.account-eyebrow {
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.account-muted {
+  color: var(--text-mute);
+}
+
+.account-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.account-form label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.account-form input {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  background: var(--bg-color);
+  color: var(--text-primary);
+  padding: 14px 16px;
+  font: inherit;
+}
+
+.account-otp-input {
+  text-align: center;
+  font-size: 28px !important;
+  letter-spacing: 0.3em;
+}
+
+.account-error {
+  margin: 10px 0;
+  color: #c62828;
+  font-size: 13px;
+}
+
+.account-page {
+  min-height: 70vh;
+}
+
+.account-page-header,
+.account-section-title,
+.account-order-head,
+.account-order-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.account-page-header {
+  max-width: var(--layout-max);
+  margin: 0 auto 48px;
+}
+
+.account-page-header h1 {
+  font-size: clamp(36px, 6vw, 72px);
+}
+
+.account-sections {
+  display: grid;
+  gap: 48px;
+  max-width: var(--layout-max);
+  margin: 0 auto;
+}
+
+.account-card {
+  padding: clamp(20px, 4vw, 36px);
+}
+
+.account-profile-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  align-items: end;
+}
+
+.account-section-title {
+  margin-bottom: 18px;
+}
+
+.account-section-title span,
+.account-status {
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.account-product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.account-empty {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.account-order-list {
+  display: grid;
+  gap: 16px;
+}
+
+.account-order ul {
+  display: grid;
+  gap: 10px;
+  margin: 24px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.account-order li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 16px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+}
+
+@media (max-width: 800px) {
+  .account-profile-form,
+  .account-product-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .account-profile-form button {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 520px) {
+  .account-page-header,
+  .account-empty {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .account-profile-form,
+  .account-product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-order li {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .announcement-track,
   .marquee-track,

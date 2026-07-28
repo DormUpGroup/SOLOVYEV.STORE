@@ -1,12 +1,13 @@
 # SOLOVYEV STORE — Next.js
 
-Improved rebuild of [solovyev.store](https://solovyev.store): streetwear aesthetic, WhatsApp-first checkout, SEO, GA4, Supabase-backed admin.
+Improved rebuild of [solovyev.store](https://solovyev.store): streetwear aesthetic, account-backed WhatsApp checkout, SEO, GA4, Supabase-backed admin.
 
 ## Stack
 
 - Next.js 15 (App Router)
 - TypeScript + Supabase (catalog, FAQ, config, analytics)
 - Admin panel at `/admin` (brutalist-improved UI)
+- Passwordless customer accounts (email OTP, favorites, synced cart, order history)
 - CSS from original site (`styles/globals.css`)
 
 ## Quick start
@@ -40,6 +41,20 @@ Without Supabase env vars, the site falls back to [`data/products.json`](data/pr
 
 Manual fallback: paste SQL from `supabase/migrations/` into Supabase SQL Editor, then `npm run seed:supabase`
 
+### Customer authentication
+
+1. Apply `supabase/migrations/006_customer_accounts.sql` (or run the full setup).
+2. In Supabase Authentication → URL Configuration, set the Site URL and add
+   `https://your-domain/auth/callback` as an allowed redirect.
+3. Configure the email OTP template to include `{{ .Token }}` so customers
+   receive the six-digit code.
+4. Customer login is `/login`; authenticated account data is available at
+   `/account`. Checkout requires a customer session and persists an order before
+   opening WhatsApp.
+
+Customer tables use RLS tied to `auth.uid()`. The separate admin JWT flow remains
+independent from customer Supabase Auth.
+
 ## Admin panel
 
 - **Catalog** — CRUD, Sold / Reserved / New Drop, image upload to Storage
@@ -70,6 +85,8 @@ Deploy to Vercel with Supabase env vars configured.
 | `/` | Main storefront |
 | `/admin` | Store management |
 | `/product/[slug]` | SEO product page |
+| `/login` | Passwordless email OTP |
+| `/account` | Profile, favorites, cart and WhatsApp order history |
 | `/sell-trade` | Valuation portal |
 | `/faq` | FAQ with JSON-LD |
 | `/sitemap.xml` | Auto-generated |

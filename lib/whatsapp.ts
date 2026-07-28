@@ -20,8 +20,9 @@ export function buildSingleItemMessage(
   size: string | null,
   siteUrl: string,
   cfg: StoreConfig = defaultConfig,
+  orderRef?: string,
 ): string {
-  const ref = generateOrderRef();
+  const ref = orderRef || generateOrderRef();
   const sym = cfg.currency.symbol;
   const sizeLine = size ? `\n📐 Size: ${size}` : "";
   const productUrl = `${siteUrl}/product/${product.slug}`;
@@ -42,9 +43,10 @@ export function buildCartMessage(
   products: Product[],
   siteUrl: string,
   cfg: StoreConfig = defaultConfig,
+  orderRef?: string,
 ): string {
   const sym = cfg.currency.symbol;
-  const ref = generateOrderRef();
+  const ref = orderRef || generateOrderRef();
   let subtotal = 0;
   let message = `Hi ${cfg.contacts.managerName}! I want to order:\n\n🆔 Order: ${ref}\n\n`;
 

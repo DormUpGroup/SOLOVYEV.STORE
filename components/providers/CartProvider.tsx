@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -13,6 +14,7 @@ import { useStore } from "@/components/providers/StoreProvider";
 import { trackAddToCart } from "@/lib/analytics";
 import { useI18n } from "@/components/providers/I18nProvider";
 import type { CartItem } from "@/lib/types";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 interface ToastState {
   message: string;
@@ -30,6 +32,7 @@ interface CartContextValue {
   addToCart: (id: number, size: string) => boolean;
   updateQuantity: (id: number, size: string, delta: number) => void;
   removeFromCart: (id: number, size: string) => void;
+  clearCart: () => void;
   showToast: (message: string, type?: "success" | "error") => void;
   clearToast: () => void;
 }
@@ -47,10 +50,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { products } = useStore();
   const { dict } = useI18n();
   const { cart: cartText } = dict;
+  const { user } = useAuth();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
   const [hydrated, setHydrated] = useState(false);
+  const syncedUserRef = useRef<string | null>(null);
+  const previousUserRef = useRef<string | null>(null);
 
   useEffect(() => {
     try {
@@ -66,6 +72,55 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!hydrated) return;
     localStorage.setItem("solovyev_cart", JSON.stringify(cart));
   }, [cart, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!user) {
+      if (previousUserRef.current) setCart([]);
+      previousUserRef.current = null;
+      syncedUserRef.current = null;
+      return;
+    }
+    previousUserRef.current = user.id;
+    if (syncedUserRef.current === user.id) return;
+
+    let cancelled = false;
+    fetch("/api/account/cart")
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then(async (data: { items?: Array<{ product_id: number; size: string; quantity: number }> }) => {
+        if (cancelled) return;
+        const merged = new Map<string, CartItem>();
+        for (const item of cart) merged.set(`${item.id}:${item.size}`, item);
+        for (const item of data.items ?? []) {
+          const key = `${item.product_id}:${item.size}`;
+          const existing = merged.get(key);
+          const quantity = Math.max(existing?.quantity ?? 0, item.quantity);
+          merged.set(key, { id: item.product_id, size: item.size, quantity, qty: quantity });
+        }
+        const next = [...merged.values()];
+        setCart(next);
+        syncedUserRef.current = user.id;
+        await fetch("/api/account/cart", {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ items: next }),
+        });
+      })
+      .catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [cart, hydrated, user]);
+
+  useEffect(() => {
+    if (!hydrated || !user || syncedUserRef.current !== user.id) return;
+    const timer = window.setTimeout(() => {
+      fetch("/api/account/cart", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ items: cart }),
+      }).catch(() => undefined);
+    }, 350);
+    return () => window.clearTimeout(timer);
+  }, [cart, hydrated, user]);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -152,6 +207,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         addToCart,
         updateQuantity,
         removeFromCart,
+        clearCart: () => setCart([]),
         showToast,
         clearToast: () => setToast(null),
       }}

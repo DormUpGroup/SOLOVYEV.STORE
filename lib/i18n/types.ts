@@ -40,6 +40,7 @@ export interface Dictionary {
     openCart: string;
     toggleMenu: string;
     instagram: string;
+    account: string;
   };
   categories: {
     sneakers: string;
@@ -88,6 +89,33 @@ export interface Dictionary {
     statusSold: string;
     statusMadeToOrder: string;
     statusBrandNew: string;
+  };
+  account: {
+    signIn: string;
+    emailHelp: string;
+    sendCode: string;
+    enterCode: string;
+    sentTo: string;
+    code: string;
+    verify: string;
+    changeEmail: string;
+    wait: string;
+    configError: string;
+    title: string;
+    signOut: string;
+    loading: string;
+    profile: string;
+    name: string;
+    phone: string;
+    save: string;
+    saving: string;
+    favorites: string;
+    noFavorites: string;
+    shop: string;
+    orders: string;
+    noOrders: string;
+    oneSize: string;
+    total: string;
   };
   footer: {
     style: string;

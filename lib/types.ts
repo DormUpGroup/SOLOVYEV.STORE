@@ -86,6 +86,36 @@ export interface CartItem {
   qty: number;
 }
 
+export interface CustomerProfile {
+  id: string;
+  email: string;
+  displayName?: string;
+  phone?: string;
+  createdAt: string;
+}
+
+export interface CustomerOrderItem {
+  id: number;
+  productId?: number;
+  productTitle: string;
+  productSlug: string;
+  productImage: string;
+  size: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface CustomerOrder {
+  id: string;
+  orderRef: string;
+  status: "pending_whatsapp" | "confirmed" | "cancelled" | "completed";
+  currencyCode: string;
+  currencySymbol: string;
+  subtotal: number;
+  createdAt: string;
+  items: CustomerOrderItem[];
+}
+
 export interface ActiveFilters {
   category: "all" | ProductCategory;
   brand: string;

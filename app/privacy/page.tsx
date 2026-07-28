@@ -21,7 +21,7 @@ export default function PrivacyPage() {
             ← BACK TO STORE
           </Link>
           <h1>Privacy Policy</h1>
-          <p>Last updated: June 16, 2026</p>
+          <p>Last updated: July 27, 2026</p>
 
           <h2>Overview</h2>
           <p>
@@ -32,8 +32,17 @@ export default function PrivacyPage() {
           <h2>Local Storage</h2>
           <p>
             We use your browser&apos;s local storage to save your shopping cart
-            items and theme preference (dark/light mode). This data stays on your
-            device and is not sent to our servers.
+            items and theme preference (dark/light mode). When you sign in, cart
+            items are synchronized with your account on our servers.
+          </p>
+
+          <h2>Customer Accounts</h2>
+          <p>
+            Passwordless sign-in is provided by Supabase. We store your email,
+            optional name and phone number, favorites, cart, and WhatsApp order
+            history so that you can access them across devices. Access is limited
+            to your authenticated account. We do not store passwords or payment
+            card details.
           </p>
 
           <h2>Analytics</h2>

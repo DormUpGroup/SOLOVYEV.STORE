@@ -1,21 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   formatPrice,
   getProductById,
 } from "@/lib/products";
 import { productImageSrc } from "@/lib/product-image";
 import { useStore } from "@/components/providers/StoreProvider";
-import { buildCartMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { trackBeginCheckout } from "@/lib/analytics";
 import { useCart } from "@/components/providers/CartProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
 import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
-
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 export function CartDrawer() {
   const { products, config } = useStore();
@@ -25,7 +22,11 @@ export function CartDrawer() {
     closeCart,
     updateQuantity,
     removeFromCart,
+    clearCart,
   } = useCart();
+  const { user } = useAuth();
+  const [checkingOut, setCheckingOut] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
   const { dict } = useI18n();
   const { cart: cartText } = dict;
 
@@ -49,11 +50,34 @@ export function CartDrawer() {
     };
   }, [isOpen, closeCart]);
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (cart.length === 0) return;
+    if (!user) {
+      window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+      return;
+    }
+    setCheckingOut(true);
+    setCheckoutError("");
     trackBeginCheckout(subtotal, cart.length);
-    const message = buildCartMessage(cart, products, SITE_URL, config);
-    window.open(buildWhatsAppUrl(message, config), "_blank", "noopener,noreferrer");
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ items: cart }),
+      });
+      const data = await response.json() as { whatsappUrl?: string; error?: string };
+      if (response.status === 401) {
+        window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+        return;
+      }
+      if (!response.ok || !data.whatsappUrl) throw new Error(data.error || "Checkout failed");
+      clearCart();
+      window.open(data.whatsappUrl, "_blank", "noopener,noreferrer");
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : "Checkout failed");
+    } finally {
+      setCheckingOut(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -164,11 +188,12 @@ export function CartDrawer() {
             type="button"
             className={`btn-primary cart-checkout-btn ${cart.length === 0 ? "disabled" : ""}`}
             id="cart-checkout-btn"
-            disabled={cart.length === 0}
-            onClick={handleCheckout}
+            disabled={cart.length === 0 || checkingOut}
+            onClick={() => void handleCheckout()}
           >
-            {cartText.checkout}
+            {checkingOut ? "CREATING ORDER…" : cartText.checkout}
           </button>
+          {checkoutError ? <p className="account-error" role="alert">{checkoutError}</p> : null}
         </div>
       </aside>
     </>

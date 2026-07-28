@@ -47,7 +47,15 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return updateSession(request);
+  const { response, user } = await updateSession(request);
+
+  if ((pathname === "/account" || pathname.startsWith("/account/")) && !user) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("next", `${pathname}${request.nextUrl.search}`);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return response;
 }
 
 export const config = {
