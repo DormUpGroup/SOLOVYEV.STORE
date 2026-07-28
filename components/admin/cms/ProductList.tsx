@@ -100,7 +100,7 @@ function SortableRow({
           #{product.id} · {product.brand}
         </p>
       </div>
-      <span className="shrink-0 px-3 text-base font-bold tabular-nums text-white">
+      <span className="ml-8 shrink-0 px-3 text-base font-bold tabular-nums text-white">
         {product.price > 0 ? `₪${product.price}` : "—"}
       </span>
       <div className="flex flex-1 items-center justify-center pr-[12%]">
