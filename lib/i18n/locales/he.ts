@@ -118,6 +118,7 @@ export const he: Dictionary = {
     wait: "נא להמתין…",
     configError: "חשבונות לקוחות עדיין לא הוגדרו.",
     title: "החשבון שלך.",
+    greeting: "שלום, {name}.",
     signOut: "התנתקות",
     loading: "טוען את החשבון…",
     profile: "פרופיל",

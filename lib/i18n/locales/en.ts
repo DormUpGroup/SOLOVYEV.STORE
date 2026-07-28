@@ -119,6 +119,7 @@ export const en: Dictionary = {
     wait: "PLEASE WAIT…",
     configError: "Customer accounts are not configured.",
     title: "YOUR ACCOUNT.",
+    greeting: "Hello, {name}.",
     signOut: "SIGN OUT",
     loading: "Loading your account…",
     profile: "PROFILE",

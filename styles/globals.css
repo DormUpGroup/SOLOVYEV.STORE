@@ -4305,8 +4305,7 @@ body.no-scroll {
 
 .account-page-header,
 .account-section-title,
-.account-order-head,
-.account-order-total {
+.account-order-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -4379,10 +4378,42 @@ body.no-scroll {
 
 .account-order li {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: center;
   gap: 16px;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 10px;
+}
+
+.account-order-thumb {
+  display: block;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background: color-mix(in srgb, var(--text-color) 6%, transparent);
+}
+
+.account-order-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.account-order-thumb-empty {
+  display: block;
+}
+
+.account-order-item-meta {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.account-order-item-meta a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: 800px) {
@@ -4409,7 +4440,11 @@ body.no-scroll {
   }
 
   .account-order li {
-    grid-template-columns: 1fr;
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+
+  .account-order li > strong {
+    grid-column: 2;
   }
 }
 

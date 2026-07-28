@@ -119,6 +119,7 @@ export const ru: Dictionary = {
     wait: "ПОДОЖДИТЕ…",
     configError: "Личные кабинеты ещё не настроены.",
     title: "ЛИЧНЫЙ КАБИНЕТ.",
+    greeting: "Привет, {name}.",
     signOut: "ВЫЙТИ",
     loading: "Загружаем кабинет…",
     profile: "ПРОФИЛЬ",
