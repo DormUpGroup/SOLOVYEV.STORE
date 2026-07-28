@@ -11,7 +11,6 @@ import { useStore } from "@/components/providers/StoreProvider";
 import { trackFilterApply } from "@/lib/analytics";
 import { useI18n } from "@/components/providers/I18nProvider";
 import { ProductCard } from "./ProductCard";
-import { StoreLogoMark } from "@/components/layout/StoreLogo";
 import type { ActiveFilters, Product, ProductCategory } from "@/lib/types";
 
 const categoryKeys: Record<ProductCategory, "sneakers" | "clothing" | "accessories"> = {
@@ -108,12 +107,6 @@ export function CatalogSection({
         <h2 className="section-title">
           {brandPageTitle ? `${brandPageTitle.toUpperCase()}.` : sectionTitle ?? catalog.theDrops}
         </h2>
-        <Link href="/" className="logo-area">
-          <StoreLogoMark size={32} />
-          <span className="logo-text catalog-logo-text">
-            SOLOVYEV<span>.STORE</span>
-          </span>
-        </Link>
       </div>
 
       <div className="catalog-controls">
