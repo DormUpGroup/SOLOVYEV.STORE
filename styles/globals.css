@@ -4150,20 +4150,20 @@ body.no-scroll {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border-color);
-  background: var(--bg-card);
   color: var(--text-primary);
 }
 
 .account-icon-btn {
   width: 42px;
   height: 42px;
-  border-radius: 50%;
+  border: 0;
+  background: transparent;
 }
 
 .account-icon-btn .icon-svg {
   width: 19px;
   height: 19px;
+  fill: currentColor;
 }
 
 .favorite-btn {
@@ -4173,7 +4173,9 @@ body.no-scroll {
   right: 12px;
   width: 38px;
   height: 38px;
+  border: 1px solid var(--border-color);
   border-radius: 50%;
+  background: var(--bg-card);
   font-size: 22px;
   cursor: pointer;
 }
