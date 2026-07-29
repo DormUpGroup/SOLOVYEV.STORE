@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/components/providers/CartProvider";
 import { useUI } from "@/components/providers/UIProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
@@ -140,6 +140,7 @@ export function MinimalFooter() {
 }
 
 export function FixedBottomBar() {
+  const barRef = useRef<HTMLDivElement>(null);
   const { config } = useStore();
   const { cartCount, openCart, isHydrated } = useCart();
   const displayCount = isHydrated ? cartCount : 0;
@@ -147,8 +148,25 @@ export function FixedBottomBar() {
   const { dict } = useI18n();
   const { footer, header } = dict;
 
+  useEffect(() => {
+    const bar = barRef.current;
+    if (!bar) return;
+
+    const updateHeight = () => {
+      document.documentElement.style.setProperty(
+        "--bottom-bar-height",
+        `${bar.offsetHeight}px`,
+      );
+    };
+
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(bar);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="fixed-bottom-bar">
+    <div ref={barRef} className="fixed-bottom-bar">
       <div className="bar-container">
         <div className="bar-brand">
           <span className="bar-title">

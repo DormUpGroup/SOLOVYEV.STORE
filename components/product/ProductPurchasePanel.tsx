@@ -92,22 +92,24 @@ export function ProductPurchasePanel({
         )}
       </div>
       <div className="modal-actions">
-        <button
-          type="button"
-          className="btn-primary"
-          disabled={unavailable}
-          onClick={() => addToCart(product.id, selectedSize || "")}
-        >
-          {copy.addToCart}
-        </button>
-        <button
-          type="button"
-          className="btn-secondary whatsapp-cta"
-          disabled={unavailable || checkoutBusy}
-          onClick={() => void handleWhatsApp()}
-        >
-          {checkoutBusy ? dict.cart.creatingOrder : copy.orderWhatsApp}
-        </button>
+        <div className="purchase-primary-actions sticky-mobile-cta">
+          <button
+            type="button"
+            className="btn-primary"
+            disabled={unavailable}
+            onClick={() => addToCart(product.id, selectedSize || "")}
+          >
+            {copy.addToCart}
+          </button>
+          <button
+            type="button"
+            className="btn-secondary whatsapp-cta"
+            disabled={unavailable || checkoutBusy}
+            onClick={() => void handleWhatsApp()}
+          >
+            {checkoutBusy ? dict.cart.creatingOrder : copy.orderWhatsApp}
+          </button>
+        </div>
         <button
           type="button"
           className={`btn-secondary${favoriteIds.has(product.id) ? " active" : ""}`}

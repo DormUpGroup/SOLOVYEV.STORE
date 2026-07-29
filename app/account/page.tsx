@@ -15,7 +15,10 @@ import { useFavorites } from "@/components/providers/FavoritesProvider";
 
 interface AccountData {
   user: { id: string; email?: string; createdAt: string };
-  profile: { display_name?: string } | null;
+  profile: {
+    display_name?: string | null;
+    marketing_email_opt_in?: boolean | null;
+  } | null;
   favoriteIds: number[];
   orders: Array<{
     id: string;
@@ -40,12 +43,14 @@ export default function AccountPage() {
   const router = useRouter();
   const { signOut } = useAuth();
   const { products } = useStore();
-  const { dict } = useI18n();
+  const { dict, locale } = useI18n();
   const { favoriteIds } = useFavorites();
   const copy = dict.account;
   const [data, setData] = useState<AccountData | null>(null);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [saving, setSaving] = useState(false);
+  const [marketingBusy, setMarketingBusy] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [displayName, setDisplayName] = useState("");
 
@@ -67,6 +72,7 @@ export default function AccountPage() {
   );
 
   const savedName = data?.profile?.display_name?.trim() ?? "";
+  const marketingOptIn = Boolean(data?.profile?.marketing_email_opt_in);
 
   const itemImage = (item: AccountData["orders"][number]["order_items"][number]) => {
     const fromOrder = productImageSrc(item.product_image);
@@ -79,6 +85,7 @@ export default function AccountPage() {
     setDisplayName(savedName);
     setEditingName(true);
     setError("");
+    setSuccess("");
   };
 
   const cancelEdit = () => {
@@ -96,6 +103,7 @@ export default function AccountPage() {
     }
     setSaving(true);
     setError("");
+    setSuccess("");
     const response = await fetch("/api/account", {
       method: "PATCH",
       headers: { "content-type": "application/json" },
@@ -103,7 +111,7 @@ export default function AccountPage() {
     });
     const body = await response.json() as {
       error?: string;
-      profile?: { display_name?: string | null };
+      profile?: { display_name?: string | null; marketing_email_opt_in?: boolean | null };
     };
     setSaving(false);
     if (!response.ok) {
@@ -114,10 +122,39 @@ export default function AccountPage() {
     setDisplayName(nextName);
     setData((prev) =>
       prev
-        ? { ...prev, profile: { ...prev.profile, display_name: nextName } }
+        ? { ...prev, profile: { ...prev.profile, ...body.profile, display_name: nextName } }
         : prev,
     );
     setEditingName(false);
+  };
+
+  const toggleMarketing = async () => {
+    if (!data) return;
+    setMarketingBusy(true);
+    setError("");
+    setSuccess("");
+    const next = !marketingOptIn;
+    const response = await fetch("/api/account", {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ marketingEmailOptIn: next, locale }),
+    });
+    const body = await response.json() as {
+      error?: string;
+      profile?: {
+        display_name?: string | null;
+        marketing_email_opt_in?: boolean | null;
+      };
+    };
+    setMarketingBusy(false);
+    if (!response.ok) {
+      setError(body.error || "Could not save preference");
+      return;
+    }
+    setData((prev) =>
+      prev ? { ...prev, profile: { ...prev.profile, ...body.profile } } : prev,
+    );
+    setSuccess(copy.marketingSaved);
   };
 
   const logout = async () => {
@@ -165,8 +202,29 @@ export default function AccountPage() {
         </div>
 
         {error ? <p className="account-error" role="alert">{error}</p> : null}
+        {success ? <p className="account-success" role="status">{success}</p> : null}
         {!data ? <div className="account-card">{copy.loading}</div> : (
           <div className="account-sections">
+            <section>
+              <div className="account-section-title"><h2>{copy.marketingPreferences}</h2></div>
+              <div className="account-card account-marketing">
+                <p>{marketingOptIn ? copy.marketingEnabled : copy.marketingDisabled}</p>
+                <p className="account-muted">{copy.marketingOptInHelp}</p>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  disabled={marketingBusy}
+                  onClick={() => void toggleMarketing()}
+                >
+                  {marketingBusy
+                    ? copy.saving
+                    : marketingOptIn
+                      ? copy.marketingToggleOff
+                      : copy.marketingToggleOn}
+                </button>
+              </div>
+            </section>
+
             <section>
               <div className="account-section-title"><h2>{copy.favorites}</h2><span>{favorites.length}</span></div>
               {favorites.length ? <div className="account-product-grid">{favorites.map((product) => <ProductCard key={product.id} product={product} />)}</div> : <div className="account-card account-empty"><p>{copy.noFavorites}</p><Link href="/drops" className="btn-secondary">{copy.shop}</Link></div>}

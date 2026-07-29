@@ -4223,6 +4223,39 @@ body.no-scroll {
   line-height: 1.5;
 }
 
+.account-form-hint a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.account-checkbox {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 12px;
+  font-weight: 500 !important;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.account-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  padding: 0;
+  accent-color: var(--text-primary);
+}
+
+.account-marketing {
+  display: grid;
+  gap: 12px;
+}
+
+.account-marketing .btn-secondary {
+  justify-self: start;
+}
+
 .account-auth-link,
 .account-auth-switch a {
   color: var(--text-primary);

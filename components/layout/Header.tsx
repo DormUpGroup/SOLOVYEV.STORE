@@ -150,7 +150,10 @@ function Header() {
 
   const mobileNavOverlay = (
     <div className={`mobile-nav-overlay ${menuOpen ? "open" : ""}`}>
-      <div className="mobile-nav-container">
+      <div
+        className="mobile-nav-container"
+        style={shellHeight ? { paddingTop: shellHeight + 24 } : undefined}
+      >
         <nav className="mobile-nav" aria-label={dict.common.mobileNav}>
           <div className="mobile-nav-group">
             <Link
