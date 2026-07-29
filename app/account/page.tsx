@@ -131,40 +131,37 @@ export default function AccountPage() {
       <Header />
       <main className="account-page">
         <div className="account-page-header">
-          <div>
-            <p className="account-eyebrow">SOLOVYEV STORE</p>
-            {editingName ? (
-              <form className="account-name-edit" onSubmit={saveName}>
-                <input
-                  value={displayName}
-                  onChange={(event) => setDisplayName(event.target.value)}
-                  maxLength={80}
-                  autoFocus
-                  aria-label={copy.name}
-                  placeholder={copy.namePlaceholder}
-                />
-                <button type="submit" className="account-name-action" disabled={saving}>
-                  {saving ? copy.saving : copy.save}
-                </button>
-                <button type="button" className="account-name-action" onClick={cancelEdit} disabled={saving}>
-                  {copy.cancelEdit}
-                </button>
-              </form>
-            ) : (
-              <div className="account-greeting-row">
-                <h1>
-                  {savedName
-                    ? copy.greeting.replace("{name}", savedName)
-                    : copy.title}
-                </h1>
-                <button type="button" className="account-edit-name" onClick={startEdit}>
-                  {copy.editName}
-                </button>
-              </div>
-            )}
-            <p className="account-muted">{data?.user.email}</p>
-          </div>
-          <button type="button" className="btn-secondary" onClick={() => void logout()}>{copy.signOut}</button>
+          <p className="account-eyebrow">SOLOVYEV STORE</p>
+          {editingName ? (
+            <form className="account-name-edit" onSubmit={saveName}>
+              <input
+                value={displayName}
+                onChange={(event) => setDisplayName(event.target.value)}
+                maxLength={80}
+                autoFocus
+                aria-label={copy.name}
+                placeholder={copy.namePlaceholder}
+              />
+              <button type="submit" className="account-name-action" disabled={saving}>
+                {saving ? copy.saving : copy.save}
+              </button>
+              <button type="button" className="account-name-action" onClick={cancelEdit} disabled={saving}>
+                {copy.cancelEdit}
+              </button>
+            </form>
+          ) : (
+            <div className="account-greeting-row">
+              <h1>
+                {savedName
+                  ? copy.greeting.replace("{name}", savedName)
+                  : copy.title}
+              </h1>
+              <button type="button" className="account-edit-name" onClick={startEdit}>
+                {copy.editName}
+              </button>
+            </div>
+          )}
+          <p className="account-muted">{data?.user.email}</p>
         </div>
 
         {error ? <p className="account-error" role="alert">{error}</p> : null}
@@ -205,6 +202,12 @@ export default function AccountPage() {
                 </article>
               ))}</div> : <div className="account-card account-empty">{copy.noOrders}</div>}
             </section>
+
+            <div className="account-signout-row">
+              <button type="button" className="account-signout-btn" onClick={() => void logout()}>
+                {copy.signOut}
+              </button>
+            </div>
           </div>
         )}
       </main>

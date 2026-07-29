@@ -4263,12 +4263,44 @@ body.no-scroll {
 }
 
 .account-page-header {
+  display: block;
+}
+
+.account-page-header {
   max-width: var(--layout-max);
   margin: 0 auto 48px;
 }
 
 .account-page-header h1 {
   font-size: clamp(36px, 6vw, 72px);
+}
+
+.account-signout-row {
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 8px;
+}
+
+.account-signout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d9304f;
+  background: transparent;
+  color: #d9304f;
+  padding: 12px 22px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.account-signout-btn:hover {
+  background: #d9304f;
+  color: #fff;
 }
 
 .account-greeting-row {
