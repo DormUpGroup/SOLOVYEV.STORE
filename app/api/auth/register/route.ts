@@ -1,15 +1,22 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServiceClient } from "@/utils/supabase/admin";
 import { isValidPassword, normalizeEmail } from "@/lib/customer-auth";
+import { setMarketingConsent } from "@/lib/marketing-consent";
 
 export async function POST(request: NextRequest) {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
     return NextResponse.json({ error: "Customer accounts are not configured." }, { status: 503 });
   }
 
-  const body = (await request.json()) as { email?: string; password?: string };
+  const body = (await request.json()) as {
+    email?: string;
+    password?: string;
+    marketingEmailOptIn?: boolean;
+    locale?: string;
+  };
   const email = normalizeEmail(body.email ?? "");
   const password = String(body.password ?? "");
+  const marketingEmailOptIn = Boolean(body.marketingEmailOptIn);
 
   if (!email || !email.includes("@")) {
     return NextResponse.json({ error: "Invalid email." }, { status: 400 });
@@ -35,5 +42,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  return NextResponse.json({ ok: true, userId: data.user?.id ?? null });
+  const userId = data.user?.id;
+  if (userId && marketingEmailOptIn) {
+    const consent = await setMarketingConsent({
+      userId,
+      granted: true,
+      source: "registration",
+      locale: body.locale,
+    });
+    if (consent.error) {
+      console.error("[POST /api/auth/register] marketing consent failed:", consent.error);
+    }
+  }
+
+  return NextResponse.json({ ok: true, userId: userId ?? null });
 }

@@ -17,13 +17,14 @@ import {
 function RegisterForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const { dict } = useI18n();
+  const { dict, locale } = useI18n();
   const copy = dict.account;
   const checkout = isCheckoutIntent(params.get("checkout"));
   const next = params.get("next");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
+  const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -40,7 +41,12 @@ function RegisterForm() {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email: normalized, password }),
+        body: JSON.stringify({
+          email: normalized,
+          password,
+          marketingEmailOptIn: marketingOptIn,
+          locale,
+        }),
       });
       const payload = (await response.json()) as { error?: string };
       if (!response.ok) {
@@ -103,6 +109,20 @@ function RegisterForm() {
             onChange={(event) => setConfirmation(event.target.value)}
           />
         </label>
+        <label className="account-checkbox">
+          <input
+            type="checkbox"
+            checked={marketingOptIn}
+            onChange={(event) => setMarketingOptIn(event.target.checked)}
+          />
+          <span>{copy.marketingOptInLabel}</span>
+        </label>
+        <p className="account-form-hint">{copy.marketingOptInHelp}</p>
+        <p className="account-form-hint">
+          {copy.termsAgreePrefix}{" "}
+          <Link href="/terms">{copy.termsLink}</Link> {copy.andWord}{" "}
+          <Link href="/privacy">{copy.privacyLink}</Link>.
+        </p>
         <p className="account-form-hint">{copy.passwordRequirements}</p>
         {error ? <p className="account-error" role="alert">{error}</p> : null}
         <button className="btn-primary" type="submit" disabled={busy}>

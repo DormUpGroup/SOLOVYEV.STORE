@@ -177,6 +177,20 @@ export const ru: Dictionary = {
     noOrders: "Здесь появятся ваши заказы через WhatsApp.",
     oneSize: "Один размер",
     total: "Итого",
+    marketingOptInLabel:
+      "Присылать новости, дропы и акции на email (по желанию). Имя из профиля можно использовать для персонализации писем.",
+    marketingOptInHelp:
+      "Настройку можно изменить в личном кабинете. Сервисные письма (например сброс пароля) отправляются всегда.",
+    marketingPreferences: "РАССЫЛКИ",
+    marketingEnabled: "Вы подписаны на маркетинговые письма.",
+    marketingDisabled: "Вы не подписаны на маркетинговые письма.",
+    marketingToggleOn: "ПОДПИСАТЬСЯ",
+    marketingToggleOff: "ОТПИСАТЬСЯ",
+    marketingSaved: "Настройка рассылки сохранена.",
+    termsAgreePrefix: "Создавая аккаунт, вы принимаете",
+    termsLink: "Пользовательское соглашение",
+    privacyLink: "Политику конфиденциальности",
+    andWord: "и",
   },
   footer: {
     privacy: "Политика конфиденциальности",

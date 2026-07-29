@@ -176,6 +176,20 @@ export const he: Dictionary = {
     noOrders: "הזמנות WhatsApp שלך יופיעו כאן.",
     oneSize: "מידה אחת",
     total: "סה״כ",
+    marketingOptInLabel:
+      "שלחו לי חדשות, דרופים ומבצעים באימייל (אופציונלי). ייתכן שנשתמש בשם התצוגה להתאמה אישית של ההודעות.",
+    marketingOptInHelp:
+      "אפשר לשנות זאת בכל עת בחשבון. אימיילים שירותיים כמו איפוס סיסמה יישלחו תמיד.",
+    marketingPreferences: "העדפות אימייל",
+    marketingEnabled: "אתם רשומים לאימיילים שיווקיים.",
+    marketingDisabled: "אינכם רשומים לאימיילים שיווקיים.",
+    marketingToggleOn: "הרשמה",
+    marketingToggleOff: "ביטול הרשמה",
+    marketingSaved: "העדפת האימייל נשמרה.",
+    termsAgreePrefix: "ביצירת חשבון אתם מאשרים את",
+    termsLink: "תנאי השימוש",
+    privacyLink: "מדיניות הפרטיות",
+    andWord: "ואת",
   },
   footer: {
     privacy: "מדיניות פרטיות",

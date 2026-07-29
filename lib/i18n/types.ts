@@ -179,6 +179,18 @@ export interface Dictionary {
     noOrders: string;
     oneSize: string;
     total: string;
+    marketingOptInLabel: string;
+    marketingOptInHelp: string;
+    marketingPreferences: string;
+    marketingEnabled: string;
+    marketingDisabled: string;
+    marketingToggleOn: string;
+    marketingToggleOff: string;
+    marketingSaved: string;
+    termsAgreePrefix: string;
+    termsLink: string;
+    privacyLink: string;
+    andWord: string;
   };
   footer: {
     privacy: string;

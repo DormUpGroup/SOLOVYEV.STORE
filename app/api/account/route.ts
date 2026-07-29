@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { setMarketingConsent } from "@/lib/marketing-consent";
 
 export async function GET() {
   const supabase = await createClient();
@@ -33,7 +34,13 @@ export async function PATCH(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await request.json() as { displayName?: string; phone?: string };
+  const body = await request.json() as {
+    displayName?: string;
+    phone?: string;
+    marketingEmailOptIn?: boolean;
+    locale?: string;
+  };
+
   const updates: { display_name?: string | null; phone?: string | null } = {};
   if ("displayName" in body) {
     updates.display_name = body.displayName?.trim().slice(0, 80) || null;
@@ -41,16 +48,46 @@ export async function PATCH(request: NextRequest) {
   if ("phone" in body) {
     updates.phone = body.phone?.trim().slice(0, 30) || null;
   }
-  if (!Object.keys(updates).length) {
+
+  const wantsMarketing =
+    typeof body.marketingEmailOptIn === "boolean";
+
+  if (!Object.keys(updates).length && !wantsMarketing) {
     return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
   }
-  const { data, error } = await supabase
-    .from("profiles")
-    .update(updates)
-    .eq("id", user.id)
-    .select()
-    .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json({ profile: data });
+  let profile = null as Record<string, unknown> | null;
+
+  if (Object.keys(updates).length) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .update(updates)
+      .eq("id", user.id)
+      .select()
+      .single();
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    profile = data;
+  }
+
+  if (wantsMarketing) {
+    const consent = await setMarketingConsent({
+      userId: user.id,
+      granted: Boolean(body.marketingEmailOptIn),
+      source: "account",
+      locale: body.locale,
+    });
+    if (consent.error) {
+      return NextResponse.json({ error: consent.error }, { status: 400 });
+    }
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    profile = data;
+  }
+
+  return NextResponse.json({ profile });
 }

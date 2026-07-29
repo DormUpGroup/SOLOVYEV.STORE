@@ -177,6 +177,20 @@ export const en: Dictionary = {
     noOrders: "Your WhatsApp orders will appear here.",
     oneSize: "One Size",
     total: "Total",
+    marketingOptInLabel:
+      "Send me news, drops, and offers by email (optional). We may use my display name to personalize messages.",
+    marketingOptInHelp:
+      "You can change this anytime in your account. Service emails like password resets are always allowed.",
+    marketingPreferences: "EMAIL PREFERENCES",
+    marketingEnabled: "You are subscribed to marketing emails.",
+    marketingDisabled: "You are not subscribed to marketing emails.",
+    marketingToggleOn: "SUBSCRIBE",
+    marketingToggleOff: "UNSUBSCRIBE",
+    marketingSaved: "Email preference saved.",
+    termsAgreePrefix: "By creating an account you agree to our",
+    termsLink: "Terms of Service",
+    privacyLink: "Privacy Policy",
+    andWord: "and",
   },
   footer: {
     privacy: "Privacy Policy",

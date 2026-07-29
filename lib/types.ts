@@ -91,8 +91,12 @@ export interface CustomerProfile {
   email: string;
   displayName?: string;
   phone?: string;
+  marketingEmailOptIn?: boolean;
+  marketingEmailOptInAt?: string | null;
   createdAt: string;
 }
+
+export type OrderStatus = "pending_whatsapp" | "confirmed" | "cancelled" | "completed";
 
 export interface CustomerOrderItem {
   id: number;
@@ -108,7 +112,7 @@ export interface CustomerOrderItem {
 export interface CustomerOrder {
   id: string;
   orderRef: string;
-  status: "pending_whatsapp" | "confirmed" | "cancelled" | "completed";
+  status: OrderStatus;
   currencyCode: string;
   currencySymbol: string;
   subtotal: number;
