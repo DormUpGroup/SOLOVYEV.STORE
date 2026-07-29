@@ -21,8 +21,10 @@ export function HeroSection() {
     const media = mediaRef.current;
     if (!section || !media) return;
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) return;
+    const disableParallax = window.matchMedia(
+      "(max-width: 768px), (prefers-reduced-motion: reduce)",
+    ).matches;
+    if (disableParallax) return;
 
     let ticking = false;
     const PARALLAX_FACTOR = 0.42;
