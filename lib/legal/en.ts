@@ -19,6 +19,7 @@ export const en: LegalBundle = {
         title: "What data we collect",
         paragraphs: [
           "Account data: email address, password (hashed by our auth provider — we never store plaintext passwords), display name, and phone number if you provide one.",
+          "Marketing preferences: whether you opted in to marketing emails, when that preference last changed, and an audit record of consent changes (granted or withdrawn, privacy-policy version, source, and language).",
           "Orders: cart contents, sizes, quantities, order amounts, order status, and the WhatsApp checkout link associated with your order.",
           "Favorites and cart: product identifiers, sizes, and quantities synced to your account when you are signed in.",
           "Technical data: authentication session cookies; for store administrators, a separate secure admin session cookie.",
@@ -37,7 +38,20 @@ export const en: LegalBundle = {
           "To create and fulfil orders and to communicate about purchases, Sell / Trade, and support.",
           "To keep the Site secure and prevent abuse.",
           "To understand how the Site is used and to improve it.",
+          "To operate the store: authorized administrators may access customer accounts and order records in the admin panel to provide support, fulfil orders, and review internal order analytics (order counts, status breakdowns, and order values).",
+          "With your separate opt-in consent, to send marketing emails about news, drops, and offers, and to personalize those messages with your display name.",
           "To comply with applicable law.",
+        ],
+      },
+      {
+        id: "marketing",
+        title: "Marketing emails",
+        paragraphs: [
+          "Marketing emails are optional. We send them only if you actively opt in (for example during registration or in your account settings). The checkbox is never pre-selected.",
+          "If you opt in, we may use your email address and display name to send and personalize news, drops, and promotional offers.",
+          "You can withdraw consent at any time in your account email preferences. Unsubscribing from marketing does not affect service messages such as password resets or communications needed to fulfil an order.",
+          "We keep a record of when consent was given or withdrawn, which privacy-policy version applied, and where the choice was made, so we can demonstrate compliance.",
+          "We do not currently use a third-party email marketing provider. If we add one later, we will update this Privacy Policy and name that processor before using it for marketing sends.",
         ],
       },
       {
@@ -51,6 +65,7 @@ export const en: LegalBundle = {
           "Instagram (Meta) — social media communication.",
           "OpenStreetMap / Google Maps — map display or location links on the About page.",
           "Courier or locker services (such as Boxit or Cheetah) — only when we share delivery details needed to ship your order.",
+          "Authorized store administrators — access customer profiles and orders solely to operate the store as described above.",
           "We do not sell your personal data.",
         ],
       },
@@ -69,6 +84,7 @@ export const en: LegalBundle = {
         paragraphs: [
           "Account and profile data: while your account remains active, and for a reasonable period after a deletion request so we can complete the request and meet legal duties.",
           "Orders: for as long as needed for fulfilment, accounting, disputes, and legal requirements.",
+          "Marketing consent records: for as long as needed to demonstrate when consent was given or withdrawn and to honour opt-out preferences.",
           "Analytics: according to Google Analytics settings and our internal event retention practices.",
           "Messenger conversations: according to the platform rules and our ordinary business practice.",
         ],
@@ -85,6 +101,7 @@ export const en: LegalBundle = {
         title: "Your rights",
         paragraphs: [
           "Depending on applicable law, you may request access to, correction of, or deletion of your personal data, and in some cases restriction of processing, objection, or data portability.",
+          "You may withdraw marketing consent at any time in your account without affecting the lawfulness of processing before withdrawal.",
           "To make a request, message us on WhatsApp or Instagram and include the email address of your account. We will respond within a reasonable time.",
           "Deleting your account may remove access to order history in your account area; we may retain certain order records where required by law or for legitimate business purposes.",
         ],
@@ -147,6 +164,8 @@ export const en: LegalBundle = {
         paragraphs: [
           "You must register with an email and password to place an order through the Site. Authentication is provided by Supabase Auth.",
           "You must provide accurate information, keep your password confidential, and not share your account. We may suspend or delete accounts used for fraud, abuse, or breach of these Terms.",
+          "Authorized store staff may access account and order information in the admin panel to operate the store, fulfil orders, and provide support.",
+          "Optional marketing emails are sent only if you opt in. You may unsubscribe at any time in your account. Service emails (such as password resets) and order-related messages are not marketing.",
         ],
       },
       {

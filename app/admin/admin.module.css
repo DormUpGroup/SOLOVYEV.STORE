@@ -264,6 +264,15 @@
   font-size: 12px;
 }
 
+.input {
+  background: #000;
+  border: 1px solid var(--adm-border);
+  color: var(--adm-text);
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 12px;
+}
+
 .searchInput {
   flex: 1;
   min-width: 180px;

@@ -5,15 +5,28 @@ import Link from "next/link";
 import type { Product, StoreConfig } from "@/lib/types";
 import { AdminClient } from "@/components/admin/cms/AdminClient";
 import { LegacyTabs } from "@/components/admin/legacy/LegacyTabs";
+import { UsersTab } from "@/components/admin/commerce/UsersTab";
+import { OrdersTab } from "@/components/admin/commerce/OrdersTab";
 import styles from "@/app/admin/admin.module.css";
 
-type Tab = "overview" | "catalog" | "made_to_order" | "brand_new" | "faq" | "settings" | "analytics";
+type Tab =
+  | "overview"
+  | "catalog"
+  | "made_to_order"
+  | "brand_new"
+  | "users"
+  | "orders"
+  | "faq"
+  | "settings"
+  | "analytics";
 
 const TAB_LABELS: Record<Tab, string> = {
   overview: "Overview",
   catalog: "Catalog",
   made_to_order: "Made to order",
   brand_new: "Brand new",
+  users: "Users",
+  orders: "Orders",
   faq: "FAQ",
   settings: "Settings",
   analytics: "Analytics",
@@ -129,6 +142,10 @@ export function AdminShell({ initialProducts }: AdminShellProps) {
                     : "catalog"
               }
             />
+          ) : tab === "users" ? (
+            <UsersTab showToast={showToast} />
+          ) : tab === "orders" ? (
+            <OrdersTab showToast={showToast} />
           ) : (
             <LegacyTabs
               tab={tab}
