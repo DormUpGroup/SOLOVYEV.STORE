@@ -5,7 +5,16 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/layout/Header";
+import {
+  FixedBottomBar,
+  MinimalFooter,
+  ToastNotification,
+} from "@/components/layout/FooterBars";
 import { ProductCard } from "@/components/catalog/ProductCard";
+import { CartDrawer } from "@/components/cart/CartDrawer";
+import { FaqModal } from "@/components/modals/FaqModal";
+import { QuickViewModal } from "@/components/modals/QuickViewModal";
+import { SellTradeModal } from "@/components/modals/SellTradeModal";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useStore } from "@/components/providers/StoreProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
@@ -269,6 +278,13 @@ export default function AccountPage() {
           </div>
         )}
       </main>
+      <MinimalFooter />
+      <FixedBottomBar />
+      <ToastNotification />
+      <QuickViewModal />
+      <SellTradeModal />
+      <FaqModal />
+      <CartDrawer />
     </>
   );
 }

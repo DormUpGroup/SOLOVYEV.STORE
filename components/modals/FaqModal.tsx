@@ -55,10 +55,7 @@ export function FaqModal() {
                 >
                   {item.question}
                 </button>
-                <div
-                  className="faq-content"
-                  style={{ maxHeight: isOpen ? "500px" : undefined }}
-                >
+                <div className="faq-content">
                   <p>{item.answer}</p>
                 </div>
               </div>
@@ -91,10 +88,7 @@ export function FaqAccordion({ className = "" }: { className?: string }) {
             >
               {item.question}
             </button>
-            <div
-              className="faq-content"
-              style={{ maxHeight: isOpen ? "500px" : undefined }}
-            >
+            <div className="faq-content">
               <p>{item.answer}</p>
             </div>
           </div>

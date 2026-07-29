@@ -133,3 +133,25 @@
     padding: 12px;
   }
 }
+
+@media (hover: none), (pointer: coarse) {
+  .brand-card-overlay {
+    align-items: flex-end;
+    opacity: 1;
+    background: linear-gradient(transparent 55%, rgba(0, 0, 0, 0.82));
+  }
+}
+
+@media (max-width: 480px) {
+  .brands-grid {
+    gap: 10px;
+  }
+
+  .brand-card {
+    gap: 8px;
+  }
+
+  .brand-card-name {
+    font-size: 11px;
+  }
+}
