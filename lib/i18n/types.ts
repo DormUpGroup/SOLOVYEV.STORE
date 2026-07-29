@@ -151,9 +151,6 @@ export interface Dictionary {
     total: string;
   };
   footer: {
-    style: string;
-    dark: string;
-    light: string;
     privacy: string;
     faq: string;
     cart: string;

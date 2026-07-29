@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useTheme } from "@/components/providers/ThemeProvider";
 import { useCart } from "@/components/providers/CartProvider";
 import { useUI } from "@/components/providers/UIProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
@@ -17,10 +16,8 @@ import { StoreLogoMark } from "@/components/layout/StoreLogo";
 
 export function MinimalFooter() {
   const { config } = useStore();
-  const { toggleTheme, isHydrated, theme } = useTheme();
   const { dict } = useI18n();
   const { footer, header, categories } = dict;
-  const themeLabel = theme === "dark" ? footer.dark : footer.light;
   const phoneDisplay = formatDisplayPhone(config.contacts.whatsappPhone);
   const locationLabel = getStoreLocationLabel(config);
   const year = new Date().getFullYear();
@@ -125,17 +122,10 @@ export function MinimalFooter() {
           </div>
         </div>
 
-        <div className="footer-bottom">
+          <div className="footer-bottom">
           <p className="footer-copyright">
             © {year} {config.storeName}. {footer.rights}
           </p>
-          <div className="footer-bottom-actions">
-            <button type="button" className="style-toggle-btn" onClick={toggleTheme}>
-              <span className="style-label" suppressHydrationWarning>
-                {footer.style}: {isHydrated ? themeLabel : footer.dark}
-              </span>
-            </button>
-          </div>
         </div>
       </div>
     </footer>

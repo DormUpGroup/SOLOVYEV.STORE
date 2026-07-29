@@ -1,6 +1,5 @@
 "use client";
 
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { CartProvider } from "@/components/providers/CartProvider";
 import { UIProvider } from "@/components/providers/UIProvider";
 import { I18nProvider } from "@/components/providers/I18nProvider";
@@ -23,11 +22,9 @@ export function AppProviders({
       <I18nProvider>
         <AuthProvider>
           <FavoritesProvider>
-            <ThemeProvider>
-              <CartProvider>
-                <UIProvider>{children}</UIProvider>
-              </CartProvider>
-            </ThemeProvider>
+            <CartProvider>
+              <UIProvider>{children}</UIProvider>
+            </CartProvider>
           </FavoritesProvider>
         </AuthProvider>
       </I18nProvider>

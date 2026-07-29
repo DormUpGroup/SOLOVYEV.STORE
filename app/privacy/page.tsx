@@ -32,8 +32,8 @@ export default function PrivacyPage() {
           <h2>Local Storage</h2>
           <p>
             We use your browser&apos;s local storage to save your shopping cart
-            items and theme preference (dark/light mode). When you sign in, cart
-            items are synchronized with your account on our servers.
+            items. When you sign in, cart items are synchronized with your
+            account on our servers.
           </p>
 
           <h2>Customer Accounts</h2>

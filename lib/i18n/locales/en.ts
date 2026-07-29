@@ -149,9 +149,6 @@ export const en: Dictionary = {
     total: "Total",
   },
   footer: {
-    style: "STYLE",
-    dark: "DARK",
-    light: "LIGHT",
     privacy: "Privacy Policy",
     faq: "F.A.Q.",
     cart: "CART",
@@ -162,7 +159,7 @@ export const en: Dictionary = {
     rights: "All rights reserved.",
   },
   consent: {
-    text: "We use local storage to save your theme preferences and cart items. By continuing, you agree to our",
+    text: "We use local storage to save your cart items. By continuing, you agree to our",
     privacy: "Privacy Policy",
     accept: "GOT IT",
   },

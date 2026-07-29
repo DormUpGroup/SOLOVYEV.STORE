@@ -116,10 +116,6 @@ export function trackFilterApply(filterType: string, value: string): void {
   trackEvent("filter_apply", { filter_type: filterType, filter_value: value });
 }
 
-export function trackThemeToggle(theme: string): void {
-  trackEvent("theme_toggle", { theme });
-}
-
 export function trackFaqExpand(question: string): void {
   trackEvent("faq_expand", { question });
 }
