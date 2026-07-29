@@ -54,6 +54,12 @@ export interface Dictionary {
     all: string;
     allBrands: string;
     shopByBrand: string;
+    shopByBrandEyebrow: string;
+    brandsTitle: string;
+    brandsDesc: string;
+    stockCount: string;
+    brandPageDesc: string;
+    viewAllBrands: string;
     searchPlaceholder: string;
     allSizes: string;
     sortByPrice: string;
@@ -72,13 +78,21 @@ export interface Dictionary {
     oneSize: string;
     subtotal: string;
     checkout: string;
+    creatingOrder: string;
     close: string;
     added: string;
     selectSize: string;
+    decreaseQty: string;
+    increaseQty: string;
+    removeItem: string;
   };
   product: {
     condition: string;
     brand: string;
+    category: string;
+    sizes: string;
+    was: string;
+    na: string;
     selectSize: string;
     outOfStock: string;
     contactForSize: string;
@@ -87,8 +101,24 @@ export interface Dictionary {
     statusNewDrop: string;
     statusReserved: string;
     statusSold: string;
+    statusDraft: string;
     statusMadeToOrder: string;
     statusBrandNew: string;
+    addFavorite: string;
+    removeFavorite: string;
+    viewProduct: string;
+    photoN: string;
+  };
+  common: {
+    backToHome: string;
+    backToDrops: string;
+    backToStore: string;
+    personalAccount: string;
+    language: string;
+    mainNav: string;
+    mobileNav: string;
+    hiGreeting: string;
+    instagramPost: string;
   };
   account: {
     signIn: string;
@@ -152,6 +182,7 @@ export interface Dictionary {
   };
   footer: {
     privacy: string;
+    terms: string;
     faq: string;
     cart: string;
     shopTitle: string;
@@ -188,6 +219,7 @@ export interface Dictionary {
     submit: string;
     required: string;
     close: string;
+    pageIntro: string;
   };
   faq: {
     title: string;

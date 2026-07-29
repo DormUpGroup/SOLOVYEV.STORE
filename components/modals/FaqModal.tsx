@@ -1,19 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { trackFaqExpand } from "@/lib/analytics";
 import { useUI } from "@/components/providers/UIProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
-import { useStore } from "@/components/providers/StoreProvider";
 import type { FaqItem } from "@/lib/types";
 
 function useFaqItems(): FaqItem[] {
   const { dict } = useI18n();
-  const { faqItems } = useStore();
-  return useMemo(
-    () => (faqItems.length > 0 ? faqItems : dict.faq.items),
-    [dict.faq.items, faqItems],
-  );
+  return dict.faq.items;
 }
 
 export function FaqModal() {

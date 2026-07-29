@@ -96,7 +96,13 @@ export function AboutPageClient() {
                   <span>{about.instagramHandle}</span>
                 </a>
                 <a
-                  href={buildWhatsAppUrl(`Hi ${config.contacts.managerName}!`, config)}
+                  href={buildWhatsAppUrl(
+                    dict.common.hiGreeting.replace(
+                      "{name}",
+                      config.contacts.managerName,
+                    ),
+                    config,
+                  )}
                   className="about-contact-link"
                   target="_blank"
                   rel="noopener noreferrer"

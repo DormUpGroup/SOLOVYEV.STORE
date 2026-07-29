@@ -16,6 +16,7 @@ import { SellTradeModal } from "@/components/modals/SellTradeModal";
 import { FaqModal } from "@/components/modals/FaqModal";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import type { ProductCategory } from "@/lib/types";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 function parseCategory(param: string | null): "all" | ProductCategory {
   if (param === "sneakers" || param === "clothing" || param === "accessories") {
@@ -27,6 +28,7 @@ function parseCategory(param: string | null): "all" | ProductCategory {
 export function DropsPageClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { dict } = useI18n();
   const activeCategory = useMemo(
     () => parseCategory(searchParams.get("category")),
     [searchParams],
@@ -46,7 +48,7 @@ export function DropsPageClient() {
       <main>
         <div className="drops-page-intro">
           <Link href="/" className="back-link">
-            ← BACK TO HOME
+            {dict.common.backToHome}
           </Link>
         </div>
         <CatalogSection

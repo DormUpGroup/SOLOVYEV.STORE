@@ -3,8 +3,8 @@ import type { Dictionary } from "../types";
 export const ru: Dictionary = {
   hero: {
     subtitle: "SOLOVYEV STORE",
-    titleLine1: "ОТБОРНЫЙ",
-    titleLine2: "ОГОНЬ.",
+    titleLine1: "CURATED",
+    titleLine2: "HEAT.",
     description:
       "Премиальный консигнационный магазин стритвира и кроссовок в Израиле. Покупайте, продавайте и обменивайте 100% аутентичные вещи.",
     shopAll: "СМОТРЕТЬ ВСЁ.",
@@ -29,7 +29,7 @@ export const ru: Dictionary = {
   header: {
     allDrops: "ВСЕ ДРОПЫ",
     madeToOrder: "ПОД ЗАКАЗ",
-    brandNew: "BRAND NEW",
+    brandNew: "НОВЫЕ",
     brands: "БРЕНДЫ",
     aboutUs: "О НАС",
     sellTrade: "ПРОДАТЬ / ОБМЕН",
@@ -50,6 +50,12 @@ export const ru: Dictionary = {
     all: "ВСЕ",
     allBrands: "ВСЕ БРЕНДЫ",
     shopByBrand: "ПО БРЕНДАМ →",
+    shopByBrandEyebrow: "ПО БРЕНДАМ",
+    brandsTitle: "БРЕНДЫ",
+    brandsDesc: "Аутентичный стритвир и кроссовки — смотрите по лейблу.",
+    stockCount: "{count} в наличии",
+    brandPageDesc: "Аутентичные дропы {brand} из SOLOVYEV STORE Israel.",
+    viewAllBrands: "Все бренды",
     searchPlaceholder: "Поиск...",
     allSizes: "Все размеры",
     sortByPrice: "Сортировка по цене",
@@ -59,24 +65,32 @@ export const ru: Dictionary = {
     madeToOrderTitle: "ПОД ЗАКАЗ.",
     madeToOrderIntro:
       "Товары под заказ — напишите нам в WhatsApp. Срок поставки зависит от позиции.",
-    brandNewTitle: "BRAND NEW.",
+    brandNewTitle: "НОВЫЕ.",
     brandNewIntro:
-      "Deadstock и новые вещи — состояние 10/10. Аутентичность проверена перед публикацией.",
+      "Дедсток и новые вещи — состояние 10/10. Аутентичность проверена перед публикацией.",
   },
   cart: {
     title: "КОРЗИНА.",
     empty: "Корзина пуста.",
     size: "Размер",
-    oneSize: "One Size",
+    oneSize: "Один размер",
     subtotal: "Итого",
     checkout: "ОФОРМИТЬ В WHATSAPP",
+    creatingOrder: "СОЗДАЁМ ЗАКАЗ…",
     close: "Закрыть корзину",
     added: "Добавлено в корзину.",
     selectSize: "Выберите размер перед добавлением.",
+    decreaseQty: "Уменьшить количество",
+    increaseQty: "Увеличить количество",
+    removeItem: "Удалить товар",
   },
   product: {
     condition: "Состояние",
     brand: "Бренд",
+    category: "Категория",
+    sizes: "Размеры",
+    was: "Было",
+    na: "Н/Д",
     selectSize: "Выберите размер",
     outOfStock: "НЕТ В НАЛИЧИИ",
     contactForSize: "УТОЧНИТЕ РАЗМЕР",
@@ -85,13 +99,29 @@ export const ru: Dictionary = {
     statusNewDrop: "НОВЫЙ ДРОП",
     statusReserved: "ЗАБРОНИРОВАНО",
     statusSold: "ПРОДАНО",
+    statusDraft: "ЧЕРНОВИК",
     statusMadeToOrder: "ПОД ЗАКАЗ",
-    statusBrandNew: "BRAND NEW",
+    statusBrandNew: "НОВЫЕ",
+    addFavorite: "Добавить в избранное",
+    removeFavorite: "Убрать из избранного",
+    viewProduct: "Смотреть {title}",
+    photoN: "Фото {n}",
+  },
+  common: {
+    backToHome: "← НА ГЛАВНУЮ",
+    backToDrops: "← К ДРОПАМ",
+    backToStore: "← НАЗАД В МАГАЗИН",
+    personalAccount: "ЛИЧНЫЙ КАБИНЕТ",
+    language: "Язык",
+    mainNav: "Основная навигация",
+    mobileNav: "Мобильная навигация",
+    hiGreeting: "Привет, {name}!",
+    instagramPost: "Пост Instagram {n}",
   },
   account: {
     signIn: "Вход",
     signInHelp: "Введите email и пароль для входа в личный кабинет.",
-    email: "Email",
+    email: "Эл. почта",
     password: "Пароль",
     confirmPassword: "Повторите пароль",
     loginButton: "ВОЙТИ",
@@ -150,6 +180,7 @@ export const ru: Dictionary = {
   },
   footer: {
     privacy: "Политика конфиденциальности",
+    terms: "Пользовательское соглашение",
     faq: "ВОПРОСЫ",
     cart: "КОРЗИНА",
     shopTitle: "МАГАЗИН",
@@ -190,6 +221,8 @@ export const ru: Dictionary = {
     submit: "ОТПРАВИТЬ В WHATSAPP",
     required: "Обязательно",
     close: "Закрыть",
+    pageIntro:
+      "Отправьте вещь через портал оценки. Мы ответим в WhatsApp в течение 2 часов.",
   },
   faq: {
     title: "ВОПРОСЫ",
@@ -208,7 +241,7 @@ export const ru: Dictionary = {
       {
         question: "Доставка и самовывоз?",
         answer:
-          "Доставляем по всему Израилю. Стандарт через постаматы (Boxit/Cheetah) 2–4 рабочих дня — минимум 50 шекелей. Курьер до двери — минимум 50 шекелей. Бесплатная передача из рук в руки в Тель-Авиве и Хайфе по договорённости.",
+          "Доставляем по всему Израилю. Локер (Boxit/Cheetah) 2–4 рабочих дня — ₪25. Курьер до двери — ₪50. Бесплатная доставка от ₪1000. Бесплатная передача из рук в руки в Тель-Авиве и Хайфе по договорённости.",
       },
       {
         question: "Возвраты и обмены?",
@@ -223,7 +256,7 @@ export const ru: Dictionary = {
       {
         question: "Когда выходят новые дропы?",
         answer:
-          "Новые дропы каждую пятницу. Подпишитесь на @solovyev.store в Instagram. Позиции с меткой NEW DROP — из последнего релиза.",
+          "Новые дропы каждую пятницу. Подпишитесь на @solovyev.store в Instagram. Позиции с меткой «НОВЫЙ ДРОП» — из последнего релиза.",
       },
       {
         question: "Как проверяете аутентичность?",

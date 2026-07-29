@@ -15,6 +15,7 @@ import { QuickViewModal } from "@/components/modals/QuickViewModal";
 import { SellTradeModal } from "@/components/modals/SellTradeModal";
 import { FaqModal } from "@/components/modals/FaqModal";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 interface BrandCatalogPageProps {
   brandName: string;
@@ -22,6 +23,8 @@ interface BrandCatalogPageProps {
 
 export function BrandCatalogPage({ brandName }: BrandCatalogPageProps) {
   const [activeCategory, setActiveCategory] = useState<"all" | ProductCategory>("all");
+  const { dict } = useI18n();
+  const { catalog } = dict;
 
   return (
     <>
@@ -29,12 +32,12 @@ export function BrandCatalogPage({ brandName }: BrandCatalogPageProps) {
       <main>
         <section className="brand-page-intro">
           <div className="brand-page-intro-inner">
-            <p className="brand-page-eyebrow">SHOP BY BRAND</p>
+            <p className="brand-page-eyebrow">{catalog.shopByBrandEyebrow}</p>
             <h1>{brandName}</h1>
             <p className="brand-page-desc">
-              Authentic {brandName} drops from SOLOVYEV STORE Israel.{" "}
+              {catalog.brandPageDesc.replace("{brand}", brandName)}{" "}
               <Link href="/brands" className="inline-link">
-                View all brands
+                {catalog.viewAllBrands}
               </Link>
             </p>
           </div>

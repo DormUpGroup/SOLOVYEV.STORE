@@ -42,7 +42,7 @@ export function QuickViewModal() {
     new_drop: product.statusNewDrop,
     reserved: product.statusReserved,
     sold: product.statusSold,
-    draft: "DRAFT",
+    draft: product.statusDraft,
     made_to_order: product.statusMadeToOrder,
     brand_new: product.statusBrandNew,
   };
@@ -105,7 +105,7 @@ export function QuickViewModal() {
                     type="button"
                     className={`modal-thumb-btn${activeImg === url ? " active" : ""}`}
                     onClick={() => setActiveImg(url)}
-                    aria-label={`Photo ${idx + 1}`}
+                    aria-label={product.photoN.replace("{n}", String(idx + 1))}
                   >
                     <Image src={url} alt={`${selectedProduct.title} ${idx + 1}`} fill sizes="64px" style={{ objectFit: "cover" }} />
                   </button>

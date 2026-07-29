@@ -134,6 +134,7 @@ export function TrustSection() {
 
 export function InstagramStrip() {
   const { config } = useStore();
+  const { dict } = useI18n();
   return (
     <section className="horizontal-section">
       <div className="horizontal-header">
@@ -151,7 +152,7 @@ export function InstagramStrip() {
             >
               <Image
                 src={post}
-                alt={`Instagram post ${index + 1}`}
+                alt={dict.common.instagramPost.replace("{n}", String(index + 1))}
                 width={300}
                 height={300}
                 loading="lazy"

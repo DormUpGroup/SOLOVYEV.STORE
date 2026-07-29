@@ -13,9 +13,11 @@ import { FaqModal } from "@/components/modals/FaqModal";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { QuickViewModal } from "@/components/modals/QuickViewModal";
 import { useUI } from "@/components/providers/UIProvider";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 export default function SellTradePage() {
   const { openSellTrade } = useUI();
+  const { dict } = useI18n();
 
   useEffect(() => {
     openSellTrade();
@@ -27,13 +29,10 @@ export default function SellTradePage() {
       <main className="subpage-main">
         <div className="subpage-container">
           <Link href="/" className="back-link">
-            ← BACK TO STORE
+            {dict.common.backToStore}
           </Link>
-          <h1>SELL OR TRADE YOUR HEAT</h1>
-          <p>
-            Use the valuation portal to submit your item. We reply on WhatsApp
-            within 2 hours.
-          </p>
+          <h1>{dict.sellTrade.title}</h1>
+          <p>{dict.sellTrade.pageIntro}</p>
         </div>
       </main>
       <MinimalFooter />

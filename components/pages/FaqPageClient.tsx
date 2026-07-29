@@ -12,17 +12,20 @@ import { SellTradeModal } from "@/components/modals/SellTradeModal";
 import { FaqModal } from "@/components/modals/FaqModal";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { QuickViewModal } from "@/components/modals/QuickViewModal";
+import { useI18n } from "@/components/providers/I18nProvider";
 
 export function FaqPageClient() {
+  const { dict } = useI18n();
+
   return (
     <>
       <Header />
       <main className="subpage-main">
         <div className="subpage-container">
           <Link href="/" className="back-link">
-            ← BACK TO STORE
+            {dict.common.backToStore}
           </Link>
-          <h1>F.A.Q.</h1>
+          <h1>{dict.faq.title}</h1>
           <FaqAccordion />
         </div>
       </main>

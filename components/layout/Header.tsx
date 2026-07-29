@@ -151,7 +151,7 @@ function Header() {
   const mobileNavOverlay = (
     <div className={`mobile-nav-overlay ${menuOpen ? "open" : ""}`}>
       <div className="mobile-nav-container">
-        <nav className="mobile-nav" aria-label="Mobile navigation">
+        <nav className="mobile-nav" aria-label={dict.common.mobileNav}>
           <div className="mobile-nav-group">
             <Link
               href="/drops"
@@ -228,7 +228,7 @@ function Header() {
                 </div>
               </Link>
 
-              <nav className="desktop-nav" aria-label="Main navigation">
+              <nav className="desktop-nav" aria-label={dict.common.mainNav}>
                 <div className="nav-dropdown">
                   <Link
                     href="/drops"

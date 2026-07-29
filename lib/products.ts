@@ -36,17 +36,36 @@ export function isProductUnavailable(product: Product): boolean {
   return !product.sizes || product.sizes.length === 0;
 }
 
-export function getStatusLabel(status: ProductStatus): string {
-  const labels: Record<ProductStatus, string> = {
-    available: "",
-    new_drop: "NEW DROP",
-    reserved: "RESERVED",
-    sold: "SOLD",
-    draft: "DRAFT",
-    made_to_order: "MADE TO ORDER",
-    brand_new: "BRAND NEW",
+export function getStatusLabel(
+  status: ProductStatus,
+  labels?: {
+    statusNewDrop: string;
+    statusReserved: string;
+    statusSold: string;
+    statusDraft: string;
+    statusMadeToOrder: string;
+    statusBrandNew: string;
+  },
+): string {
+  const fallback = {
+    statusNewDrop: "NEW DROP",
+    statusReserved: "RESERVED",
+    statusSold: "SOLD",
+    statusDraft: "DRAFT",
+    statusMadeToOrder: "MADE TO ORDER",
+    statusBrandNew: "BRAND NEW",
   };
-  return labels[status];
+  const L = labels ?? fallback;
+  const map: Record<ProductStatus, string> = {
+    available: "",
+    new_drop: L.statusNewDrop,
+    reserved: L.statusReserved,
+    sold: L.statusSold,
+    draft: L.statusDraft,
+    made_to_order: L.statusMadeToOrder,
+    brand_new: L.statusBrandNew,
+  };
+  return map[status];
 }
 
 export function isBrandNewCondition(condition: string): boolean {

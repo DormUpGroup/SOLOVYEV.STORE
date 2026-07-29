@@ -106,7 +106,7 @@ export function ProductPurchasePanel({
           disabled={unavailable || checkoutBusy}
           onClick={() => void handleWhatsApp()}
         >
-          {checkoutBusy ? "CREATING ORDER…" : copy.orderWhatsApp}
+          {checkoutBusy ? dict.cart.creatingOrder : copy.orderWhatsApp}
         </button>
         <button
           type="button"

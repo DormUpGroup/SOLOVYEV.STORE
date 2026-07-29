@@ -36,6 +36,7 @@ export function MinimalFooter() {
     { href: "/about", label: header.aboutUs },
     { href: "/faq", label: footer.faq },
     { href: "/sell-trade", label: header.sellTrade },
+    { href: "/terms", label: footer.terms },
     { href: "/privacy", label: footer.privacy },
   ];
 
@@ -94,7 +95,13 @@ export function MinimalFooter() {
               </li>
               <li>
                 <a
-                  href={buildWhatsAppUrl(`Hi ${config.contacts.managerName}!`, config)}
+                  href={buildWhatsAppUrl(
+                    dict.common.hiGreeting.replace(
+                      "{name}",
+                      config.contacts.managerName,
+                    ),
+                    config,
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footer-contact-link"

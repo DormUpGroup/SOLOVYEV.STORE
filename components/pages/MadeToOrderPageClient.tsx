@@ -53,7 +53,7 @@ export function MadeToOrderPageClient({ products }: MadeToOrderPageClientProps) 
       <main>
         <div className="drops-page-intro">
           <Link href="/" className="back-link">
-            ← BACK TO HOME
+            {dict.common.backToHome}
           </Link>
           <p className="made-to-order-intro">{dict.catalog.madeToOrderIntro}</p>
         </div>

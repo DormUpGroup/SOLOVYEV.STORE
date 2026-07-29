@@ -45,7 +45,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const { favoriteIds, toggleFavorite } = useFavorites();
   const sym = config.currency.symbol;
   const unavailable = isProductUnavailable(product);
-  const statusLabel = getStatusLabel(product.status);
+  const statusLabel = getStatusLabel(product.status, dict.product);
   const categoryLabel = dict.categories[product.category];
   const metaRight = statusLabel || formatConditionScore(product.condition);
 
@@ -60,7 +60,11 @@ export function ProductCard({ product }: ProductCardProps) {
         type="button"
         className={`favorite-btn${favoriteIds.has(product.id) ? " active" : ""}`}
         onClick={() => void toggleFavorite(product.id)}
-        aria-label={favoriteIds.has(product.id) ? "Remove from favorites" : "Add to favorites"}
+        aria-label={
+          favoriteIds.has(product.id)
+            ? dict.product.removeFavorite
+            : dict.product.addFavorite
+        }
         aria-pressed={favoriteIds.has(product.id)}
       >
         {favoriteIds.has(product.id) ? "♥" : "♡"}
@@ -69,7 +73,7 @@ export function ProductCard({ product }: ProductCardProps) {
         type="button"
         className="product-img-hit"
         onClick={open}
-        aria-label={`View ${product.title}`}
+        aria-label={dict.product.viewProduct.replace("{title}", product.title)}
       >
         <ProductImageLoupe
           src={product.img}

@@ -1,18 +1,14 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  formatPrice,
   formatPriceOrDm,
   getProductBySlug,
-  getStatusLabel,
   isProductUnavailable,
 } from "@/lib/products";
-import { absoluteProductImageUrl, productImageSrc } from "@/lib/product-image";
+import { absoluteProductImageUrl } from "@/lib/product-image";
 import { getConfig, getProductBySlugFromStore, getProducts } from "@/lib/data/store";
 import { ProductPageClient } from "@/components/product/ProductPageClient";
-import { ProductPurchasePanel } from "@/components/product/ProductPurchasePanel";
+import { ProductPageDetails } from "@/components/product/ProductPageDetails";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -59,13 +55,9 @@ export default async function ProductPage({ params }: PageProps) {
   ]);
   if (!product) notFound();
 
-  const sym = config.currency.symbol;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
   const unavailable = isProductUnavailable(product);
-  const statusLabel = getStatusLabel(product.status);
-
   const imageUrl = absoluteProductImageUrl(siteUrl, product.img);
-  const safeImg = productImageSrc(product.img);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -92,55 +84,10 @@ export default async function ProductPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <ProductPageClient product={product}>
-        <article className="product-page">
-          <Link href="/drops" className="back-link">
-            ← BACK TO DROPS
-          </Link>
-          <div className="product-page-grid">
-            <div className="product-page-image">
-              {safeImg ? (
-                <Image
-                  src={safeImg}
-                  alt={product.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  priority
-                />
-              ) : (
-                <div className="product-img-placeholder" aria-hidden="true" />
-              )}
-              {statusLabel ? (
-                <span className={`product-status-badge status-${product.status}`}>
-                  {statusLabel}
-                </span>
-              ) : null}
-            </div>
-            <div className="product-page-details">
-              <p className="product-page-brand">{product.brand}</p>
-              <h1>{product.title}</h1>
-              <p className="modal-price">{formatPriceOrDm(product.price, sym)}</p>
-              {product.description ? (
-                <p className="product-description">{product.description}</p>
-              ) : null}
-              {product.originalPrice ? (
-                <p className="original-price-inline">
-                  Was {formatPrice(product.originalPrice, sym)}
-                </p>
-              ) : null}
-              <p>
-                <strong>Condition:</strong> {product.condition}
-              </p>
-              <p>
-                <strong>Category:</strong> {product.category}
-              </p>
-              <p>
-                <strong>Sizes:</strong>{" "}
-                {product.sizes.length ? product.sizes.join(", ") : "N/A"}
-              </p>
-              <ProductPurchasePanel product={product} showQuickView={false} />
-            </div>
-          </div>
-        </article>
+        <ProductPageDetails
+          product={product}
+          currencySymbol={config.currency.symbol}
+        />
       </ProductPageClient>
     </>
   );

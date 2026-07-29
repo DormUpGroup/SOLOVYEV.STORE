@@ -3,8 +3,8 @@ import type { Dictionary } from "../types";
 export const he: Dictionary = {
   hero: {
     subtitle: "SOLOVYEV STORE",
-    titleLine1: "מאוצר",
-    titleLine2: "חם.",
+    titleLine1: "CURATED",
+    titleLine2: "HEAT.",
     description:
       "חנות קונסיגנציה פרימיום לסטריטוור וסניקרס בישראל. קנו, מכרו והחליפו פריטים אותנטיים ב-100%.",
     shopAll: "לכל המוצרים.",
@@ -29,7 +29,7 @@ export const he: Dictionary = {
   header: {
     allDrops: "כל הדרופים",
     madeToOrder: "בהזמנה",
-    brandNew: "BRAND NEW",
+    brandNew: "חדש",
     brands: "מותגים",
     aboutUs: "אודותינו",
     sellTrade: "מכירה / החלפה",
@@ -50,6 +50,12 @@ export const he: Dictionary = {
     all: "הכל",
     allBrands: "כל המותגים",
     shopByBrand: "לפי מותג →",
+    shopByBrandEyebrow: "לפי מותג",
+    brandsTitle: "מותגים",
+    brandsDesc: "סטריטוור וסניקרס אותנטיים — דפדוף לפי מותג.",
+    stockCount: "{count} במלאי",
+    brandPageDesc: "דרופים אותנטיים של {brand} מ-SOLOVYEV STORE Israel.",
+    viewAllBrands: "כל המותגים",
     searchPlaceholder: "חיפוש...",
     allSizes: "כל המידות",
     sortByPrice: "מיון לפי מחיר",
@@ -58,9 +64,9 @@ export const he: Dictionary = {
     noResults: "לא נמצאו פריטים.",
     madeToOrderTitle: "בהזמנה.",
     madeToOrderIntro: "פריטים בהזמנה — שלחו לנו הודעה ב-WhatsApp. זמן אספקה משתנה.",
-    brandNewTitle: "BRAND NEW.",
+    brandNewTitle: "חדש.",
     brandNewIntro:
-      "Deadstock ופריטים חדשים — מצב 10/10. אותנטיות מאומתת לפני פרסום.",
+      "דדסטוק ופריטים חדשים — מצב 10/10. אותנטיות מאומתת לפני פרסום.",
   },
   cart: {
     title: "העגלה שלך.",
@@ -69,13 +75,21 @@ export const he: Dictionary = {
     oneSize: "מידה אחת",
     subtotal: "סכום ביניים",
     checkout: "תשלום ב-WhatsApp",
+    creatingOrder: "יוצרים הזמנה…",
     close: "סגירת עגלה",
     added: "נוסף לעגלה.",
     selectSize: "בחרו מידה לפני ההוספה.",
+    decreaseQty: "הקטנת כמות",
+    increaseQty: "הגדלת כמות",
+    removeItem: "הסרת פריט",
   },
   product: {
     condition: "מצב",
     brand: "מותג",
+    category: "קטגוריה",
+    sizes: "מידות",
+    was: "היה",
+    na: "לא זמין",
     selectSize: "בחירת מידה",
     outOfStock: "אזל מהמלאי",
     contactForSize: "צרו קשר לגבי מידה",
@@ -84,8 +98,24 @@ export const he: Dictionary = {
     statusNewDrop: "דרופ חדש",
     statusReserved: "שמור",
     statusSold: "נמכר",
+    statusDraft: "טיוטה",
     statusMadeToOrder: "בהזמנה",
-    statusBrandNew: "BRAND NEW",
+    statusBrandNew: "חדש",
+    addFavorite: "הוספה למועדפים",
+    removeFavorite: "הסרה מהמועדפים",
+    viewProduct: "צפייה ב-{title}",
+    photoN: "תמונה {n}",
+  },
+  common: {
+    backToHome: "← חזרה לדף הבית",
+    backToDrops: "← חזרה לדרופים",
+    backToStore: "← חזרה לחנות",
+    personalAccount: "חשבון אישי",
+    language: "שפה",
+    mainNav: "ניווט ראשי",
+    mobileNav: "ניווט לנייד",
+    hiGreeting: "היי {name}!",
+    instagramPost: "פוסט אינסטגרם {n}",
   },
   account: {
     signIn: "התחברות",
@@ -149,6 +179,7 @@ export const he: Dictionary = {
   },
   footer: {
     privacy: "מדיניות פרטיות",
+    terms: "תנאי שימוש",
     faq: "שאלות",
     cart: "עגלה",
     shopTitle: "חנות",
@@ -189,6 +220,8 @@ export const he: Dictionary = {
     submit: "שליחה ב-WhatsApp",
     required: "שדה חובה",
     close: "סגירה",
+    pageIntro:
+      "שלחו את הפריט דרך פורטל ההערכה. נשיב ב-WhatsApp תוך שעתיים.",
   },
   faq: {
     title: "שאלות",
@@ -207,7 +240,7 @@ export const he: Dictionary = {
       {
         question: "משלוח ואיסוף?",
         answer:
-          "משלוחים בכל ישראל. משלוח סטנדרטי ללוקרים (Boxit/Cheetah) 2–4 ימי עסקים — מינימום 50 שקל. שליח עד הבית — מינימום 50 שקל. מסירה מיד ביד בתל אביב וחיפה בתיאום.",
+          "משלוחים בכל ישראל. לוקר (Boxit/Cheetah) 2–4 ימי עסקים — ₪25. שליח עד הבית — ₪50. משלוח חינם בהזמנות מ-₪1000 ומעלה. מסירה מיד ביד בתל אביב וחיפה בתיאום — ללא עלות.",
       },
       {
         question: "החזרות והחלפות?",
@@ -222,7 +255,7 @@ export const he: Dictionary = {
       {
         question: "מתי יוצאים דרופים חדשים?",
         answer:
-          "דרופים חדשים כל שישי. עקבו אחרי @solovyev.store באינסטגרם. פריטים עם תווית NEW DROP — מהריליס האחרון.",
+          "דרופים חדשים כל שישי. עקבו אחרי @solovyev.store באינסטגרם. פריטים עם תווית «דרופ חדש» — מהריליס האחרון.",
       },
       {
         question: "איך מאמתים אותנטיות?",

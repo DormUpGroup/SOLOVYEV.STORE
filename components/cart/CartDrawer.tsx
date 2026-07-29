@@ -149,7 +149,7 @@ export function CartDrawer() {
                       <button
                         type="button"
                         className="qty-minus"
-                        aria-label="Decrease quantity"
+                        aria-label={cartText.decreaseQty}
                         onClick={() => updateQuantity(item.id, item.size, -1)}
                       >
                         &minus;
@@ -158,7 +158,7 @@ export function CartDrawer() {
                       <button
                         type="button"
                         className="qty-plus"
-                        aria-label="Increase quantity"
+                        aria-label={cartText.increaseQty}
                         onClick={() => updateQuantity(item.id, item.size, 1)}
                       >
                         +
@@ -167,7 +167,7 @@ export function CartDrawer() {
                     <button
                       type="button"
                       className="remove-btn"
-                      aria-label="Remove item"
+                      aria-label={cartText.removeItem}
                       onClick={() => removeFromCart(item.id, item.size)}
                     >
                       <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
@@ -192,7 +192,7 @@ export function CartDrawer() {
             disabled={cart.length === 0 || checkingOut}
             onClick={() => void handleCheckout()}
           >
-            {checkingOut ? "CREATING ORDER…" : cartText.checkout}
+            {checkingOut ? cartText.creatingOrder : cartText.checkout}
           </button>
           {checkoutError ? <p className="account-error" role="alert">{checkoutError}</p> : null}
         </div>

@@ -5,7 +5,7 @@ import { localeLabels, locales, type Locale } from "@/lib/i18n";
 import { useI18n } from "@/components/providers/I18nProvider";
 
 export function LanguageSwitcher() {
-  const { locale, setLocale, isHydrated } = useI18n();
+  const { locale, setLocale, isHydrated, dict } = useI18n();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const listId = useId();
@@ -46,7 +46,7 @@ export function LanguageSwitcher() {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listId}
-        aria-label="Language"
+        aria-label={dict.common.language}
       >
         <span>{localeLabels[displayLocale]}</span>
         <svg
@@ -72,7 +72,7 @@ export function LanguageSwitcher() {
           id={listId}
           className="lang-switcher-menu"
           role="listbox"
-          aria-label="Language"
+          aria-label={dict.common.language}
         >
           {locales.map((code) => (
             <li key={code} role="option" aria-selected={displayLocale === code}>
