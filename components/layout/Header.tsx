@@ -13,7 +13,7 @@ import { AnnouncementBar } from "@/components/layout/Marquees";
 import { StoreLogoMark } from "@/components/layout/StoreLogo";
 import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 import type { ProductCategory } from "@/lib/types";
-import { accountInitial, useAuth } from "@/components/providers/AuthProvider";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 const categoryKeys: Record<ProductCategory, "sneakers" | "clothing" | "accessories"> = {
   sneakers: "sneakers",
@@ -31,8 +31,7 @@ function Header() {
   const displayCount = isHydrated ? cartCount : 0;
   const { openSellTrade } = useUI();
   const { dict } = useI18n();
-  const { user, displayName } = useAuth();
-  const accountLetter = accountInitial(displayName, user?.email);
+  const { user } = useAuth();
   const { header, categories } = dict;
   const pathname = usePathname();
   const [categoryParam, setCategoryParam] = useState<string | null>(null);
@@ -294,19 +293,13 @@ function Header() {
                 <LanguageSwitcher />
                 <Link
                   href={user ? "/account" : "/login"}
-                  className="account-icon-btn"
+                  className={`account-icon-btn${user ? " account-icon-btn--signed-in" : ""}`}
                   aria-label={header.account}
                   title={header.account}
                 >
-                  {user && accountLetter ? (
-                    <span className="account-avatar-letter" aria-hidden="true">
-                      {accountLetter}
-                    </span>
-                  ) : (
-                    <svg className="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-5 0-9 2.5-9 5.5V22h18v-2.5C21 16.5 17 14 12 14z" />
-                    </svg>
-                  )}
+                  <svg className="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-5 0-9 2.5-9 5.5V22h18v-2.5C21 16.5 17 14 12 14z" />
+                  </svg>
                 </Link>
                 <a
                   href={config.contacts.instagramUrl}
