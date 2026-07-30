@@ -100,11 +100,3 @@ export function useAuth() {
   if (!value) throw new Error("useAuth must be used within AuthProvider");
   return value;
 }
-
-export function accountInitial(displayName: string | null | undefined, email?: string | null) {
-  const fromName = displayName?.trim().charAt(0);
-  if (fromName) return fromName.toLocaleUpperCase();
-  const fromEmail = email?.trim().charAt(0);
-  if (fromEmail) return fromEmail.toLocaleUpperCase();
-  return null;
-}
