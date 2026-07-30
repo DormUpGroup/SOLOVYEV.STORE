@@ -15,6 +15,7 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { FaqModal } from "@/components/modals/FaqModal";
 import { QuickViewModal } from "@/components/modals/QuickViewModal";
 import { SellTradeModal } from "@/components/modals/SellTradeModal";
+import { ThemeToggle } from "@/components/account/ThemeToggle";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useStore } from "@/components/providers/StoreProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
@@ -61,11 +62,9 @@ export default function AccountPage() {
   const [success, setSuccess] = useState("");
   const [saving, setSaving] = useState(false);
   const [marketingBusy, setMarketingBusy] = useState(false);
-  const [editingName, setEditingName] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [displayName, setDisplayName] = useState("");
-  const [editingPhone, setEditingPhone] = useState(false);
   const [phone, setPhone] = useState("");
-  const [phoneSaving, setPhoneSaving] = useState(false);
 
   useEffect(() => {
     fetch("/api/account")
@@ -98,93 +97,67 @@ export default function AccountPage() {
 
   const startEdit = () => {
     setDisplayName(savedName);
-    setEditingName(true);
+    setPhone(savedPhone);
+    setEditing(true);
     setError("");
     setSuccess("");
   };
 
   const cancelEdit = () => {
     setDisplayName(savedName);
-    setEditingName(false);
-    setError("");
-  };
-
-  const startEditPhone = () => {
     setPhone(savedPhone);
-    setEditingPhone(true);
-    setError("");
-    setSuccess("");
-  };
-
-  const cancelEditPhone = () => {
-    setPhone(savedPhone);
-    setEditingPhone(false);
+    setEditing(false);
     setError("");
   };
 
-  const savePhone = async (event: FormEvent) => {
+  const saveProfile = async (event: FormEvent) => {
     event.preventDefault();
-    const next = phone.trim().slice(0, 30);
-    setPhoneSaving(true);
-    setError("");
-    setSuccess("");
-    const response = await fetch("/api/account", {
-      method: "PATCH",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ phone: next }),
-    });
-    const body = await response.json() as {
-      error?: string;
-      profile?: { display_name?: string | null; phone?: string | null; marketing_email_opt_in?: boolean | null };
-    };
-    setPhoneSaving(false);
-    if (!response.ok) {
-      setError(body.error || "Could not save phone");
-      return;
-    }
-    const nextPhone = body.profile?.phone?.trim() || next;
-    setPhone(nextPhone);
-    setData((prev) =>
-      prev
-        ? { ...prev, profile: { ...prev.profile, ...body.profile, phone: nextPhone || null } }
-        : prev,
-    );
-    setEditingPhone(false);
-    setSuccess(copy.phoneSaved);
-  };
-
-  const saveName = async (event: FormEvent) => {
-    event.preventDefault();
-    const next = displayName.trim();
-    if (!next) {
+    const nextName = displayName.trim();
+    if (!nextName) {
       setError(copy.nameRequired);
       return;
     }
+    const nextPhone = phone.trim().slice(0, 30);
     setSaving(true);
     setError("");
     setSuccess("");
     const response = await fetch("/api/account", {
       method: "PATCH",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ displayName: next }),
+      body: JSON.stringify({ displayName: nextName, phone: nextPhone }),
     });
     const body = await response.json() as {
       error?: string;
-      profile?: { display_name?: string | null; marketing_email_opt_in?: boolean | null };
+      profile?: {
+        display_name?: string | null;
+        phone?: string | null;
+        marketing_email_opt_in?: boolean | null;
+      };
     };
     setSaving(false);
     if (!response.ok) {
       setError(body.error || "Could not save profile");
       return;
     }
-    const nextName = body.profile?.display_name?.trim() || next;
-    setDisplayName(nextName);
+    const savedDisplayName = body.profile?.display_name?.trim() || nextName;
+    const savedPhoneValue = body.profile?.phone?.trim() || nextPhone;
+    setDisplayName(savedDisplayName);
+    setPhone(savedPhoneValue);
     setData((prev) =>
       prev
-        ? { ...prev, profile: { ...prev.profile, ...body.profile, display_name: nextName } }
+        ? {
+            ...prev,
+            profile: {
+              ...prev.profile,
+              ...body.profile,
+              display_name: savedDisplayName,
+              phone: savedPhoneValue || null,
+            },
+          }
         : prev,
     );
-    setEditingName(false);
+    setEditing(false);
+    setSuccess(copy.profileSaved);
     await refreshProfile();
   };
 
@@ -229,64 +202,63 @@ export default function AccountPage() {
       <main className="account-page">
         <div className="account-page-header">
           <p className="account-eyebrow">SOLOVYEV STORE</p>
-          {editingName ? (
-            <form className="account-name-edit" onSubmit={saveName}>
-              <input
-                value={displayName}
-                onChange={(event) => setDisplayName(event.target.value)}
-                maxLength={80}
-                autoFocus
-                aria-label={copy.name}
-                placeholder={copy.namePlaceholder}
-              />
-              <button type="submit" className="account-name-action" disabled={saving}>
-                {saving ? copy.saving : copy.save}
-              </button>
-              <button type="button" className="account-name-action" onClick={cancelEdit} disabled={saving}>
-                {copy.cancelEdit}
-              </button>
-            </form>
-          ) : (
-            <div className="account-greeting-row">
-              <h1>
-                {savedName
-                  ? copy.greeting.replace("{name}", savedName)
-                  : copy.title}
-              </h1>
+          <div className="account-greeting-row">
+            <h1>
+              {savedName
+                ? copy.greeting.replace("{name}", savedName)
+                : copy.title}
+            </h1>
+            {!editing ? (
               <button type="button" className="account-edit-name" onClick={startEdit}>
-                {copy.editName}
+                {copy.editProfile}
               </button>
-            </div>
-          )}
+            ) : null}
+          </div>
           <p className="account-muted">{data?.user.email}</p>
-          {editingPhone ? (
-            <form className="account-name-edit" onSubmit={savePhone}>
-              <input
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
-                maxLength={30}
-                autoFocus
-                aria-label={copy.phone}
-                placeholder={copy.phonePlaceholder}
-                inputMode="tel"
-              />
-              <button type="submit" className="account-name-action" disabled={phoneSaving}>
-                {phoneSaving ? copy.saving : copy.save}
-              </button>
-              <button type="button" className="account-name-action" onClick={cancelEditPhone} disabled={phoneSaving}>
-                {copy.cancelEdit}
-              </button>
+          {!editing ? (
+            <p className="account-muted">
+              {copy.phone}: {savedPhone || "—"}
+            </p>
+          ) : null}
+
+          {editing ? (
+            <form className="account-profile-edit" onSubmit={saveProfile}>
+              <label>
+                {copy.name}
+                <input
+                  value={displayName}
+                  onChange={(event) => setDisplayName(event.target.value)}
+                  maxLength={80}
+                  autoFocus
+                  placeholder={copy.namePlaceholder}
+                />
+              </label>
+              <label>
+                {copy.phone}
+                <input
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                  maxLength={30}
+                  placeholder={copy.phonePlaceholder}
+                  inputMode="tel"
+                />
+              </label>
+              <ThemeToggle />
+              <div className="account-profile-edit-actions">
+                <button type="submit" className="btn-primary" disabled={saving}>
+                  {saving ? copy.saving : copy.save}
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={cancelEdit}
+                  disabled={saving}
+                >
+                  {copy.cancelEdit}
+                </button>
+              </div>
             </form>
-          ) : (
-            <div className="account-greeting-row">
-              <p className="account-muted">
-                {copy.phone}: {savedPhone || "—"}
-              </p>
-              <button type="button" className="account-edit-name" onClick={startEditPhone}>
-                {copy.editPhone}
-              </button>
-            </div>
-          )}
+          ) : null}
         </div>
 
         {error ? <p className="account-error" role="alert">{error}</p> : null}

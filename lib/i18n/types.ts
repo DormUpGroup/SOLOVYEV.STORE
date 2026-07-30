@@ -153,6 +153,7 @@ export interface Dictionary {
     title: string;
     greeting: string;
     editName: string;
+    editProfile: string;
     cancelEdit: string;
     signOut: string;
     loading: string;
@@ -164,6 +165,10 @@ export interface Dictionary {
     phonePlaceholder: string;
     editPhone: string;
     phoneSaved: string;
+    profileSaved: string;
+    theme: string;
+    themeDark: string;
+    themeLight: string;
     onboardingTitle: string;
     onboardingHelp: string;
     continueButton: string;

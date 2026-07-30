@@ -64,6 +64,21 @@
   --backdrop-color: rgba(0, 0, 0, 0.8);
 }
 
+html[data-theme="light"] {
+  --bg-color: #f4f2ee;
+  --bg-card: #ffffff;
+  --bg-studio: #ebe7e1;
+  --accent-color: #111111;
+  --accent-glow: rgba(17, 17, 17, 0.06);
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --text-mute: #888888;
+  --border-color: #111111;
+  --border-active: #111111;
+  --bg-bar: rgba(244, 242, 238, 0.94);
+  --backdrop-color: rgba(17, 17, 17, 0.45);
+}
+
 html {
   scroll-behavior: smooth;
   background-color: var(--bg-color);
@@ -4524,6 +4539,99 @@ body.no-scroll {
 
 .account-empty-block .account-muted {
   margin: 0;
+}
+
+.account-profile-edit {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+  max-width: 420px;
+}
+
+.account-profile-edit label {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.account-profile-edit input {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  background: var(--bg-color);
+  color: var(--text-primary);
+  padding: 14px 16px;
+  font: inherit;
+}
+
+.account-profile-edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.theme-toggle {
+  display: grid;
+  gap: 10px;
+}
+
+.theme-toggle-label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.theme-switch {
+  position: relative;
+  display: inline-flex;
+  width: 100%;
+  max-width: 280px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  font: inherit;
+}
+
+.theme-switch-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  min-height: 44px;
+}
+
+.theme-switch-option {
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  transition: color 0.2s ease;
+}
+
+.theme-switch:not(.theme-switch--light) .theme-switch-option:first-child,
+.theme-switch--light .theme-switch-option:last-child {
+  color: var(--bg-color);
+}
+
+.theme-switch-thumb {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  inset-inline-start: 4px;
+  width: calc(50% - 4px);
+  background: var(--text-primary);
+  transition: inset-inline-start 0.22s ease;
+}
+
+.theme-switch--light .theme-switch-thumb {
+  inset-inline-start: calc(50%);
 }
 
 .account-order-list {

@@ -1,10 +1,9 @@
-"use client";
-
 import { CartProvider } from "@/components/providers/CartProvider";
 import { UIProvider } from "@/components/providers/UIProvider";
 import { I18nProvider } from "@/components/providers/I18nProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { FavoritesProvider } from "@/components/providers/FavoritesProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import {
   StoreProvider,
   type StoreContextValue,
@@ -19,15 +18,17 @@ export function AppProviders({
 }) {
   return (
     <StoreProvider value={store}>
-      <I18nProvider>
-        <AuthProvider>
-          <FavoritesProvider>
-            <CartProvider>
-              <UIProvider>{children}</UIProvider>
-            </CartProvider>
-          </FavoritesProvider>
-        </AuthProvider>
-      </I18nProvider>
+      <ThemeProvider>
+        <I18nProvider>
+          <AuthProvider>
+            <FavoritesProvider>
+              <CartProvider>
+                <UIProvider>{children}</UIProvider>
+              </CartProvider>
+            </FavoritesProvider>
+          </AuthProvider>
+        </I18nProvider>
+      </ThemeProvider>
     </StoreProvider>
   );
 }
