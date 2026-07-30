@@ -4203,6 +4203,20 @@ body.no-scroll {
   fill: currentColor;
 }
 
+.account-avatar-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+  user-select: none;
+}
+
 .favorite-btn {
   position: absolute;
   z-index: 4;
@@ -4505,6 +4519,11 @@ body.no-scroll {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+}
+
+.account-empty-link {
+  display: inline-flex;
+  width: fit-content;
 }
 
 .account-order-list {
