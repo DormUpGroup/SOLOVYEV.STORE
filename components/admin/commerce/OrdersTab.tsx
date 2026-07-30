@@ -20,6 +20,7 @@ import {
   type CommerceSummary,
 } from "@/lib/admin/commerce-types";
 import { OrderStatusBadge } from "@/components/admin/commerce/OrderStatusBadge";
+import { buildAdminOrderReplyMessage } from "@/lib/whatsapp";
 import styles from "@/app/admin/admin.module.css";
 
 ChartJS.register(
@@ -132,6 +133,15 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
       showToast(err instanceof Error ? err.message : "Failed to update status", false);
     } finally {
       setDetailBusy(false);
+    }
+  };
+
+  const copyText = async (text: string, okMessage: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast(okMessage);
+    } catch {
+      showToast("Could not copy to clipboard", false);
     }
   };
 
@@ -424,6 +434,34 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
                       </option>
                     ))}
                   </select>
+                  <button
+                    type="button"
+                    className={styles.btn}
+                    onClick={() =>
+                      void copyText(
+                        selected.orderRef,
+                        `Copied ${selected.orderRef} — paste into WhatsApp search`,
+                      )
+                    }
+                  >
+                    Copy order ref
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.btn}
+                    onClick={() =>
+                      void copyText(
+                        buildAdminOrderReplyMessage({
+                          orderRef: selected.orderRef,
+                          itemTitles: selected.items.map((item) => item.productTitle),
+                          customerName: selected.customerName,
+                        }),
+                        "Reply copied — paste into the WhatsApp chat",
+                      )
+                    }
+                  >
+                    Copy reply
+                  </button>
                   {selected.customerChatUrl ? (
                     <a
                       className={styles.btn}
@@ -433,12 +471,11 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
                     >
                       Go to chat
                     </a>
-                  ) : (
-                    <span className={styles.hint} title="Customer must save a phone in /account">
-                      Go to chat unavailable — no customer phone
-                    </span>
-                  )}
+                  ) : null}
                 </div>
+                <p className={styles.hint} style={{ marginTop: 0 }}>
+                  Find chat: WhatsApp search → paste order ref (after customer sent the order).
+                </p>
                 <div className={styles.tableWrap}>
                   <table className={styles.table}>
                     <thead>

@@ -67,7 +67,7 @@ independent from customer Supabase Auth.
 
 - **Catalog / Made to order / Brand new** — CRUD товаров, статусы наличия, фото
 - **Users** — клиенты, поиск, фильтр «есть заказы», карточка с историей
-- **Orders** — WhatsApp-заказы (`SS-…`), статусы, Go to chat (клиент), сводка 7/30/90д
+- **Orders** — WhatsApp-заказы (`SS-…`), статусы, Copy order ref / Copy reply, сводка 7/30/90д
 - **FAQ** — вопросы/ответы на сайте
 - **Settings** — контакты (в т.ч. WhatsApp), валюта, анонсы, hero
 - **Analytics** — события витрины (`analytics_events`)

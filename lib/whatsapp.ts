@@ -34,6 +34,24 @@ export function normalizeWhatsAppPhone(phone: string | null | undefined): string
   return digits;
 }
 
+export function buildAdminOrderReplyMessage(options: {
+  orderRef: string;
+  itemTitles: string[];
+  customerName?: string | null;
+}): string {
+  const titles = options.itemTitles.filter(Boolean).slice(0, 5);
+  const about =
+    titles.length > 0
+      ? titles.join(", ") + (options.itemTitles.length > 5 ? "…" : "")
+      : "your order";
+  const name = options.customerName?.trim();
+  const greeting = name ? `Hi ${name}!` : "Hi!";
+  return (
+    `${greeting} Re order ${options.orderRef} about: ${about}. ` +
+    `Happy to confirm availability and shipping.`
+  );
+}
+
 export function buildAdminCustomerChatUrl(options: {
   phone: string | null | undefined;
   orderRef: string;
@@ -42,18 +60,7 @@ export function buildAdminCustomerChatUrl(options: {
 }): string | null {
   const digits = normalizeWhatsAppPhone(options.phone);
   if (!digits) return null;
-
-  const titles = options.itemTitles.filter(Boolean).slice(0, 5);
-  const about =
-    titles.length > 0
-      ? titles.join(", ") + (options.itemTitles.length > 5 ? "…" : "")
-      : "your order";
-  const name = options.customerName?.trim();
-  const greeting = name ? `Hi ${name}!` : "Hi!";
-  const message =
-    `${greeting} Re order ${options.orderRef} about: ${about}. ` +
-    `Happy to confirm availability and shipping.`;
-
+  const message = buildAdminOrderReplyMessage(options);
   return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
 }
 
