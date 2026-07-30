@@ -196,6 +196,7 @@ create table if not exists orders (
   currency_symbol text not null,
   subtotal numeric not null check (subtotal >= 0),
   whatsapp_url text,
+  customer_phone text,
   admin_notes text,
   tracking_code text,
   shipping_method text,
@@ -449,3 +450,7 @@ create policy "Users read own order status events"
         and orders.user_id = auth.uid()
     )
   );
+
+-- ── 009 order customer phone snapshot ───────────────────────────────────────
+
+alter table orders add column if not exists customer_phone text;

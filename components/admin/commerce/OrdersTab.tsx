@@ -408,6 +408,7 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
                 <p className={styles.hint}>
                   {selected.customerEmail || "Unknown customer"}
                   {selected.customerName ? ` · ${selected.customerName}` : ""}
+                  {selected.customerPhone ? ` · ${selected.customerPhone}` : ""}
                 </p>
                 <div style={{ display: "flex", gap: 8, alignItems: "center", margin: "12px 0", flexWrap: "wrap" }}>
                   <OrderStatusBadge status={selected.status} />
@@ -423,16 +424,20 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
                       </option>
                     ))}
                   </select>
-                  {selected.whatsappUrl ? (
+                  {selected.customerChatUrl ? (
                     <a
                       className={styles.btn}
-                      href={selected.whatsappUrl}
+                      href={selected.customerChatUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Open WhatsApp
+                      Go to chat
                     </a>
-                  ) : null}
+                  ) : (
+                    <span className={styles.hint} title="Customer must save a phone in /account">
+                      Go to chat unavailable — no customer phone
+                    </span>
+                  )}
                 </div>
                 <div className={styles.tableWrap}>
                   <table className={styles.table}>

@@ -57,18 +57,22 @@ export async function POST(request: NextRequest) {
     },
   );
   const whatsappUrl = buildWhatsAppUrl(message, config);
+  const customerPhone = profile?.phone?.trim() || null;
 
   try {
     const admin = createServiceClient();
     const { error: urlError } = await admin
       .from("orders")
-      .update({ whatsapp_url: whatsappUrl })
+      .update({
+        whatsapp_url: whatsappUrl,
+        customer_phone: customerPhone,
+      })
       .eq("id", order.order_id);
     if (urlError) {
-      console.error("Failed to persist whatsapp_url:", urlError.message);
+      console.error("Failed to persist whatsapp_url/customer_phone:", urlError.message);
     }
   } catch (persistError) {
-    console.error("Failed to persist whatsapp_url:", persistError);
+    console.error("Failed to persist whatsapp_url/customer_phone:", persistError);
   }
 
   return NextResponse.json({

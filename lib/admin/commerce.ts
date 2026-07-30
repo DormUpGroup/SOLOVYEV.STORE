@@ -10,6 +10,7 @@ import {
   type AdminUserRow,
   type CommerceSummary,
 } from "@/lib/admin/commerce-types";
+import { buildAdminCustomerChatUrl } from "@/lib/whatsapp";
 
 type ProfileRow = {
   id: string;
@@ -30,6 +31,7 @@ type OrderRow = {
   currency_symbol: string;
   subtotal: number | string;
   whatsapp_url?: string | null;
+  customer_phone?: string | null;
   admin_notes?: string | null;
   tracking_code?: string | null;
   shipping_method?: string | null;
@@ -316,16 +318,20 @@ export async function listAdminOrders(options: {
 }
 
 async function loadProfilesMap(userIds: string[]) {
-  const map = new Map<string, { email: string; display_name: string | null }>();
+  const map = new Map<string, { email: string; display_name: string | null; phone: string | null }>();
   if (!userIds.length) return map;
   const admin = createServiceClient();
   const { data, error } = await admin
     .from("profiles")
-    .select("id,email,display_name")
+    .select("id,email,display_name,phone")
     .in("id", userIds);
   if (error) throw new Error(error.message);
   for (const row of data ?? []) {
-    map.set(row.id, { email: row.email, display_name: row.display_name });
+    map.set(row.id, {
+      email: row.email,
+      display_name: row.display_name,
+      phone: row.phone ?? null,
+    });
   }
   return map;
 }
@@ -335,7 +341,7 @@ export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null
   const { data, error } = await admin
     .from("orders")
     .select(
-      "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,whatsapp_url,admin_notes,tracking_code,shipping_method,assignee,created_at,updated_at,order_items(*)",
+      "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,whatsapp_url,customer_phone,admin_notes,tracking_code,shipping_method,assignee,created_at,updated_at,order_items(*)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -345,12 +351,22 @@ export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null
 
   const row = data as OrderRow & { order_items?: OrderItemRow[] };
   const profilesMap = await loadProfilesMap([row.user_id]);
+  const profile = profilesMap.get(row.user_id) ?? null;
   const items = (row.order_items ?? []).map(mapOrderItem);
-  const base = mapOrderRow(row, profilesMap.get(row.user_id) ?? null, items.length);
+  const base = mapOrderRow(row, profile, items.length);
+  const customerPhone = (row.customer_phone?.trim() || profile?.phone?.trim() || null) as string | null;
+  const customerChatUrl = buildAdminCustomerChatUrl({
+    phone: customerPhone,
+    orderRef: row.order_ref,
+    itemTitles: items.map((item) => item.productTitle),
+    customerName: profile?.display_name ?? null,
+  });
 
   return {
     ...base,
     whatsappUrl: row.whatsapp_url ?? null,
+    customerPhone,
+    customerChatUrl,
     adminNotes: row.admin_notes ?? null,
     trackingCode: row.tracking_code ?? null,
     shippingMethod: row.shipping_method ?? null,

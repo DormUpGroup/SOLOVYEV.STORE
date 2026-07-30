@@ -61,11 +61,20 @@ independent from customer Supabase Auth.
 
 ## Admin panel
 
-- **Catalog** — CRUD, Sold / Reserved / New Drop, image upload to Storage
-- **FAQ** — edit questions/answers (live on site)
-- **Settings** — contacts, currency, announcements, hero image
-- **Analytics** — views, cart, WhatsApp checkout from `analytics_events`
-- **Publish** — revalidates site cache after changes
+Секретный URL: `/{ADMIN_PATH}` (см. `.env`). Публичный `/admin` для посторонних недоступен.
+
+**Памятка для менеджеров (RU):** [docs/ADMIN_GUIDE.md](docs/ADMIN_GUIDE.md)
+
+- **Catalog / Made to order / Brand new** — CRUD товаров, статусы наличия, фото
+- **Users** — клиенты, поиск, фильтр «есть заказы», карточка с историей
+- **Orders** — WhatsApp-заказы (`SS-…`), статусы, Go to chat (клиент), сводка 7/30/90д
+- **FAQ** — вопросы/ответы на сайте
+- **Settings** — контакты (в т.ч. WhatsApp), валюта, анонсы, hero
+- **Analytics** — события витрины (`analytics_events`)
+- **Publish** — сброс кэша сайта после изменений
+
+Статусы заказа: `pending_whatsapp` → `in_chat` → `paid` → `shipped` → `completed` | `cancelled`.
+Checkout всегда создаёт строку заказа до открытия WhatsApp.
 
 ## Instagram import
 

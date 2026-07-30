@@ -21,6 +21,42 @@ export function buildWhatsAppUrl(
   return `https://api.whatsapp.com/send?phone=${cfg.contacts.whatsappPhone}&text=${encodeURIComponent(message)}`;
 }
 
+/** Digits only, Israel local 0X… → 972X…; returns null if too short. */
+export function normalizeWhatsAppPhone(phone: string | null | undefined): string | null {
+  if (!phone) return null;
+  let digits = phone.replace(/\D/g, "");
+  if (!digits) return null;
+  if (digits.startsWith("00")) digits = digits.slice(2);
+  if (digits.startsWith("0") && digits.length >= 9) {
+    digits = `972${digits.slice(1)}`;
+  }
+  if (digits.length < 10 || digits.length > 15) return null;
+  return digits;
+}
+
+export function buildAdminCustomerChatUrl(options: {
+  phone: string | null | undefined;
+  orderRef: string;
+  itemTitles: string[];
+  customerName?: string | null;
+}): string | null {
+  const digits = normalizeWhatsAppPhone(options.phone);
+  if (!digits) return null;
+
+  const titles = options.itemTitles.filter(Boolean).slice(0, 5);
+  const about =
+    titles.length > 0
+      ? titles.join(", ") + (options.itemTitles.length > 5 ? "…" : "")
+      : "your order";
+  const name = options.customerName?.trim();
+  const greeting = name ? `Hi ${name}!` : "Hi!";
+  const message =
+    `${greeting} Re order ${options.orderRef} about: ${about}. ` +
+    `Happy to confirm availability and shipping.`;
+
+  return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+}
+
 function formatCustomerBlock(customer?: WhatsAppCustomer | null): string {
   if (!customer) return "";
   const lines: string[] = [];

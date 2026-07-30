@@ -59,6 +59,8 @@ export interface AdminOrderRow {
 
 export interface AdminOrderDetail extends AdminOrderRow {
   whatsappUrl: string | null;
+  customerPhone: string | null;
+  customerChatUrl: string | null;
   adminNotes: string | null;
   trackingCode: string | null;
   shippingMethod: string | null;
