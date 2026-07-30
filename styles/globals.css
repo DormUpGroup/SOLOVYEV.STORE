@@ -4526,6 +4526,16 @@ body.no-scroll {
   width: fit-content;
 }
 
+.account-empty-block {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+
+.account-empty-block .account-muted {
+  margin: 0;
+}
+
 .account-order-list {
   display: grid;
   gap: 16px;

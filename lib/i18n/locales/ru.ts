@@ -175,7 +175,7 @@ export const ru: Dictionary = {
     save: "Сохранить",
     saving: "Сохранение…",
     favorites: "ИЗБРАННОЕ",
-    noFavorites: "В избранном пока ничего нет.",
+    noFavorites: "Пока у вас нет любимых товаров.",
     shop: "СМОТРЕТЬ ДРОПЫ",
     orders: "ИСТОРИЯ ЗАКАЗОВ",
     noOrders: "Здесь появятся ваши заказы через WhatsApp.",

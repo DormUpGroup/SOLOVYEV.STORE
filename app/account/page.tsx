@@ -302,7 +302,10 @@ export default function AccountPage() {
                   ))}
                 </div>
               ) : (
-                <Link href="/drops" className="btn-secondary account-empty-link">{copy.shop}</Link>
+                <div className="account-empty-block">
+                  <p className="account-muted">{copy.noFavorites}</p>
+                  <Link href="/drops" className="btn-secondary account-empty-link">{copy.shop}</Link>
+                </div>
               )}
             </section>
 
@@ -337,7 +340,10 @@ export default function AccountPage() {
                   </article>
                 ))}</div>
               ) : (
-                <Link href="/drops" className="btn-secondary account-empty-link">{copy.shop}</Link>
+                <div className="account-empty-block">
+                  <p className="account-muted">{copy.noOrders}</p>
+                  <Link href="/drops" className="btn-secondary account-empty-link">{copy.shop}</Link>
+                </div>
               )}
             </section>
 
