@@ -7,28 +7,26 @@ import {
   isProductUnavailable,
 } from "@/lib/products";
 import { useStore } from "@/components/providers/StoreProvider";
-import {
-  buildSingleItemMessage,
-  buildWhatsAppUrl,
-} from "@/lib/whatsapp";
 import { trackBeginCheckout, trackViewItem } from "@/lib/analytics";
 import { useCart } from "@/components/providers/CartProvider";
 import { useUI } from "@/components/providers/UIProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { checkoutLoginHref } from "@/lib/customer-auth";
 import { ProductImageLoupe } from "@/components/ui/ProductImageLoupe";
 import type { ProductStatus } from "@/lib/types";
-
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
 
 export function QuickViewModal() {
   const { config } = useStore();
   const { activeModal, selectedProduct, closeAll } = useUI();
   const { addToCart } = useCart();
   const { dict } = useI18n();
+  const { user } = useAuth();
   const { product, sellTrade } = dict;
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeImg, setActiveImg] = useState<string>("");
+  const [checkoutBusy, setCheckoutBusy] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
 
   const galleryImages = useMemo(() => {
     if (!selectedProduct) return [];
@@ -49,6 +47,7 @@ export function QuickViewModal() {
 
   useEffect(() => {
     setSelectedSize(null);
+    setCheckoutError("");
     if (selectedProduct && activeModal === "quickView") {
       setActiveImg(selectedProduct.img || selectedProduct.images?.[0]?.imageUrl || "");
       trackViewItem(selectedProduct);
@@ -68,17 +67,38 @@ export function QuickViewModal() {
   const unavailable = isProductUnavailable(selectedProduct);
   const statusLabel = statusLabels[selectedProduct.status];
 
-  const handleWhatsApp = () => {
+  const handleWhatsApp = async () => {
     if (unavailable) return;
     if (selectedProduct.sizes.length > 0 && !selectedSize) return;
+    if (!user) {
+      addToCart(selectedProduct.id, selectedSize || "");
+      window.location.href = checkoutLoginHref(window.location.pathname);
+      return;
+    }
+    setCheckoutBusy(true);
+    setCheckoutError("");
     trackBeginCheckout(selectedProduct.price, 1);
-    const message = buildSingleItemMessage(
-      selectedProduct,
-      selectedSize,
-      SITE_URL,
-      config,
-    );
-    window.open(buildWhatsAppUrl(message, config), "_blank", "noopener,noreferrer");
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          items: [{ id: selectedProduct.id, size: selectedSize || "", quantity: 1, qty: 1 }],
+        }),
+      });
+      const data = await response.json() as { whatsappUrl?: string; error?: string };
+      if (response.status === 401) {
+        addToCart(selectedProduct.id, selectedSize || "");
+        window.location.href = checkoutLoginHref(window.location.pathname);
+        return;
+      }
+      if (!response.ok || !data.whatsappUrl) throw new Error(data.error || "Checkout failed");
+      window.open(data.whatsappUrl, "_blank", "noopener,noreferrer");
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : "Checkout failed");
+    } finally {
+      setCheckoutBusy(false);
+    }
   };
 
   return (
@@ -182,12 +202,13 @@ export function QuickViewModal() {
                 type="button"
                 className={`btn-secondary whatsapp-cta ${unavailable ? "disabled" : ""}`}
                 id="whatsapp-order-btn"
-                disabled={unavailable}
-                onClick={handleWhatsApp}
+                disabled={unavailable || checkoutBusy}
+                onClick={() => void handleWhatsApp()}
               >
-                {product.orderWhatsApp}
+                {checkoutBusy ? dict.cart.creatingOrder : product.orderWhatsApp}
               </button>
             </div>
+            {checkoutError ? <p className="account-error" role="alert">{checkoutError}</p> : null}
           </div>
         </div>
       </div>

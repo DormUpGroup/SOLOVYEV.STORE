@@ -39,7 +39,9 @@ interface OrdersTabProps {
 const STATUS_LABELS: Record<OrderStatus | "", string> = {
   "": "All statuses",
   pending_whatsapp: "Pending WhatsApp",
-  confirmed: "Confirmed",
+  in_chat: "In chat",
+  paid: "Paid",
+  shipped: "Shipped",
   completed: "Completed",
   cancelled: "Cancelled",
 };
@@ -407,7 +409,7 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
                   {selected.customerEmail || "Unknown customer"}
                   {selected.customerName ? ` · ${selected.customerName}` : ""}
                 </p>
-                <div style={{ display: "flex", gap: 8, alignItems: "center", margin: "12px 0" }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "center", margin: "12px 0", flexWrap: "wrap" }}>
                   <OrderStatusBadge status={selected.status} />
                   <select
                     className={styles.input}
@@ -421,6 +423,16 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
                       </option>
                     ))}
                   </select>
+                  {selected.whatsappUrl ? (
+                    <a
+                      className={styles.btn}
+                      href={selected.whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open WhatsApp
+                    </a>
+                  ) : null}
                 </div>
                 <div className={styles.tableWrap}>
                   <table className={styles.table}>

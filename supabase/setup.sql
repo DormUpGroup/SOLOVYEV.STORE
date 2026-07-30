@@ -184,11 +184,22 @@ create table if not exists orders (
   user_id uuid not null references auth.users(id) on delete restrict,
   order_ref text not null unique,
   status text not null default 'pending_whatsapp'
-    check (status in ('pending_whatsapp', 'confirmed', 'cancelled', 'completed')),
+    check (status in (
+      'pending_whatsapp',
+      'in_chat',
+      'paid',
+      'shipped',
+      'completed',
+      'cancelled'
+    )),
   currency_code text not null,
   currency_symbol text not null,
   subtotal numeric not null check (subtotal >= 0),
   whatsapp_url text,
+  admin_notes text,
+  tracking_code text,
+  shipping_method text,
+  assignee text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -341,3 +352,100 @@ create policy "Users read own marketing consent events"
 
 grant update (display_name, phone, marketing_email_opt_in, marketing_email_opt_in_at)
   on profiles to authenticated;
+
+-- ── 008 CRM foundation ──────────────────────────────────────────────────────
+
+alter table profiles
+  add column if not exists tags text[] not null default '{}';
+
+create table if not exists order_status_events (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid not null references orders(id) on delete cascade,
+  from_status text,
+  to_status text not null,
+  note text,
+  created_by text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists order_status_events_order_idx
+  on order_status_events(order_id, created_at desc);
+
+create table if not exists customer_notes (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  body text not null,
+  created_by text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists customer_notes_user_idx
+  on customer_notes(user_id, created_at desc);
+
+create table if not exists inquiries (
+  id uuid primary key default gen_random_uuid(),
+  type text not null check (type in ('sell', 'trade', 'other')),
+  name text not null default '',
+  email text not null default '',
+  phone text not null default '',
+  message text not null default '',
+  status text not null default 'new'
+    check (status in ('new', 'in_progress', 'won', 'lost')),
+  user_id uuid references auth.users(id) on delete set null,
+  source text,
+  admin_notes text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists inquiries_status_idx
+  on inquiries(status, created_at desc);
+
+create index if not exists inquiries_email_idx
+  on inquiries(email);
+
+drop trigger if exists inquiries_updated_at on inquiries;
+create trigger inquiries_updated_at before update on inquiries
+  for each row execute function set_updated_at();
+
+create table if not exists admin_tasks (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  due_at timestamptz,
+  user_id uuid references auth.users(id) on delete set null,
+  order_id uuid references orders(id) on delete set null,
+  done boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists admin_tasks_due_idx
+  on admin_tasks(done, due_at);
+
+alter table order_status_events enable row level security;
+alter table customer_notes enable row level security;
+alter table inquiries enable row level security;
+alter table admin_tasks enable row level security;
+
+revoke all on order_status_events from public;
+revoke insert, update, delete on order_status_events from authenticated;
+grant select on order_status_events to authenticated;
+
+revoke all on customer_notes from public;
+revoke all on customer_notes from authenticated;
+
+revoke all on inquiries from public;
+revoke all on inquiries from authenticated;
+
+revoke all on admin_tasks from public;
+revoke all on admin_tasks from authenticated;
+
+drop policy if exists "Users read own order status events" on order_status_events;
+create policy "Users read own order status events"
+  on order_status_events for select
+  using (
+    exists (
+      select 1 from orders
+      where orders.id = order_status_events.order_id
+        and orders.user_id = auth.uid()
+    )
+  );

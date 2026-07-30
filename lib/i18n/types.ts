@@ -160,6 +160,10 @@ export interface Dictionary {
     name: string;
     namePlaceholder: string;
     nameRequired: string;
+    phone: string;
+    phonePlaceholder: string;
+    editPhone: string;
+    phoneSaved: string;
     onboardingTitle: string;
     onboardingHelp: string;
     continueButton: string;

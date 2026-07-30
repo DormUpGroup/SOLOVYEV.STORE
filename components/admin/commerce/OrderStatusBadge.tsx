@@ -3,7 +3,9 @@ import styles from "@/app/admin/admin.module.css";
 
 const LABELS: Record<OrderStatus, string> = {
   pending_whatsapp: "Pending WA",
-  confirmed: "Confirmed",
+  in_chat: "In chat",
+  paid: "Paid",
+  shipped: "Shipped",
   completed: "Completed",
   cancelled: "Cancelled",
 };
@@ -14,7 +16,7 @@ export function OrderStatusBadge({ status }: { status: OrderStatus }) {
       ? styles.badgeNew
       : status === "cancelled"
         ? styles.badgeSold
-        : status === "confirmed"
+        : status === "paid" || status === "shipped" || status === "in_chat"
           ? styles.badgeReserved
           : styles.badge;
 

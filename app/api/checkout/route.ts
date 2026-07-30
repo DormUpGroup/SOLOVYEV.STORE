@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { createServiceClient } from "@/utils/supabase/admin";
 import { getConfig, getProducts } from "@/lib/data/store";
 import { buildCartMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { CartItem } from "@/lib/types";
@@ -36,14 +37,39 @@ export async function POST(request: NextRequest) {
 
   const products = await getProducts();
   const order = data[0] as { order_id: string; order_ref: string; subtotal: number };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("display_name,phone,email")
+    .eq("id", user.id)
+    .maybeSingle();
+
   const message = buildCartMessage(
     items,
     products,
     process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store",
     config,
     order.order_ref,
+    {
+      displayName: profile?.display_name ?? null,
+      phone: profile?.phone ?? null,
+      email: profile?.email ?? user.email ?? null,
+    },
   );
   const whatsappUrl = buildWhatsAppUrl(message, config);
+
+  try {
+    const admin = createServiceClient();
+    const { error: urlError } = await admin
+      .from("orders")
+      .update({ whatsapp_url: whatsappUrl })
+      .eq("id", order.order_id);
+    if (urlError) {
+      console.error("Failed to persist whatsapp_url:", urlError.message);
+    }
+  } catch (persistError) {
+    console.error("Failed to persist whatsapp_url:", persistError);
+  }
 
   return NextResponse.json({
     orderId: order.order_id,

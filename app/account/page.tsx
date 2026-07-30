@@ -26,6 +26,7 @@ interface AccountData {
   user: { id: string; email?: string; createdAt: string };
   profile: {
     display_name?: string | null;
+    phone?: string | null;
     marketing_email_opt_in?: boolean | null;
   } | null;
   favoriteIds: number[];
@@ -50,7 +51,7 @@ interface AccountData {
 
 export default function AccountPage() {
   const router = useRouter();
-  const { signOut } = useAuth();
+  const { signOut, refreshProfile } = useAuth();
   const { products } = useStore();
   const { dict, locale } = useI18n();
   const { favoriteIds } = useFavorites();
@@ -62,6 +63,9 @@ export default function AccountPage() {
   const [marketingBusy, setMarketingBusy] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [displayName, setDisplayName] = useState("");
+  const [editingPhone, setEditingPhone] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [phoneSaving, setPhoneSaving] = useState(false);
 
   useEffect(() => {
     fetch("/api/account")
@@ -71,6 +75,7 @@ export default function AccountPage() {
         if (!response.ok) throw new Error(body.error || "Could not load account");
         setData(body);
         setDisplayName(body.profile?.display_name ?? "");
+        setPhone(body.profile?.phone ?? "");
       })
       .catch((reason) => setError(reason instanceof Error ? reason.message : "Could not load account"));
   }, [router]);
@@ -81,6 +86,7 @@ export default function AccountPage() {
   );
 
   const savedName = data?.profile?.display_name?.trim() ?? "";
+  const savedPhone = data?.profile?.phone?.trim() ?? "";
   const marketingOptIn = Boolean(data?.profile?.marketing_email_opt_in);
 
   const itemImage = (item: AccountData["orders"][number]["order_items"][number]) => {
@@ -101,6 +107,50 @@ export default function AccountPage() {
     setDisplayName(savedName);
     setEditingName(false);
     setError("");
+  };
+
+  const startEditPhone = () => {
+    setPhone(savedPhone);
+    setEditingPhone(true);
+    setError("");
+    setSuccess("");
+  };
+
+  const cancelEditPhone = () => {
+    setPhone(savedPhone);
+    setEditingPhone(false);
+    setError("");
+  };
+
+  const savePhone = async (event: FormEvent) => {
+    event.preventDefault();
+    const next = phone.trim().slice(0, 30);
+    setPhoneSaving(true);
+    setError("");
+    setSuccess("");
+    const response = await fetch("/api/account", {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ phone: next }),
+    });
+    const body = await response.json() as {
+      error?: string;
+      profile?: { display_name?: string | null; phone?: string | null; marketing_email_opt_in?: boolean | null };
+    };
+    setPhoneSaving(false);
+    if (!response.ok) {
+      setError(body.error || "Could not save phone");
+      return;
+    }
+    const nextPhone = body.profile?.phone?.trim() || next;
+    setPhone(nextPhone);
+    setData((prev) =>
+      prev
+        ? { ...prev, profile: { ...prev.profile, ...body.profile, phone: nextPhone || null } }
+        : prev,
+    );
+    setEditingPhone(false);
+    setSuccess(copy.phoneSaved);
   };
 
   const saveName = async (event: FormEvent) => {
@@ -135,6 +185,7 @@ export default function AccountPage() {
         : prev,
     );
     setEditingName(false);
+    await refreshProfile();
   };
 
   const toggleMarketing = async () => {
@@ -208,12 +259,88 @@ export default function AccountPage() {
             </div>
           )}
           <p className="account-muted">{data?.user.email}</p>
+          {editingPhone ? (
+            <form className="account-name-edit" onSubmit={savePhone}>
+              <input
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+                maxLength={30}
+                autoFocus
+                aria-label={copy.phone}
+                placeholder={copy.phonePlaceholder}
+                inputMode="tel"
+              />
+              <button type="submit" className="account-name-action" disabled={phoneSaving}>
+                {phoneSaving ? copy.saving : copy.save}
+              </button>
+              <button type="button" className="account-name-action" onClick={cancelEditPhone} disabled={phoneSaving}>
+                {copy.cancelEdit}
+              </button>
+            </form>
+          ) : (
+            <div className="account-greeting-row">
+              <p className="account-muted">
+                {copy.phone}: {savedPhone || "—"}
+              </p>
+              <button type="button" className="account-edit-name" onClick={startEditPhone}>
+                {copy.editPhone}
+              </button>
+            </div>
+          )}
         </div>
 
         {error ? <p className="account-error" role="alert">{error}</p> : null}
         {success ? <p className="account-success" role="status">{success}</p> : null}
         {!data ? <div className="account-card">{copy.loading}</div> : (
           <div className="account-sections">
+            <section>
+              <div className="account-section-title"><h2>{copy.favorites}</h2><span>{favorites.length}</span></div>
+              {favorites.length ? (
+                <div className="account-product-grid">
+                  {favorites.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                <Link href="/drops" className="btn-secondary account-empty-link">{copy.shop}</Link>
+              )}
+            </section>
+
+            <section>
+              <div className="account-section-title"><h2>{copy.orders}</h2><span>{data.orders.length}</span></div>
+              {data.orders.length ? (
+                <div className="account-order-list">{data.orders.map((order) => (
+                  <article className="account-card account-order" key={order.id}>
+                    <div className="account-order-head">
+                      <div><strong>{order.order_ref}</strong><p>{new Date(order.created_at).toLocaleDateString()}</p></div>
+                      <span className="account-status">{order.status.replace("_", " ")}</span>
+                    </div>
+                    <ul>{order.order_items.map((item) => {
+                      const src = itemImage(item);
+                      return (
+                        <li key={item.id}>
+                          {src ? (
+                            <Link href={`/product/${item.product_slug}`} className="account-order-thumb">
+                              <Image src={src} alt={item.product_title} width={64} height={64} />
+                            </Link>
+                          ) : (
+                            <span className="account-order-thumb account-order-thumb-empty" aria-hidden="true" />
+                          )}
+                          <div className="account-order-item-meta">
+                            <Link href={`/product/${item.product_slug}`}>{item.product_title}</Link>
+                            <span>{item.size || copy.oneSize} × {item.quantity}</span>
+                          </div>
+                          <strong>{formatPrice(Number(item.unit_price) * item.quantity, order.currency_symbol)}</strong>
+                        </li>
+                      );
+                    })}</ul>
+                  </article>
+                ))}</div>
+              ) : (
+                <Link href="/drops" className="btn-secondary account-empty-link">{copy.shop}</Link>
+              )}
+            </section>
+
             <section>
               <div className="account-section-title"><h2>{copy.marketingPreferences}</h2></div>
               <div className="account-card account-marketing">
@@ -232,42 +359,6 @@ export default function AccountPage() {
                       : copy.marketingToggleOn}
                 </button>
               </div>
-            </section>
-
-            <section>
-              <div className="account-section-title"><h2>{copy.favorites}</h2><span>{favorites.length}</span></div>
-              {favorites.length ? <div className="account-product-grid">{favorites.map((product) => <ProductCard key={product.id} product={product} />)}</div> : <div className="account-card account-empty"><p>{copy.noFavorites}</p><Link href="/drops" className="btn-secondary">{copy.shop}</Link></div>}
-            </section>
-
-            <section>
-              <div className="account-section-title"><h2>{copy.orders}</h2><span>{data.orders.length}</span></div>
-              {data.orders.length ? <div className="account-order-list">{data.orders.map((order) => (
-                <article className="account-card account-order" key={order.id}>
-                  <div className="account-order-head">
-                    <div><strong>{order.order_ref}</strong><p>{new Date(order.created_at).toLocaleDateString()}</p></div>
-                    <span className="account-status">{order.status.replace("_", " ")}</span>
-                  </div>
-                  <ul>{order.order_items.map((item) => {
-                    const src = itemImage(item);
-                    return (
-                      <li key={item.id}>
-                        {src ? (
-                          <Link href={`/product/${item.product_slug}`} className="account-order-thumb">
-                            <Image src={src} alt={item.product_title} width={64} height={64} />
-                          </Link>
-                        ) : (
-                          <span className="account-order-thumb account-order-thumb-empty" aria-hidden="true" />
-                        )}
-                        <div className="account-order-item-meta">
-                          <Link href={`/product/${item.product_slug}`}>{item.product_title}</Link>
-                          <span>{item.size || copy.oneSize} × {item.quantity}</span>
-                        </div>
-                        <strong>{formatPrice(Number(item.unit_price) * item.quantity, order.currency_symbol)}</strong>
-                      </li>
-                    );
-                  })}</ul>
-                </article>
-              ))}</div> : <div className="account-card account-empty">{copy.noOrders}</div>}
             </section>
 
             <div className="account-signout-row">

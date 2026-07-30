@@ -96,7 +96,13 @@ export interface CustomerProfile {
   createdAt: string;
 }
 
-export type OrderStatus = "pending_whatsapp" | "confirmed" | "cancelled" | "completed";
+export type OrderStatus =
+  | "pending_whatsapp"
+  | "in_chat"
+  | "paid"
+  | "shipped"
+  | "completed"
+  | "cancelled";
 
 export interface CustomerOrderItem {
   id: number;

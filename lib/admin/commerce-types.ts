@@ -2,9 +2,11 @@ import type { OrderStatus } from "@/lib/types";
 
 export const ORDER_STATUSES: OrderStatus[] = [
   "pending_whatsapp",
-  "confirmed",
-  "cancelled",
+  "in_chat",
+  "paid",
+  "shipped",
   "completed",
+  "cancelled",
 ];
 
 export function isOrderStatus(value: unknown): value is OrderStatus {
@@ -57,6 +59,10 @@ export interface AdminOrderRow {
 
 export interface AdminOrderDetail extends AdminOrderRow {
   whatsappUrl: string | null;
+  adminNotes: string | null;
+  trackingCode: string | null;
+  shippingMethod: string | null;
+  assignee: string | null;
   items: AdminOrderItemRow[];
 }
 

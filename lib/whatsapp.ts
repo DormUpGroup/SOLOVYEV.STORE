@@ -4,6 +4,12 @@ import type { CartItem, Product, SellTradeFormData, StoreConfig } from "./types"
 
 const defaultConfig = configData as StoreConfig;
 
+export type WhatsAppCustomer = {
+  displayName?: string | null;
+  phone?: string | null;
+  email?: string | null;
+};
+
 export function generateOrderRef(): string {
   return `SS-${Date.now().toString(36).toUpperCase()}`;
 }
@@ -15,12 +21,26 @@ export function buildWhatsAppUrl(
   return `https://api.whatsapp.com/send?phone=${cfg.contacts.whatsappPhone}&text=${encodeURIComponent(message)}`;
 }
 
+function formatCustomerBlock(customer?: WhatsAppCustomer | null): string {
+  if (!customer) return "";
+  const lines: string[] = [];
+  const name = customer.displayName?.trim();
+  const phone = customer.phone?.trim();
+  const email = customer.email?.trim();
+  if (name) lines.push(`👤 Name: ${name}`);
+  if (phone) lines.push(`📞 Phone: ${phone}`);
+  if (email) lines.push(`✉️ Email: ${email}`);
+  if (!lines.length) return "";
+  return `\n${lines.join("\n")}\n`;
+}
+
 export function buildSingleItemMessage(
   product: Product,
   size: string | null,
   siteUrl: string,
   cfg: StoreConfig = defaultConfig,
   orderRef?: string,
+  customer?: WhatsAppCustomer | null,
 ): string {
   const ref = orderRef || generateOrderRef();
   const sym = cfg.currency.symbol;
@@ -33,8 +53,9 @@ export function buildSingleItemMessage(
     `🏷️ ${product.title}\n` +
     `🔢 SKU: #${product.id}${sizeLine}\n` +
     `💰 Price: ${formatPriceOrDm(product.price, sym)}\n` +
-    `🔗 ${productUrl}\n\n` +
-    `Please confirm availability.`
+    `🔗 ${productUrl}` +
+    formatCustomerBlock(customer) +
+    `\nPlease confirm availability.`
   );
 }
 
@@ -44,6 +65,7 @@ export function buildCartMessage(
   siteUrl: string,
   cfg: StoreConfig = defaultConfig,
   orderRef?: string,
+  customer?: WhatsAppCustomer | null,
 ): string {
   const sym = cfg.currency.symbol;
   const ref = orderRef || generateOrderRef();
@@ -67,6 +89,7 @@ export function buildCartMessage(
   } else {
     message += `🚚 Shipping: ₪25 locker / ₪50 door-to-door\n`;
   }
+  message += formatCustomerBlock(customer);
   message += `\nPlease confirm availability.`;
 
   return message;

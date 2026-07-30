@@ -1,6 +1,7 @@
 import { createServiceClient } from "@/utils/supabase/admin";
 import type { OrderStatus } from "@/lib/types";
 import {
+  ORDER_STATUSES,
   isOrderStatus,
   type AdminOrderDetail,
   type AdminOrderItemRow,
@@ -29,6 +30,10 @@ type OrderRow = {
   currency_symbol: string;
   subtotal: number | string;
   whatsapp_url?: string | null;
+  admin_notes?: string | null;
+  tracking_code?: string | null;
+  shipping_method?: string | null;
+  assignee?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -92,21 +97,33 @@ export async function listAdminUsers(options: {
   const to = from + limit - 1;
   const search = options.search?.trim() ?? "";
 
+  let orderUserIds: string[] | null = null;
+  if (options.hasOrders) {
+    const { data: orderRows, error: orderIdsError } = await admin
+      .from("orders")
+      .select("user_id");
+    if (orderIdsError) throw new Error(orderIdsError.message);
+    orderUserIds = [...new Set((orderRows ?? []).map((row) => row.user_id as string))];
+    if (!orderUserIds.length) return { users: [], total: 0 };
+  }
+
   let query = admin
     .from("profiles")
     .select(
       "id,email,display_name,phone,marketing_email_opt_in,marketing_email_opt_in_at,created_at",
       { count: "exact" },
     )
-    .order("created_at", { ascending: false })
-    .range(from, to);
+    .order("created_at", { ascending: false });
 
+  if (orderUserIds) {
+    query = query.in("id", orderUserIds);
+  }
   if (search) {
     const escaped = search.replace(/[%_,]/g, "");
     query = query.or(`email.ilike.%${escaped}%,display_name.ilike.%${escaped}%`);
   }
 
-  const { data: profiles, error, count } = await query;
+  const { data: profiles, error, count } = await query.range(from, to);
   if (error) throw new Error(error.message);
 
   const rows = (profiles ?? []) as ProfileRow[];
@@ -143,7 +160,7 @@ export async function listAdminUsers(options: {
     cartCount.set(row.user_id, (cartCount.get(row.user_id) ?? 0) + 1);
   }
 
-  let users: AdminUserRow[] = rows.map((profile) => {
+  const users: AdminUserRow[] = rows.map((profile) => {
     const orderMeta = ordersByUser.get(profile.id) ?? { count: 0, lastAt: null };
     return {
       id: profile.id,
@@ -159,10 +176,6 @@ export async function listAdminUsers(options: {
       cartItemsCount: cartCount.get(profile.id) ?? 0,
     };
   });
-
-  if (options.hasOrders) {
-    users = users.filter((u) => u.ordersCount > 0);
-  }
 
   return { users, total: count ?? users.length };
 }
@@ -322,7 +335,7 @@ export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null
   const { data, error } = await admin
     .from("orders")
     .select(
-      "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,whatsapp_url,created_at,updated_at,order_items(*)",
+      "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,whatsapp_url,admin_notes,tracking_code,shipping_method,assignee,created_at,updated_at,order_items(*)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -338,6 +351,10 @@ export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null
   return {
     ...base,
     whatsappUrl: row.whatsapp_url ?? null,
+    adminNotes: row.admin_notes ?? null,
+    trackingCode: row.tracking_code ?? null,
+    shippingMethod: row.shipping_method ?? null,
+    assignee: row.assignee ?? null,
     items,
   };
 }
@@ -389,12 +406,9 @@ export async function getCommerceSummary(daysInput = 7): Promise<CommerceSummary
   };
 
   const rows = (orders ?? []) as SummaryOrder[];
-  const byStatus: Record<OrderStatus, number> = {
-    pending_whatsapp: 0,
-    confirmed: 0,
-    cancelled: 0,
-    completed: 0,
-  };
+  const byStatus = Object.fromEntries(
+    ORDER_STATUSES.map((status) => [status, 0]),
+  ) as Record<OrderStatus, number>;
 
   let subtotalSum = 0;
   const dailyMap = new Map<string, { count: number; subtotal: number }>();
