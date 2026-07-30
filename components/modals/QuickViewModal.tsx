@@ -14,6 +14,7 @@ import { useI18n } from "@/components/providers/I18nProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { checkoutLoginHref } from "@/lib/customer-auth";
 import { ProductImageLoupe } from "@/components/ui/ProductImageLoupe";
+import { FavoriteButton } from "@/components/catalog/FavoriteButton";
 import type { ProductStatus } from "@/lib/types";
 
 export function QuickViewModal() {
@@ -110,6 +111,7 @@ export function QuickViewModal() {
         </button>
         <div className="modal-grid">
           <div className="modal-image">
+            <FavoriteButton productId={selectedProduct.id} />
             <ProductImageLoupe
               src={activeImg || selectedProduct.img}
               alt={selectedProduct.title}

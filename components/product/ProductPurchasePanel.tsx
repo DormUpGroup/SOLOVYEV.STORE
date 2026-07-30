@@ -11,9 +11,9 @@ import { useStore } from "@/components/providers/StoreProvider";
 import { trackBeginCheckout } from "@/lib/analytics";
 import type { Product } from "@/lib/types";
 import { useState } from "react";
-import { useFavorites } from "@/components/providers/FavoritesProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { checkoutLoginHref } from "@/lib/customer-auth";
+import { FavoriteButton } from "@/components/catalog/FavoriteButton";
 
 interface ProductPurchasePanelProps {
   product: Product;
@@ -30,7 +30,6 @@ export function ProductPurchasePanel({
   const { dict } = useI18n();
   const { product: copy } = dict;
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const { favoriteIds, toggleFavorite } = useFavorites();
   const { user } = useAuth();
   const [checkoutBusy, setCheckoutBusy] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
@@ -110,14 +109,7 @@ export function ProductPurchasePanel({
             {checkoutBusy ? dict.cart.creatingOrder : copy.orderWhatsApp}
           </button>
         </div>
-        <button
-          type="button"
-          className={`btn-secondary${favoriteIds.has(product.id) ? " active" : ""}`}
-          onClick={() => void toggleFavorite(product.id)}
-          aria-pressed={favoriteIds.has(product.id)}
-        >
-          {favoriteIds.has(product.id) ? "♥ SAVED" : "♡ SAVE"}
-        </button>
+        <FavoriteButton productId={product.id} variant="inline" showLabel />
         {showQuickView ? (
           <button
             type="button"

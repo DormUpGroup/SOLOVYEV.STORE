@@ -13,7 +13,7 @@ import { useUI } from "@/components/providers/UIProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
 import { ProductImageLoupe } from "@/components/ui/ProductImageLoupe";
 import type { Product } from "@/lib/types";
-import { useFavorites } from "@/components/providers/FavoritesProvider";
+import { FavoriteButton } from "@/components/catalog/FavoriteButton";
 
 interface ProductCardProps {
   product: Product;
@@ -42,7 +42,6 @@ export function ProductCard({ product }: ProductCardProps) {
   const { config } = useStore();
   const { openQuickView } = useUI();
   const { dict } = useI18n();
-  const { favoriteIds, toggleFavorite } = useFavorites();
   const sym = config.currency.symbol;
   const unavailable = isProductUnavailable(product);
   const statusLabel = getStatusLabel(product.status, dict.product);
@@ -56,19 +55,7 @@ export function ProductCard({ product }: ProductCardProps) {
       className={`product-card ${product.category} ${unavailable ? "sold-out-card" : ""}`}
       data-id={product.id}
     >
-      <button
-        type="button"
-        className={`favorite-btn${favoriteIds.has(product.id) ? " active" : ""}`}
-        onClick={() => void toggleFavorite(product.id)}
-        aria-label={
-          favoriteIds.has(product.id)
-            ? dict.product.removeFavorite
-            : dict.product.addFavorite
-        }
-        aria-pressed={favoriteIds.has(product.id)}
-      >
-        {favoriteIds.has(product.id) ? "♥" : "♡"}
-      </button>
+      <FavoriteButton productId={product.id} />
       <button
         type="button"
         className="product-img-hit"

@@ -1359,6 +1359,7 @@ main {
 }
 
 .product-card {
+  position: relative;
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   transition: border-color 0.3s;
@@ -2836,11 +2837,23 @@ main {
   .favorite-btn {
     top: 8px;
     inset-inline-end: 8px;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border: none;
-    background: rgba(5, 5, 5, 0.45);
-    font-size: 16px;
+    background: var(--overlay-scrim-soft);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: var(--hero-text);
+  }
+
+  .favorite-btn.active {
+    color: #ff5a73;
+    background: var(--overlay-scrim);
+  }
+
+  .favorite-btn .favorite-icon {
+    width: 18px;
+    height: 18px;
   }
 
   .sell-trade-form-card {
@@ -4262,19 +4275,78 @@ body.no-scroll {
 
 .favorite-btn {
   position: absolute;
-  z-index: 4;
+  z-index: 5;
   top: 12px;
   inset-inline-end: 12px;
   width: 44px;
   height: 44px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-soft);
   border-radius: 50%;
-  background: var(--bg-card);
-  font-size: 22px;
+  background: var(--bg-bar);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text-primary);
   cursor: pointer;
+  padding: 0;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.favorite-btn:hover {
+  border-color: var(--border-color);
+  transform: scale(1.04);
+}
+
+.favorite-btn:active {
+  transform: scale(0.96);
+}
+
+.favorite-btn .favorite-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .favorite-btn.active {
+  color: #d9304f;
+  border-color: #d9304f;
+}
+
+.favorite-btn.active .favorite-icon {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+.favorite-btn--inline {
+  position: static;
+  width: auto;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 0;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  gap: 10px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.favorite-btn--inline:hover {
+  background: var(--accent-glow);
+  transform: none;
+}
+
+.favorite-btn--inline.active {
   color: #d9304f;
 }
 
