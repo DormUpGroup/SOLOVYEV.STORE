@@ -2740,18 +2740,36 @@ main {
     mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent);
   }
 
+  :root {
+    --layout-gutter: 12px;
+  }
+
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 8px;
+  }
+
+  .product-card {
+    border-color: transparent;
   }
 
   .product-info {
-    padding: 12px;
-    gap: 8px;
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .product-info-header {
+    display: none;
   }
 
   .product-title {
     font-size: 13px;
+    -webkit-line-clamp: 1;
+  }
+
+  .product-footer {
+    padding-top: 0;
+    border-top: none;
   }
 
   .product-price {
@@ -2759,8 +2777,17 @@ main {
   }
 
   .quick-view-btn {
-    width: 44px;
-    height: 44px;
+    display: none;
+  }
+
+  .favorite-btn {
+    top: 8px;
+    inset-inline-end: 8px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(5, 5, 5, 0.45);
+    font-size: 16px;
   }
 
   .sell-trade-form-card {
