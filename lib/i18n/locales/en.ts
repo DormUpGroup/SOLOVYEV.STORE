@@ -131,8 +131,6 @@ export const en: Dictionary = {
     registerTitle: "Create account",
     registerHelp: "Create an account to save favorites, sync your cart, and track orders.",
     registerButton: "CREATE ACCOUNT",
-    registerCheckEmail:
-      "Check your email for a confirmation link before signing in.",
     haveAccount: "Already have an account?",
     passwordRequirements: "Use at least 8 characters with a letter and a number.",
     passwordsMismatch: "Passwords do not match.",

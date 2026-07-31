@@ -133,7 +133,6 @@ export interface Dictionary {
     registerTitle: string;
     registerHelp: string;
     registerButton: string;
-    registerCheckEmail: string;
     haveAccount: string;
     passwordRequirements: string;
     passwordsMismatch: string;

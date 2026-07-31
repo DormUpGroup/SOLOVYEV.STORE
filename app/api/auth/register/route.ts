@@ -1,27 +1,10 @@
-import { createClient } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
+import { createServiceClient } from "@/utils/supabase/admin";
 import { isValidPassword, normalizeEmail } from "@/lib/customer-auth";
 import { setMarketingConsent } from "@/lib/marketing-consent";
 
-const GENERIC_REGISTER_OK =
-  "If this email can be registered, we sent a confirmation link. Check your inbox.";
-
-function siteUrl(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store").replace(/\/$/, "");
-}
-
-function publishableKey(): string | undefined {
-  return (
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    undefined
-  );
-}
-
 export async function POST(request: NextRequest) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = publishableKey();
-  if (!url || !key) {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
     return NextResponse.json({ error: "Customer accounts are not configured." }, { status: 503 });
   }
 
@@ -51,25 +34,21 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const supabase = createClient(url, key, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-
-  const { data, error } = await supabase.auth.signUp({
+  const admin = createServiceClient();
+  const { data, error } = await admin.auth.admin.createUser({
     email,
     password,
-    options: {
-      emailRedirectTo: `${siteUrl()}/auth/callback`,
-    },
+    email_confirm: true,
   });
 
   if (error) {
-    // Avoid account enumeration: same generic success for "already registered" cases.
-    if (/already|registered|exists/i.test(error.message)) {
-      return NextResponse.json({ ok: true, needsConfirmation: true, message: GENERIC_REGISTER_OK });
+    const message = /already|registered|exists/i.test(error.message)
+      ? "An account with this email already exists."
+      : "Registration failed. Try again later.";
+    if (!/already|registered|exists/i.test(error.message)) {
+      console.error("[POST /api/auth/register] createUser failed");
     }
-    console.error("[POST /api/auth/register] signUp failed");
-    return NextResponse.json({ error: "Registration failed. Try again later." }, { status: 400 });
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 
   const userId = data.user?.id;
@@ -85,13 +64,5 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Prefer confirmation flow: do not auto-issue a session for unverified emails.
-  const needsConfirmation = !data.session;
-  return NextResponse.json({
-    ok: true,
-    needsConfirmation,
-    message: needsConfirmation
-      ? GENERIC_REGISTER_OK
-      : undefined,
-  });
+  return NextResponse.json({ ok: true });
 }
