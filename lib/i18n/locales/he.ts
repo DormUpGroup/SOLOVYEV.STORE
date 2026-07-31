@@ -130,6 +130,7 @@ export const he: Dictionary = {
     registerTitle: "יצירת חשבון",
     registerHelp: "שמרו מועדפים, סנכרנו את העגלה ועקבו אחר הזמנות.",
     registerButton: "יצירת חשבון",
+    registerCheckEmail: "בדקו את האימייל ולחצו על קישור האימות לפני הכניסה.",
     haveAccount: "כבר יש לכם חשבון?",
     passwordRequirements: "לפחות 8 תווים, אות אחת ומספר אחד.",
     passwordsMismatch: "הסיסמאות אינן תואמות.",

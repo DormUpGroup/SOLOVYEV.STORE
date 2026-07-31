@@ -9,6 +9,7 @@ import { absoluteProductImageUrl } from "@/lib/product-image";
 import { getConfig, getProductBySlugFromStore, getProducts } from "@/lib/data/store";
 import { ProductPageClient } from "@/components/product/ProductPageClient";
 import { ProductPageDetails } from "@/components/product/ProductPageDetails";
+import { safeJsonLd } from "@/lib/safe-json-ld";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -81,7 +82,7 @@ export default async function ProductPage({ params }: PageProps) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <ProductPageClient product={product}>
         <ProductPageDetails

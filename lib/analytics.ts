@@ -6,23 +6,6 @@ declare global {
 
 const pendingEvents: Array<{ type: string; productId?: number }> = [];
 let flushTimer: ReturnType<typeof setTimeout> | null = null;
-let trackingDisabled: boolean | null = null;
-let trackingDisabledPromise: Promise<boolean> | null = null;
-
-async function shouldSkipTracking(): Promise<boolean> {
-  if (trackingDisabled !== null) return trackingDisabled;
-  if (!trackingDisabledPromise) {
-    trackingDisabledPromise = fetch("/api/analytics", { credentials: "same-origin" })
-      .then((res) => res.json())
-      .then((data: { admin?: boolean }) => Boolean(data.admin))
-      .catch(() => false)
-      .then((isAdmin) => {
-        trackingDisabled = isAdmin;
-        return isAdmin;
-      });
-  }
-  return trackingDisabledPromise;
-}
 
 function flushAnalytics(): void {
   if (typeof window === "undefined" || pendingEvents.length === 0) return;
@@ -42,29 +25,25 @@ export function trackEvent(
 ): void {
   if (typeof window === "undefined") return;
 
-  void shouldSkipTracking().then((skip) => {
-    if (skip) return;
+  if (window.gtag) {
+    window.gtag("event", eventName, params);
+  }
 
-    if (window.gtag) {
-      window.gtag("event", eventName, params);
-    }
-
-    const productId =
-      params?.item_id != null ? Number(params.item_id) : undefined;
-    if (
-      eventName === "view_item" ||
-      eventName === "add_to_cart" ||
-      eventName === "begin_checkout" ||
-      eventName === "sell_trade_submit"
-    ) {
-      pendingEvents.push({
-        type: eventName,
-        productId: Number.isFinite(productId) ? productId : undefined,
-      });
-      if (flushTimer) clearTimeout(flushTimer);
-      flushTimer = setTimeout(flushAnalytics, 1500);
-    }
-  });
+  const productId =
+    params?.item_id != null ? Number(params.item_id) : undefined;
+  if (
+    eventName === "view_item" ||
+    eventName === "add_to_cart" ||
+    eventName === "begin_checkout" ||
+    eventName === "sell_trade_submit"
+  ) {
+    pendingEvents.push({
+      type: eventName,
+      productId: Number.isFinite(productId) ? productId : undefined,
+    });
+    if (flushTimer) clearTimeout(flushTimer);
+    flushTimer = setTimeout(flushAnalytics, 1500);
+  }
 }
 
 export function trackViewItem(product: {

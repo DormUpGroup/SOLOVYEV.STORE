@@ -4,15 +4,31 @@ import { NextRequest, NextResponse } from "next/server";
 export const ADMIN_COOKIE = "admin_session";
 const SESSION_TTL_SEC = 60 * 60 * 24 * 7;
 
+/** Secret admin URL segment. No hardcoded production path — set ADMIN_PATH. */
 export function getAdminPath(): string {
-  return process.env.ADMIN_PATH ?? "s9Vm2kQx";
+  const path = process.env.ADMIN_PATH?.trim().replace(/^\/+|\/+$/g, "");
+  if (path) return path;
+  if (process.env.NODE_ENV === "production") {
+    // Fail closed: never expose a guessable default in production.
+    return "__admin_path_not_configured__";
+  }
+  return "admin-dev-local";
 }
 
+/**
+ * Constant-time string compare that does not early-return on length mismatch.
+ * Length still influences loop bound slightly; avoids trivial length oracle.
+ */
 export function constantTimeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let result = 0;
-  for (let i = 0; i < a.length; i++) {
-    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  const encoder = new TextEncoder();
+  const aBytes = encoder.encode(a);
+  const bBytes = encoder.encode(b);
+  const len = Math.max(aBytes.length, bBytes.length, 1);
+  let result = aBytes.length === bBytes.length ? 0 : 1;
+  for (let i = 0; i < len; i++) {
+    const x = i < aBytes.length ? aBytes[i]! : 0;
+    const y = i < bBytes.length ? bBytes[i]! : 0;
+    result |= x ^ y;
   }
   return result === 0;
 }
@@ -103,15 +119,13 @@ export async function verifyAdminJwt(token: string): Promise<boolean> {
 export function verifyAdminCredentials(login: string, password: string): boolean {
   const expectedLogin = process.env.ADMIN_LOGIN;
   const expectedPassword = process.env.ADMIN_PASSWORD;
-  if (process.env.NODE_ENV === "production") {
-    if (!expectedLogin || !expectedPassword) {
+  if (!expectedLogin || !expectedPassword) {
+    if (process.env.NODE_ENV === "production") {
       console.error("[auth] ADMIN_LOGIN and ADMIN_PASSWORD are required in production");
-      return false;
     }
+    return false;
   }
-  const loginOk = expectedLogin ?? "admin";
-  const passwordOk = expectedPassword ?? "gosha2026";
-  return constantTimeEqual(login, loginOk) && constantTimeEqual(password, passwordOk);
+  return constantTimeEqual(login, expectedLogin) && constantTimeEqual(password, expectedPassword);
 }
 
 export async function isAdminAuthenticated(): Promise<boolean> {
@@ -154,6 +168,10 @@ export function unauthorizedResponse() {
   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 }
 
+/**
+ * Process-local rate limit. Ineffective across serverless isolates —
+ * use edge/WAF rate limiting in production. Kept as a soft local guard only.
+ */
 const loginAttempts = new Map<string, { count: number; resetAt: number }>();
 
 export function checkRateLimit(ip: string): boolean {

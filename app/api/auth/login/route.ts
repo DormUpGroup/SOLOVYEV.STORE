@@ -9,11 +9,16 @@ import {
 } from "@/lib/auth";
 
 function clientIp(request: NextRequest): string {
-  return (
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    request.headers.get("x-real-ip") ??
-    "unknown"
-  );
+  // Prefer platform-provided IP; do not trust the first XFF hop alone on unknown proxies.
+  const realIp = request.headers.get("x-real-ip")?.trim();
+  if (realIp) return realIp;
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    const parts = forwarded.split(",").map((p) => p.trim()).filter(Boolean);
+    // Use the right-most hop as a weaker spoof surface when behind a reverse proxy.
+    return parts[parts.length - 1] || "unknown";
+  }
+  return "unknown";
 }
 
 async function parseCredentials(request: NextRequest): Promise<{ login: string; password: string }> {

@@ -67,7 +67,11 @@ export function AdminShell({ initialProducts }: AdminShellProps) {
   };
 
   const logout = () => {
-    window.location.href = "/api/auth/logout";
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "/api/auth/logout";
+    document.body.appendChild(form);
+    form.submit();
   };
 
   const refreshProducts = async () => {

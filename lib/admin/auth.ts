@@ -1,3 +1,5 @@
+import { constantTimeEqual } from "@/lib/auth";
+
 export {
   ADMIN_COOKIE,
   clearAdminCookie,
@@ -17,6 +19,6 @@ export {
 /** @deprecated Use verifyAdminCredentials(login, password) */
 export function verifyAdminPassword(password: string): boolean {
   const expected = process.env.ADMIN_PASSWORD;
-  if (process.env.NODE_ENV === "production" && !expected) return false;
-  return password === (expected ?? "gosha2026");
+  if (!expected) return false;
+  return constantTimeEqual(password, expected);
 }

@@ -7,8 +7,11 @@ export async function GET() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const profileSelect =
+    "id,email,display_name,phone,created_at,updated_at,marketing_email_opt_in,marketing_email_opt_in_at";
+
   const [profileResult, favoritesResult, cartResult, ordersResult] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+    supabase.from("profiles").select(profileSelect).eq("id", user.id).maybeSingle(),
     supabase.from("favorites").select("product_id").order("created_at", { ascending: false }),
     supabase.from("cart_items").select("product_id,size,quantity").order("created_at"),
     supabase
@@ -63,7 +66,9 @@ export async function PATCH(request: NextRequest) {
       .from("profiles")
       .update(updates)
       .eq("id", user.id)
-      .select()
+      .select(
+        "id,email,display_name,phone,created_at,updated_at,marketing_email_opt_in,marketing_email_opt_in_at",
+      )
       .single();
 
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });
@@ -82,7 +87,9 @@ export async function PATCH(request: NextRequest) {
     }
     const { data, error } = await supabase
       .from("profiles")
-      .select("*")
+      .select(
+        "id,email,display_name,phone,created_at,updated_at,marketing_email_opt_in,marketing_email_opt_in_at",
+      )
       .eq("id", user.id)
       .single();
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });

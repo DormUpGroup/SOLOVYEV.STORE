@@ -131,6 +131,8 @@ export const ru: Dictionary = {
     registerTitle: "Создать аккаунт",
     registerHelp: "Сохраняйте избранное, синхронизируйте корзину и отслеживайте заказы.",
     registerButton: "СОЗДАТЬ АККАУНТ",
+    registerCheckEmail:
+      "Проверьте почту и перейдите по ссылке подтверждения, прежде чем войти.",
     haveAccount: "Уже есть аккаунт?",
     passwordRequirements: "Минимум 8 символов, одна буква и одна цифра.",
     passwordsMismatch: "Пароли не совпадают.",

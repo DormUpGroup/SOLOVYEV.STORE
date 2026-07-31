@@ -27,10 +27,12 @@ function RegisterForm() {
   const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [checkEmail, setCheckEmail] = useState(false);
 
   const register = async (event: FormEvent) => {
     event.preventDefault();
     setError("");
+    setCheckEmail(false);
     if (!hasSupabaseBrowserConfig()) return setError(copy.configError);
     if (!isValidPassword(password)) return setError(copy.passwordRequirements);
     if (password !== confirmation) return setError(copy.passwordsMismatch);
@@ -48,9 +50,18 @@ function RegisterForm() {
           locale,
         }),
       });
-      const payload = (await response.json()) as { error?: string };
+      const payload = (await response.json()) as {
+        error?: string;
+        needsConfirmation?: boolean;
+        message?: string;
+      };
       if (!response.ok) {
         setError(payload.error || copy.configError);
+        return;
+      }
+
+      if (payload.needsConfirmation) {
+        setCheckEmail(true);
         return;
       }
 
@@ -72,6 +83,19 @@ function RegisterForm() {
       setBusy(false);
     }
   };
+
+  if (checkEmail) {
+    return (
+      <AuthCard title={copy.registerTitle} description={copy.registerCheckEmail}>
+        <p className="account-form-hint">{copy.registerCheckEmail}</p>
+        <p className="account-auth-switch">
+          <Link href={`/login${buildAuthQuery({ next, checkout })}`}>
+            {copy.loginButton}
+          </Link>
+        </p>
+      </AuthCard>
+    );
+  }
 
   return (
     <AuthCard title={copy.registerTitle} description={copy.registerHelp}>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getFaqItems } from "@/lib/data/store";
 import { FaqPageClient } from "@/components/pages/FaqPageClient";
+import { safeJsonLd } from "@/lib/safe-json-ld";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
 
@@ -31,7 +32,7 @@ export default async function FaqPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }}
       />
       <FaqPageClient />
     </>

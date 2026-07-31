@@ -1,24 +1,47 @@
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
-import { createServiceClient } from "@/utils/supabase/admin";
 import { isValidPassword, normalizeEmail } from "@/lib/customer-auth";
 import { setMarketingConsent } from "@/lib/marketing-consent";
 
+const GENERIC_REGISTER_OK =
+  "If this email can be registered, we sent a confirmation link. Check your inbox.";
+
+function siteUrl(): string {
+  return (process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store").replace(/\/$/, "");
+}
+
+function publishableKey(): string | undefined {
+  return (
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    undefined
+  );
+}
+
 export async function POST(request: NextRequest) {
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = publishableKey();
+  if (!url || !key) {
     return NextResponse.json({ error: "Customer accounts are not configured." }, { status: 503 });
   }
 
-  const body = (await request.json()) as {
+  let body: {
     email?: string;
     password?: string;
     marketingEmailOptIn?: boolean;
     locale?: string;
   };
+  try {
+    body = (await request.json()) as typeof body;
+  } catch {
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  }
+
   const email = normalizeEmail(body.email ?? "");
   const password = String(body.password ?? "");
   const marketingEmailOptIn = Boolean(body.marketingEmailOptIn);
 
-  if (!email || !email.includes("@")) {
+  if (!email || !email.includes("@") || email.length > 254) {
     return NextResponse.json({ error: "Invalid email." }, { status: 400 });
   }
   if (!isValidPassword(password)) {
@@ -28,18 +51,25 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const admin = createServiceClient();
-  const { data, error } = await admin.auth.admin.createUser({
+  const supabase = createClient(url, key, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    email_confirm: true,
+    options: {
+      emailRedirectTo: `${siteUrl()}/auth/callback`,
+    },
   });
 
   if (error) {
-    const message = /already|registered|exists/i.test(error.message)
-      ? "An account with this email already exists."
-      : error.message;
-    return NextResponse.json({ error: message }, { status: 400 });
+    // Avoid account enumeration: same generic success for "already registered" cases.
+    if (/already|registered|exists/i.test(error.message)) {
+      return NextResponse.json({ ok: true, needsConfirmation: true, message: GENERIC_REGISTER_OK });
+    }
+    console.error("[POST /api/auth/register] signUp failed");
+    return NextResponse.json({ error: "Registration failed. Try again later." }, { status: 400 });
   }
 
   const userId = data.user?.id;
@@ -55,5 +85,13 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, userId: userId ?? null });
+  // Prefer confirmation flow: do not auto-issue a session for unverified emails.
+  const needsConfirmation = !data.session;
+  return NextResponse.json({
+    ok: true,
+    needsConfirmation,
+    message: needsConfirmation
+      ? GENERIC_REGISTER_OK
+      : undefined,
+  });
 }
