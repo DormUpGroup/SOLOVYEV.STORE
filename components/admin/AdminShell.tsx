@@ -7,6 +7,7 @@ import { AdminClient } from "@/components/admin/cms/AdminClient";
 import { LegacyTabs } from "@/components/admin/legacy/LegacyTabs";
 import { UsersTab } from "@/components/admin/commerce/UsersTab";
 import { OrdersTab } from "@/components/admin/commerce/OrdersTab";
+import { ReportingTab } from "@/components/admin/commerce/ReportingTab";
 import styles from "@/app/admin/admin.module.css";
 
 type Tab =
@@ -16,6 +17,7 @@ type Tab =
   | "brand_new"
   | "users"
   | "orders"
+  | "reporting"
   | "faq"
   | "settings"
   | "analytics";
@@ -27,6 +29,7 @@ const TAB_LABELS: Record<Tab, string> = {
   brand_new: "Brand new",
   users: "Users",
   orders: "Orders",
+  reporting: "Reporting",
   faq: "FAQ",
   settings: "Settings",
   analytics: "Analytics",
@@ -150,6 +153,8 @@ export function AdminShell({ initialProducts }: AdminShellProps) {
             <UsersTab showToast={showToast} />
           ) : tab === "orders" ? (
             <OrdersTab showToast={showToast} />
+          ) : tab === "reporting" ? (
+            <ReportingTab showToast={showToast} />
           ) : (
             <LegacyTabs
               tab={tab}
