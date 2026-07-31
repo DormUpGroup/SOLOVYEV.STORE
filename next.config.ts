@@ -45,7 +45,14 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  serverExternalPackages: ["sharp"],
+  // pdfkit loads AFM font files from disk — must stay external + traced into the lambda
+  serverExternalPackages: ["sharp", "pdfkit", "fontkit"],
+  outputFileTracingIncludes: {
+    "/api/admin/reports/sales": [
+      "./node_modules/pdfkit/js/data/**/*",
+      "./node_modules/@swc/helpers/**/*",
+    ],
+  },
   trailingSlash: false,
   async headers() {
     return [
