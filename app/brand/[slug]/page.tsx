@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: brand,
-    description: `Shop ${count} authentic ${brand} items at SOLOVYEV STORE Israel. Sneakers, streetwear and accessories.`,
+    description: `Shop ${count} authentic ${brand} items at SOLOVYEV STORE. Sneakers, streetwear and accessories.`,
     alternates: {
       canonical: `${siteUrl}/brand/${slug}`,
     },

@@ -6,11 +6,11 @@ export const he: Dictionary = {
     titleLine1: "CURATED",
     titleLine2: "HEAT.",
     description:
-      "חנות קונסיגנציה פרימיום לסטריטוור וסניקרס בישראל. קנו, מכרו והחליפו פריטים אותנטיים ב-100%.",
+      "חנות קונסיגנציה פרימיום לסטריטוור וסניקרס. קנו, מכרו והחליפו פריטים אותנטיים ב-100%.",
     shopAll: "לכל המוצרים.",
     sellTrade: "מכירה / החלפה.",
     badgeAuthentic: "אותנטי",
-    badgeIsrael: "ישראל",
+    badgeIsrael: "חיפה",
     photoAlt: "סטריטוור וסניקרס נבחרים",
   },
   stats: {
@@ -54,7 +54,7 @@ export const he: Dictionary = {
     brandsTitle: "מותגים",
     brandsDesc: "סטריטוור וסניקרס אותנטיים — דפדוף לפי מותג.",
     stockCount: "{count} במלאי",
-    brandPageDesc: "דרופים אותנטיים של {brand} מ-SOLOVYEV STORE Israel.",
+    brandPageDesc: "דרופים אותנטיים של {brand} מ-SOLOVYEV STORE.",
     viewAllBrands: "כל המותגים",
     searchPlaceholder: "חיפוש...",
     allSizes: "כל המידות",
@@ -208,7 +208,7 @@ export const he: Dictionary = {
     shopTitle: "חנות",
     infoTitle: "מידע",
     contactTitle: "צור קשר",
-    tagline: "קונסיגנציה פרימיום לסטריטוור וסניקרס בישראל.",
+    tagline: "קונסיגנציה פרימיום לסטריטוור וסניקרס.",
     rights: "כל הזכויות שמורות.",
   },
   consent: {
@@ -291,7 +291,7 @@ export const he: Dictionary = {
     title: "אודותינו.",
     backLink: "← חזרה לחנות",
     lead:
-      "קונסיגנציה פרימיום לסטריטוור וסניקרס בישראל — קנו, מכרו והחליפו פריטים אותנטיים ב-100%.",
+      "קונסיגנציה פרימיום לסטריטוור וסניקרס — קנו, מכרו והחליפו פריטים אותנטיים ב-100%.",
     paragraphs: [
       "כל דרופ נבחר ביד: בדיקות אותנטיות, דירוג מצב כנה ומחירים מתחת לשוק.",
       "משלוחים בכל הארץ בימי חול. בקשות מכירה / החלפה — הערכה ב-WhatsApp תוך שעתיים.",

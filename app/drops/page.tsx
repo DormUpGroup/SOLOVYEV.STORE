@@ -7,7 +7,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
 export const metadata: Metadata = {
   title: "All Drops",
   description:
-    "Shop all authentic streetwear and sneakers at SOLOVYEV STORE Israel — Jordan, Yeezy, Supreme, vintage luxury, and more.",
+    "Shop all authentic streetwear and sneakers at SOLOVYEV STORE — Jordan, Yeezy, Supreme, vintage luxury, and more.",
   alternates: { canonical: `${siteUrl}/drops` },
   openGraph: {
     title: "All Drops | SOLOVYEV STORE",

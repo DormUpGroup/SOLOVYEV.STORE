@@ -8,7 +8,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
 export const metadata: Metadata = {
   title: "F.A.Q.",
   description:
-    "Frequently asked questions about authenticity, shipping, returns, and Sell/Trade at SOLOVYEV STORE Israel.",
+    "Frequently asked questions about authenticity, shipping, returns, and Sell/Trade at SOLOVYEV STORE.",
   alternates: { canonical: `${siteUrl}/faq` },
 };
 

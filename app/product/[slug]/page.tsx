@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: product.title,
     description: product.description
       ? product.description.slice(0, 160)
-      : `${product.brand} — ${product.condition}. ${formatPriceOrDm(product.price)}. Authentic streetwear at SOLOVYEV STORE Israel.`,
+      : `${product.brand} — ${product.condition}. ${formatPriceOrDm(product.price)}. Authentic streetwear at SOLOVYEV STORE.`,
     openGraph: {
       title: product.title,
       description: product.description

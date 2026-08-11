@@ -18,26 +18,26 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "SOLOVYEV STORE | Buy, Sell & Trade Streetwear Israel",
+    default: "SOLOVYEV STORE | Buy, Sell & Trade Streetwear",
     template: "%s | SOLOVYEV STORE",
   },
   description:
-    "Premium streetwear & sneakers consignment store in Israel. Buy, sell, and trade 100% authentic items.",
+    "Premium streetwear & sneakers consignment store. Buy, sell, and trade 100% authentic items.",
   openGraph: {
     type: "website",
     locale: "en_IL",
     url: siteUrl,
     siteName: "SOLOVYEV STORE",
-    title: "SOLOVYEV STORE | Buy, Sell & Trade Streetwear Israel",
+    title: "SOLOVYEV STORE | Buy, Sell & Trade Streetwear",
     description:
-      "Premium streetwear & sneakers consignment store in Israel. Buy, sell, and trade 100% authentic items.",
+      "Premium streetwear & sneakers consignment store. Buy, sell, and trade 100% authentic items.",
     images: [{ url: "/assets/hiro_photo.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "SOLOVYEV STORE",
     description:
-      "Premium streetwear & sneakers consignment store in Israel.",
+      "Premium streetwear & sneakers consignment store.",
     images: ["/assets/hiro_photo.png"],
   },
   alternates: {

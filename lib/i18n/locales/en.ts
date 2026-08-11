@@ -6,11 +6,11 @@ export const en: Dictionary = {
     titleLine1: "CURATED",
     titleLine2: "HEAT.",
     description:
-      "Premium streetwear & sneakers consignment store in Israel. Buy, sell, and trade 100% authentic items.",
+      "Premium streetwear & sneakers consignment store. Buy, sell, and trade 100% authentic items.",
     shopAll: "SHOP ALL.",
     sellTrade: "SELL / TRADE.",
     badgeAuthentic: "AUTHENTIC",
-    badgeIsrael: "ISRAEL",
+    badgeIsrael: "HAIFA",
     photoAlt: "Featured streetwear and sneakers",
   },
   stats: {
@@ -54,7 +54,7 @@ export const en: Dictionary = {
     brandsTitle: "BRANDS",
     brandsDesc: "Authentic streetwear and sneakers — browse by label.",
     stockCount: "{count} in stock",
-    brandPageDesc: "Authentic {brand} drops from SOLOVYEV STORE Israel.",
+    brandPageDesc: "Authentic {brand} drops from SOLOVYEV STORE.",
     viewAllBrands: "View all brands",
     searchPlaceholder: "Search drops...",
     allSizes: "All Sizes",
@@ -209,7 +209,7 @@ export const en: Dictionary = {
     shopTitle: "SHOP",
     infoTitle: "INFO",
     contactTitle: "CONTACT",
-    tagline: "Premium streetwear & sneakers consignment in Israel.",
+    tagline: "Premium streetwear & sneakers consignment.",
     rights: "All rights reserved.",
   },
   consent: {
@@ -292,7 +292,7 @@ export const en: Dictionary = {
     title: "ABOUT US.",
     backLink: "← BACK TO STORE",
     lead:
-      "Premium streetwear & sneakers consignment in Israel — buy, sell, and trade 100% authentic heat.",
+      "Premium streetwear & sneakers consignment — buy, sell, and trade 100% authentic heat.",
     paragraphs: [
       "Every drop is hand-picked: authenticity checks, honest condition grading, and prices below market.",
       "We ship nationwide on weekdays. Sell / Trade submissions get a WhatsApp estimate within 2 hours.",

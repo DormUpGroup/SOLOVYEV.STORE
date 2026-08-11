@@ -8,7 +8,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
 export const metadata: Metadata = {
   title: "Made to Order",
   description:
-    "Order authentic streetwear and sneakers on request at SOLOVYEV STORE Israel — curated pieces sourced for you.",
+    "Order authentic streetwear and sneakers on request at SOLOVYEV STORE — curated pieces sourced for you.",
   alternates: { canonical: `${siteUrl}/made-to-order` },
   openGraph: {
     title: "Made to Order | SOLOVYEV STORE",

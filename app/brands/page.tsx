@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Brands",
     description:
-      "Browse authentic streetwear and sneaker brands at SOLOVYEV STORE Israel — Gucci, Nike, Supreme, and more.",
+      "Browse authentic streetwear and sneaker brands at SOLOVYEV STORE — Gucci, Nike, Supreme, and more.",
     alternates: { canonical: `${siteUrl}/brands` },
     openGraph: {
       title: "Brands | SOLOVYEV STORE",
