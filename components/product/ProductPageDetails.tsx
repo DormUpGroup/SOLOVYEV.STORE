@@ -9,6 +9,7 @@ import {
 } from "@/lib/products";
 import { productImageSrc } from "@/lib/product-image";
 import { useI18n } from "@/components/providers/I18nProvider";
+import { FavoriteButton } from "@/components/catalog/FavoriteButton";
 import { ProductPurchasePanel } from "@/components/product/ProductPurchasePanel";
 import type { Product } from "@/lib/types";
 
@@ -35,6 +36,7 @@ export function ProductPageDetails({
       </Link>
       <div className="product-page-grid">
         <div className="product-page-image">
+          <FavoriteButton productId={product.id} />
           {safeImg ? (
             <Image
               src={safeImg}

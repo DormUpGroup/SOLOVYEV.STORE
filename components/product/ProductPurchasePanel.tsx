@@ -13,7 +13,6 @@ import type { Product } from "@/lib/types";
 import { useState } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { checkoutLoginHref } from "@/lib/customer-auth";
-import { FavoriteButton } from "@/components/catalog/FavoriteButton";
 
 interface ProductPurchasePanelProps {
   product: Product;
@@ -109,7 +108,6 @@ export function ProductPurchasePanel({
             {checkoutBusy ? dict.cart.creatingOrder : copy.orderWhatsApp}
           </button>
         </div>
-        <FavoriteButton productId={product.id} variant="inline" showLabel />
         {showQuickView ? (
           <button
             type="button"

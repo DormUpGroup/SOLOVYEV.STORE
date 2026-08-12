@@ -111,16 +111,18 @@ export function QuickViewModal() {
         </button>
         <div className="modal-grid">
           <div className="modal-image">
-            <FavoriteButton productId={selectedProduct.id} />
-            <ProductImageLoupe
-              src={activeImg || selectedProduct.img}
-              alt={selectedProduct.title}
-              sizes="(max-width: 768px) 100vw, 580px"
-              className="modal-img-loupe"
-              lensSize={160}
-              priority
-              quality={75}
-            />
+            <div className="modal-image-stage">
+              <FavoriteButton productId={selectedProduct.id} />
+              <ProductImageLoupe
+                src={activeImg || selectedProduct.img}
+                alt={selectedProduct.title}
+                sizes="(max-width: 768px) 100vw, 580px"
+                className="modal-img-loupe"
+                lensSize={160}
+                priority
+                quality={75}
+              />
+            </div>
             {galleryImages.length > 1 && (
               <div className="modal-thumbnails">
                 {galleryImages.map((url, idx) => (
