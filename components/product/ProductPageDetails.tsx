@@ -36,7 +36,6 @@ export function ProductPageDetails({
       </Link>
       <div className="product-page-grid">
         <div className="product-page-image">
-          <FavoriteButton productId={product.id} />
           {safeImg ? (
             <Image
               src={safeImg}
@@ -58,9 +57,12 @@ export function ProductPageDetails({
         <div className="product-page-details">
           <p className="product-page-brand">{product.brand}</p>
           <h1>{product.title}</h1>
-          <p className="modal-price">
-            {formatPriceOrDm(product.price, currencySymbol)}
-          </p>
+          <div className="modal-price-row">
+            <p className="modal-price">
+              {formatPriceOrDm(product.price, currencySymbol)}
+            </p>
+            <FavoriteButton productId={product.id} variant="inline" />
+          </div>
           {product.description ? (
             <p className="product-description">{product.description}</p>
           ) : null}

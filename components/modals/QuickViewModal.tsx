@@ -111,18 +111,15 @@ export function QuickViewModal() {
         </button>
         <div className="modal-grid">
           <div className="modal-image">
-            <div className="modal-image-stage">
-              <FavoriteButton productId={selectedProduct.id} />
-              <ProductImageLoupe
-                src={activeImg || selectedProduct.img}
-                alt={selectedProduct.title}
-                sizes="(max-width: 768px) 100vw, 580px"
-                className="modal-img-loupe"
-                lensSize={160}
-                priority
-                quality={75}
-              />
-            </div>
+            <ProductImageLoupe
+              src={activeImg || selectedProduct.img}
+              alt={selectedProduct.title}
+              sizes="(max-width: 768px) 100vw, 580px"
+              className="modal-img-loupe"
+              lensSize={160}
+              priority
+              quality={75}
+            />
             {galleryImages.length > 1 && (
               <div className="modal-thumbnails">
                 {galleryImages.map((url, idx) => (
@@ -155,9 +152,12 @@ export function QuickViewModal() {
               {statusLabel || selectedProduct.badge.toUpperCase()}
             </span>
             <h2 id="modal-product-title">{selectedProduct.title}</h2>
-            <p className="modal-price" id="modal-product-price">
-              {formatPriceOrDm(selectedProduct.price, config.currency.symbol)}
-            </p>
+            <div className="modal-price-row">
+              <p className="modal-price" id="modal-product-price">
+                {formatPriceOrDm(selectedProduct.price, config.currency.symbol)}
+              </p>
+              <FavoriteButton productId={selectedProduct.id} variant="inline" />
+            </div>
 
             <div className="product-specs">
               <div className="spec-row">
