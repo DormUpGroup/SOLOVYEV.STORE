@@ -106,9 +106,16 @@ export function QuickViewModal() {
     <div className="modal open" id="quick-view-modal" role="dialog" aria-modal="true">
       <div className="modal-backdrop" onClick={closeAll} aria-hidden="true" />
       <div className="modal-content quick-view-modal-content">
-        <button type="button" className="close-modal-btn" onClick={closeAll} aria-label={sellTrade.close}>
-          ×
-        </button>
+        <div className="quick-view-close-bar">
+          <button
+            type="button"
+            className="close-modal-btn quick-view-close-btn"
+            onClick={closeAll}
+            aria-label={sellTrade.close}
+          >
+            ×
+          </button>
+        </div>
         <div className="modal-grid">
           <div className="modal-image">
             <ProductImageLoupe

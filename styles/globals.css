@@ -2035,8 +2035,11 @@ main {
   color: var(--text-primary);
   font-size: 32px;
   font-weight: 300;
-  transition: color 0.3s;
+  transition: color 0.3s, background-color 0.2s, border-color 0.2s;
   z-index: 320;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
 }
 
 .close-modal-btn:hover {
@@ -2286,6 +2289,40 @@ main {
   overflow: hidden;
   width: min(96vw, 1040px);
   max-height: min(92vh, 820px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.quick-view-close-bar {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+  z-index: 400;
+  padding: 10px;
+  pointer-events: none;
+}
+
+.quick-view-close-btn {
+  pointer-events: auto;
+  position: static !important;
+  inset: auto !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+  border: 1px solid var(--border-medium) !important;
+  background: color-mix(in srgb, var(--bg-card) 88%, transparent) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text-primary) !important;
+  font-size: 28px !important;
+  box-shadow: 0 4px 16px var(--shadow-color);
+}
+
+.quick-view-close-btn:hover {
+  color: var(--text-primary) !important;
+  background: var(--bg-card) !important;
+  border-color: var(--border-strong) !important;
 }
 
 .quick-view-modal-content .modal-grid {
