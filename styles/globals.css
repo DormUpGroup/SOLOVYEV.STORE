@@ -1415,7 +1415,7 @@ main {
   height: 100% !important;
   object-fit: cover;
   object-position: center;
-  transform: scale(0.72);
+  transform: scale(1);
   transform-origin: center center;
   transition: transform 0.35s cubic-bezier(0.33, 1, 0.68, 1);
   will-change: transform;
@@ -1439,11 +1439,11 @@ main {
 }
 
 .product-card:hover .product-img-wrapper {
-  background-color: var(--product-photo-hover-bg);
+  background-color: var(--product-photo-bg);
 }
 
 .product-card:hover .product-img-wrapper img {
-  transform: scale(1);
+  transform: scale(1.03);
 }
 
 @media (hover: none), (pointer: coarse) {
@@ -1453,7 +1453,7 @@ main {
   }
 
   .product-img-wrapper {
-    background-color: var(--product-photo-hover-bg);
+    background-color: var(--product-photo-bg);
   }
 
   .product-img-wrapper img {
