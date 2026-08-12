@@ -369,5 +369,56 @@
     "description": "Off-White jacket black\nCondition: 10 of 10 \nSize: S-M\nPrice: 900",
     "instagramUrl": "https://www.instagram.com/p/DY1nKtcDVK7/",
     "source": "instagram"
+  },
+  {
+    "id": 21,
+    "slug": "off-white-spray-arrow-tee-cream",
+    "title": "Off-White spray arrow tee cream",
+    "category": "clothing",
+    "price": 580,
+    "condition": "9 out 10",
+    "brand": "Off-White",
+    "badge": "hot",
+    "sizes": [
+      "M-L"
+    ],
+    "img": "https://esfbxjmiakxcpnrkeboz.supabase.co/storage/v1/object/public/product-images/6f2135c1-cf71-4198-852a-71d36033128c.webp",
+    "status": "available",
+    "description": "Off-White spray arrow tee cream\nCondition: 9 out 10\nSize: M-L\nPrice: 580",
+    "source": "admin"
+  },
+  {
+    "id": 22,
+    "slug": "project-gr-zip-hoodie-heather-grey",
+    "title": "PROJECT G/R zip hoodie heather grey",
+    "category": "clothing",
+    "price": 450,
+    "condition": "10 of 10",
+    "brand": "PROJECT G/R",
+    "badge": "hot",
+    "sizes": [
+      "L"
+    ],
+    "img": "https://esfbxjmiakxcpnrkeboz.supabase.co/storage/v1/object/public/product-images/32c6669f-a7a2-46d7-82ab-230008631b8a.webp",
+    "status": "available",
+    "description": "PROJECT G/R zip hoodie heather grey\nCondition: 10 of 10\nSize: L\nPrice: 450",
+    "source": "admin"
+  },
+  {
+    "id": 23,
+    "slug": "stussy-desert-camo-waffle-ls",
+    "title": "Stussy desert camo waffle LS",
+    "category": "clothing",
+    "price": 320,
+    "condition": "9 out 10",
+    "brand": "Stussy",
+    "badge": "hot",
+    "sizes": [
+      "M"
+    ],
+    "img": "https://esfbxjmiakxcpnrkeboz.supabase.co/storage/v1/object/public/product-images/6fdebc7b-ff1c-46f7-9631-416e1303ab1d.webp",
+    "status": "available",
+    "description": "Stussy desert camo waffle LS\nCondition: 9 out 10\nSize: M\nPrice: 320",
+    "source": "admin"
   }
 ]
