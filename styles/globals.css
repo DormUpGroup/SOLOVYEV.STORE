@@ -2125,7 +2125,7 @@ main {
 }
 
 .modal-image img {
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   display: block;
 }
@@ -2290,7 +2290,7 @@ main {
 
 .quick-view-modal-content .modal-grid {
   height: 100%;
-  min-height: 620px;
+  min-height: 0;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
 }
 
@@ -2343,16 +2343,16 @@ main {
 }
 
 .quick-view-modal-content .modal-img-loupe {
-  flex: 1;
+  flex: 0 0 auto;
   width: 100%;
+  aspect-ratio: 1 / 1;
   min-height: 0;
-  aspect-ratio: unset;
   background-color: var(--bg-card);
 }
 
 .quick-view-modal-content .modal-img-loupe img {
   transform: scale(1);
-  object-fit: contain !important;
+  object-fit: cover !important;
   padding: 0;
 }
 
@@ -2460,7 +2460,8 @@ main {
   }
 
   .quick-view-modal-content .modal-img-loupe {
-    min-height: min(45dvh, 280px);
+    aspect-ratio: 1 / 1;
+    min-height: 0;
   }
 }
 
@@ -4140,14 +4141,14 @@ body.no-scroll {
 .product-page-image {
   position: relative;
   width: 100%;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
 }
 
 .product-page-image img {
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   display: block;
 }
