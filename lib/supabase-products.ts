@@ -493,6 +493,25 @@ export async function updateProductImagePosition(
   if (error) throw error;
 }
 
+export async function updateProductImageUrl(
+  productId: number,
+  imageId: number,
+  imageUrl: string,
+): Promise<ProductImage> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from("product_images")
+    .update({ image_url: imageUrl })
+    .eq("id", imageId)
+    .eq("product_id", productId)
+    .select("*")
+    .single();
+  if (error) throw error;
+
+  await syncProductPrimaryImage(productId);
+  return mapImage(data as DbProductImage);
+}
+
 export async function deleteProductImage(productId: number, imageId: number): Promise<void> {
   const supabase = getSupabaseAdmin();
   const { data } = await supabase

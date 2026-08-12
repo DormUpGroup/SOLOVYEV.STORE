@@ -22,3 +22,19 @@ export async function optimizeImage(
 
   return { buffer: optimized, contentType: "image/webp", ext: "webp" };
 }
+
+export const ROTATE_DEGREES = [90, -90, 180, 270] as const;
+export type RotateDegrees = (typeof ROTATE_DEGREES)[number];
+
+export function isRotateDegrees(value: unknown): value is RotateDegrees {
+  return typeof value === "number" && (ROTATE_DEGREES as readonly number[]).includes(value);
+}
+
+export async function rotateOptimizedImage(
+  buffer: Buffer,
+  degrees: RotateDegrees,
+): Promise<{ buffer: Buffer; contentType: string; ext: string }> {
+  const sharp = (await import("sharp")).default;
+  const rotated = await sharp(buffer).rotate(degrees).webp({ quality: 82 }).toBuffer();
+  return { buffer: rotated, contentType: "image/webp", ext: "webp" };
+}

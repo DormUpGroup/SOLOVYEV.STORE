@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Product, ProductImage, ProductStatus, StoreConfig } from "@/lib/types";
+import type { RotateDegrees } from "@/lib/image-optimize";
 import { ProductList } from "./ProductList";
 import { ProductForm, emptyFormProduct, type FormProduct } from "./ProductForm";
 import type { TempImage } from "./ImageManager";
@@ -277,6 +278,25 @@ export function AdminClient({
     setIsFormDirty(true);
   };
 
+  const persistRotate = async (imageId: number, degrees: RotateDegrees) => {
+    if (!formProduct?.id) return;
+    const res = await fetch(`/api/admin/products/${formProduct.id}/images/${imageId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rotate: degrees }),
+    });
+    if (!res.ok) {
+      const json = await res.json().catch(() => ({}));
+      throw new Error(json.error ?? "Failed to rotate image");
+    }
+    const json = (await res.json()) as { product: Product; image: ProductImage };
+    setFormProduct(json.product);
+    setFormImages(productToTempImages(json.product));
+    updateProducts((prev) => prev.map((p) => (p.id === json.product.id ? json.product : p)));
+    await publishSite();
+    return json.image;
+  };
+
   const persistDeleteImage = async (imageId: number) => {
     if (!formProduct?.id) return;
     const res = await fetch(`/api/admin/products/${formProduct.id}/images/${imageId}`, {
@@ -346,6 +366,7 @@ export function AdminClient({
             onCancel={closeForm}
             onPersistReorder={formProduct.id ? persistReorderImages : undefined}
             onPersistPosition={formProduct.id ? persistPosition : undefined}
+            onPersistRotate={formProduct.id ? persistRotate : undefined}
             onPersistDelete={formProduct.id ? persistDeleteImage : undefined}
             onPersistAdd={formProduct.id ? persistAddImage : undefined}
             onRefreshProduct={formProduct.id ? () => refreshProduct(formProduct.id) : undefined}

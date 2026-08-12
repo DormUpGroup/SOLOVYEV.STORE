@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { revalidateStore } from "@/lib/admin-api";
+import { isRotateDegrees, rotateImageAtUrl } from "@/lib/rotate-product-image";
 import {
   deleteProductImage,
   fetchProductById,
   updateProductImagePosition,
+  updateProductImageUrl,
 } from "@/lib/supabase-products";
 
 type RouteContext = { params: Promise<{ id: string; imageId: string }> };
@@ -15,14 +17,41 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 
   const { id, imageId } = await context.params;
-  const body = (await request.json()) as { objectPosition?: string };
+  const productId = Number(id);
+  const imgId = Number(imageId);
+  const body = (await request.json()) as {
+    objectPosition?: string;
+    rotate?: number;
+  };
 
-  if (!body.objectPosition) {
-    return NextResponse.json({ error: "objectPosition required" }, { status: 400 });
+  if (isRotateDegrees(body.rotate)) {
+    const product = await fetchProductById(productId);
+    const existing = product?.images?.find((img) => img.id === imgId);
+    if (!existing) {
+      return NextResponse.json({ error: "Image not found" }, { status: 404 });
+    }
+
+    try {
+      const newUrl = await rotateImageAtUrl(existing.imageUrl, body.rotate);
+      const image = await updateProductImageUrl(productId, imgId, newUrl);
+      const updated = await fetchProductById(productId);
+      revalidateStore(updated?.slug);
+      return NextResponse.json({ product: updated, image });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Rotate failed";
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
   }
 
-  await updateProductImagePosition(Number(id), Number(imageId), body.objectPosition);
-  const product = await fetchProductById(Number(id));
+  if (!body.objectPosition) {
+    return NextResponse.json(
+      { error: "objectPosition or rotate required" },
+      { status: 400 },
+    );
+  }
+
+  await updateProductImagePosition(productId, imgId, body.objectPosition);
+  const product = await fetchProductById(productId);
   revalidateStore(product?.slug);
   return NextResponse.json({ product });
 }

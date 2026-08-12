@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import type { Product, ProductCategory, ProductImage, ProductStatus, StoreConfig } from "@/lib/types";
+import type { RotateDegrees } from "@/lib/image-optimize";
 import { slugify } from "@/lib/slug";
 import { ImageManager, type TempImage } from "./ImageManager";
 import { ProductPreview } from "./ProductPreview";
@@ -28,6 +29,7 @@ interface ProductFormProps {
   onCancel: () => void;
   onPersistReorder?: (imageIds: number[]) => Promise<void>;
   onPersistPosition?: (imageId: number, position: string) => Promise<void>;
+  onPersistRotate?: (imageId: number, degrees: RotateDegrees) => Promise<ProductImage | void>;
   onPersistDelete?: (imageId: number) => Promise<void>;
   onPersistAdd?: (url: string) => Promise<ProductImage | void>;
   onRefreshProduct?: () => Promise<void>;
@@ -45,6 +47,7 @@ export function ProductForm({
   onCancel,
   onPersistReorder,
   onPersistPosition,
+  onPersistRotate,
   onPersistDelete,
   onPersistAdd,
   onRefreshProduct,
@@ -312,6 +315,7 @@ export function ProductForm({
           onChange={onImagesChange}
           onPersistReorder={onPersistReorder}
           onPersistPosition={onPersistPosition}
+          onPersistRotate={onPersistRotate}
           onPersistDelete={onPersistDelete}
           onPersistAdd={onPersistAdd}
           onRefreshProduct={onRefreshProduct}

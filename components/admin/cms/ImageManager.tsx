@@ -19,6 +19,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ProductImage } from "@/lib/types";
+import type { RotateDegrees } from "@/lib/image-optimize";
 import { adminProductImageSrc } from "@/lib/admin-images";
 import { ImagePositionEditor } from "./ImagePositionEditor";
 
@@ -36,6 +37,7 @@ interface ImageManagerProps {
   onChange: (images: TempImage[]) => void;
   onPersistReorder?: (imageIds: number[]) => Promise<void>;
   onPersistPosition?: (imageId: number, position: string) => Promise<void>;
+  onPersistRotate?: (imageId: number, degrees: RotateDegrees) => Promise<ProductImage | void>;
   onPersistDelete?: (imageId: number) => Promise<void>;
   onPersistAdd?: (url: string) => Promise<ProductImage | void>;
   onRefreshProduct?: () => Promise<void>;
@@ -45,20 +47,24 @@ function SortableImageRow({
   image,
   index,
   isEditing,
+  isRotating,
   onEdit,
   onDelete,
   onMoveUp,
   onMoveDown,
   onPositionChange,
+  onRotate,
 }: {
   image: TempImage;
   index: number;
   isEditing: boolean;
+  isRotating: boolean;
   onEdit: () => void;
   onDelete: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
   onPositionChange: (pos: string) => void;
+  onRotate: (degrees: RotateDegrees) => void;
 }) {
   const id = image.id ? String(image.id) : image.tempId;
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
@@ -99,6 +105,24 @@ function SortableImageRow({
             <button type="button" className="border border-admin-border px-2 py-0.5 text-xs" onClick={onEdit}>
               Crop
             </button>
+            <button
+              type="button"
+              className="border border-admin-border px-2 py-0.5 text-xs disabled:opacity-50"
+              disabled={isRotating}
+              onClick={() => onRotate(-90)}
+              title="Rotate left 90°"
+            >
+              ↺
+            </button>
+            <button
+              type="button"
+              className="border border-admin-border px-2 py-0.5 text-xs disabled:opacity-50"
+              disabled={isRotating}
+              onClick={() => onRotate(90)}
+              title="Rotate right 90°"
+            >
+              ↻
+            </button>
             <button type="button" className="border border-admin-border px-2 py-0.5 text-xs" onClick={onMoveUp}>
               ↑
             </button>
@@ -113,6 +137,7 @@ function SortableImageRow({
               Delete
             </button>
           </div>
+          {isRotating ? <p className="mt-1 text-xs text-admin-muted">Rotating…</p> : null}
         </div>
       </div>
       {isEditing ? (
@@ -134,12 +159,14 @@ export function ImageManager({
   onChange,
   onPersistReorder,
   onPersistPosition,
+  onPersistRotate,
   onPersistDelete,
   onPersistAdd,
   onRefreshProduct,
 }: ImageManagerProps) {
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [rotatingId, setRotatingId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   const sensors = useSensors(
@@ -238,6 +265,49 @@ export function ImageManager({
     }
   };
 
+  const handleRotate = async (index: number, degrees: RotateDegrees) => {
+    const img = images[index];
+    if (!img) return;
+    const key = img.id ? String(img.id) : img.tempId;
+    setRotatingId(key);
+    setError("");
+    try {
+      if (img.id && productId && onPersistRotate) {
+        const updated = await onPersistRotate(img.id, degrees);
+        if (updated) {
+          onChange(
+            images.map((row, i) =>
+              i === index
+                ? {
+                    ...row,
+                    imageUrl: updated.imageUrl,
+                    objectPosition: updated.objectPosition,
+                    altText: updated.altText,
+                  }
+                : row,
+            ),
+          );
+        }
+      } else {
+        const res = await fetch("/api/admin/images/rotate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageUrl: img.imageUrl, degrees }),
+        });
+        if (!res.ok) {
+          const json = await res.json().catch(() => ({}));
+          throw new Error(json.error ?? "Rotate failed");
+        }
+        const json = (await res.json()) as { url: string };
+        onChange(images.map((row, i) => (i === index ? { ...row, imageUrl: json.url } : row)));
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Rotate failed");
+    } finally {
+      setRotatingId(null);
+    }
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -274,11 +344,13 @@ export function ImageManager({
                   image={img}
                   index={index}
                   isEditing={editingId === key}
+                  isRotating={rotatingId === key}
                   onEdit={() => setEditingId(editingId === key ? null : key)}
                   onDelete={() => handleDelete(index)}
                   onMoveUp={() => move(index, -1)}
                   onMoveDown={() => move(index, 1)}
                   onPositionChange={(pos) => handlePositionChange(index, pos)}
+                  onRotate={(degrees) => handleRotate(index, degrees)}
                 />
               );
             })}
