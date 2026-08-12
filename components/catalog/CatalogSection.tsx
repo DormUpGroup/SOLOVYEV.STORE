@@ -45,15 +45,19 @@ export function NewestArrivals() {
       </div>
       <div className="horizontal-scroll-container newest-arrivals-scroll newest-arrivals-scroll--mobile">
         <div className="horizontal-track">
-          {items.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {items.map((product, index) => (
+            <ProductCard key={product.id} product={product} priority={index < 4} />
           ))}
         </div>
       </div>
       <div className="horizontal-scroll-container newest-arrivals-scroll--desktop">
         <div className="horizontal-track newest-arrivals-track">
           {carouselItems.map((product, index) => (
-            <ProductCard key={`${product.id}-${index}`} product={product} />
+            <ProductCard
+              key={`${product.id}-${index}`}
+              product={product}
+              priority={index < 4}
+            />
           ))}
         </div>
       </div>
@@ -198,8 +202,8 @@ export function CatalogSection({
         {filtered.length === 0 ? (
           <p className="no-results">{catalog.noResults}</p>
         ) : (
-          filtered.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          filtered.map((product, index) => (
+            <ProductCard key={product.id} product={product} priority={index < 8} />
           ))
         )}
       </div>

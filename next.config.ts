@@ -41,9 +41,46 @@ if (isProd) {
   });
 }
 
+function supabaseImageHostname(): string | null {
+  const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!raw) return null;
+  try {
+    return new URL(raw).hostname;
+  } catch {
+    return null;
+  }
+}
+
+const supabaseHostname = supabaseImageHostname();
+
 const nextConfig: NextConfig = {
   images: {
-    unoptimized: true,
+    // Was left over from static `output: "export"`. Enable optimizer so catalog
+    // cards request ~400px derivatives instead of full ~2000px Supabase WebPs.
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [64, 96, 128, 256, 384],
+    remotePatterns: [
+      ...(supabaseHostname
+        ? [
+            {
+              protocol: "https" as const,
+              hostname: supabaseHostname,
+              pathname: "/storage/v1/object/public/**",
+            },
+          ]
+        : []),
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
   },
   // pdfkit loads AFM font files from disk — must stay external + traced into the lambda
   serverExternalPackages: ["sharp", "pdfkit", "fontkit"],

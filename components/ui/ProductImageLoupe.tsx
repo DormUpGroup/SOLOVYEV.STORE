@@ -23,6 +23,10 @@ interface ProductImageLoupeProps {
   className?: string;
   lensSize?: number;
   lensZoom?: number;
+  /** Above-the-fold cards / LCP — disables lazy load and boosts fetch priority. */
+  priority?: boolean;
+  /** Catalog thumbs default lower; detail views can raise. */
+  quality?: number;
 }
 
 export function ProductImageLoupe({
@@ -32,6 +36,8 @@ export function ProductImageLoupe({
   className = "",
   lensSize = DEFAULT_LENS_SIZE,
   lensZoom = DEFAULT_LENS_ZOOM,
+  priority = false,
+  quality = 70,
 }: ProductImageLoupeProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [lens, setLens] = useState<LensState | null>(null);
@@ -83,7 +89,15 @@ export function ProductImageLoupe({
       onMouseLeave={handleMouseLeave}
     >
       {safeSrc ? (
-        <Image src={safeSrc} alt={alt} fill sizes={sizes} />
+        <Image
+          src={safeSrc}
+          alt={alt}
+          fill
+          sizes={sizes}
+          quality={quality}
+          priority={priority}
+          loading={priority ? undefined : "lazy"}
+        />
       ) : (
         <div className="product-img-placeholder" aria-hidden="true" />
       )}

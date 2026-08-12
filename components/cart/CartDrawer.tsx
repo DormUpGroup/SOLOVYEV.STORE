@@ -130,6 +130,9 @@ export function CartDrawer() {
                         alt={product.title}
                         width={88}
                         height={104}
+                        sizes="88px"
+                        quality={55}
+                        loading="lazy"
                       />
                     ) : (
                       <div className="product-img-placeholder" aria-hidden="true" />

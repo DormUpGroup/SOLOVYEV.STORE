@@ -17,6 +17,8 @@ import { FavoriteButton } from "@/components/catalog/FavoriteButton";
 
 interface ProductCardProps {
   product: Product;
+  /** First viewport cards — prioritize image fetch for faster LCP. */
+  priority?: boolean;
 }
 
 function EyeIcon() {
@@ -38,7 +40,7 @@ function EyeIcon() {
   );
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, priority = false }: ProductCardProps) {
   const { config } = useStore();
   const { openQuickView } = useUI();
   const { dict } = useI18n();
@@ -65,7 +67,9 @@ export function ProductCard({ product }: ProductCardProps) {
         <ProductImageLoupe
           src={product.img}
           alt={product.title}
-          sizes="(max-width: 768px) 50vw, 25vw"
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+          priority={priority}
+          quality={65}
         />
       </button>
 

@@ -41,6 +41,7 @@ export function ProductPageDetails({
               alt={product.title}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
+              quality={78}
               priority
             />
           ) : (

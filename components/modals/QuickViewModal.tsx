@@ -118,6 +118,8 @@ export function QuickViewModal() {
               sizes="(max-width: 768px) 100vw, 580px"
               className="modal-img-loupe"
               lensSize={160}
+              priority
+              quality={75}
             />
             {galleryImages.length > 1 && (
               <div className="modal-thumbnails">
@@ -129,7 +131,15 @@ export function QuickViewModal() {
                     onClick={() => setActiveImg(url)}
                     aria-label={product.photoN.replace("{n}", String(idx + 1))}
                   >
-                    <Image src={url} alt={`${selectedProduct.title} ${idx + 1}`} fill sizes="64px" style={{ objectFit: "cover" }} />
+                    <Image
+                      src={url}
+                      alt={`${selectedProduct.title} ${idx + 1}`}
+                      fill
+                      sizes="64px"
+                      quality={55}
+                      loading="lazy"
+                      style={{ objectFit: "cover" }}
+                    />
                   </button>
                 ))}
               </div>
