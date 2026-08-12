@@ -19,7 +19,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { Product, ProductCategory } from "@/lib/types";
-import { adminProductImageSrc } from "@/lib/admin-images";
+import { AdminProductImage } from "@/lib/admin-images";
 
 const STATUS_LABELS: Record<Product["status"], string> = {
   available: "AVAILABLE",
@@ -88,10 +88,9 @@ function SortableRow({
       >
         ⋮⋮
       </button>
-      <div className="h-20 w-20 shrink-0 overflow-hidden border border-admin-border">
+      <div className="relative h-20 w-20 shrink-0 overflow-hidden border border-admin-border">
         {product.img ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={adminProductImageSrc(product.img, "thumb")} alt="" className="h-full w-full object-cover" />
+          <AdminProductImage src={product.img} size="thumb" className="h-full w-full object-cover" />
         ) : null}
       </div>
       <div className="min-w-0">

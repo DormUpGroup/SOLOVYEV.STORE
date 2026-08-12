@@ -192,6 +192,9 @@ export function getAvailableSizes(
 }
 
 export function getNewestArrivals(items: Product[], limit = 5): Product[] {
+  const drops = items.filter((p) => p.status === "new_drop" && !isProductUnavailable(p));
+  if (drops.length > 0) return drops.slice(0, limit);
+
   const available = items.filter((p) => !isProductUnavailable(p));
   return (available.length > 0 ? available : items).slice(0, limit);
 }

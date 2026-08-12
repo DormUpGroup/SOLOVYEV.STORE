@@ -20,7 +20,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type { ProductImage } from "@/lib/types";
 import type { RotateDegrees } from "@/lib/image-optimize";
-import { adminProductImageSrc } from "@/lib/admin-images";
+import { AdminProductImage } from "@/lib/admin-images";
 import { ImagePositionEditor } from "./ImagePositionEditor";
 
 export type TempImage = {
@@ -86,13 +86,12 @@ function SortableImageRow({
         >
           ⋮⋮
         </button>
-        <div className="h-16 w-16 shrink-0 overflow-hidden border border-admin-border">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={adminProductImageSrc(image.imageUrl, "thumb")}
-            alt=""
+        <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-admin-border">
+          <AdminProductImage
+            src={image.imageUrl}
+            size="editor"
             className="h-full w-full object-cover"
-            style={{ objectPosition: image.objectPosition }}
+            objectPosition={image.objectPosition}
           />
         </div>
         <div className="min-w-0 flex-1">

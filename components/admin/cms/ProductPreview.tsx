@@ -1,7 +1,7 @@
 "use client";
 
 import type { Product, ProductImage } from "@/lib/types";
-import { adminProductImageSrc } from "@/lib/admin-images";
+import { AdminProductImage } from "@/lib/admin-images";
 
 interface ProductPreviewProps {
   product: Partial<Product> & { title: string; brand: string; price: number };
@@ -22,12 +22,11 @@ export function ProductPreview({ product, images }: ProductPreviewProps) {
         <div className="overflow-hidden border border-admin-border bg-admin-bg">
           <div className="relative aspect-square bg-neutral-900">
             {mainUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={adminProductImageSrc(mainUrl, "preview")}
-                alt=""
+              <AdminProductImage
+                src={mainUrl}
+                size="preview"
                 className="h-full w-full object-cover"
-                style={{ objectPosition: position ?? "50% 50%" }}
+                objectPosition={position ?? "50% 50%"}
               />
             ) : (
               <div className="flex h-full items-center justify-center text-admin-muted">No image</div>
@@ -56,12 +55,11 @@ export function ProductPreview({ product, images }: ProductPreviewProps) {
         <div className="grid grid-cols-2 gap-2">
           {images.slice(0, 4).map((img, i) => (
             <div key={i} className="aspect-square overflow-hidden border border-admin-border">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={adminProductImageSrc(img.imageUrl, "grid")}
-                alt=""
+              <AdminProductImage
+                src={img.imageUrl}
+                size="grid"
                 className="h-full w-full object-cover"
-                style={{ objectPosition: img.objectPosition ?? "50% 50%" }}
+                objectPosition={img.objectPosition ?? "50% 50%"}
               />
             </div>
           ))}
