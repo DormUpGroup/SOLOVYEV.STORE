@@ -2335,6 +2335,10 @@ main {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  height: auto;
+  aspect-ratio: auto;
+  max-height: none;
+  overflow: visible;
   background-color: var(--bg-card);
 }
 
@@ -2670,6 +2674,19 @@ main {
     max-height: min(68vh, 560px);
     min-height: 0;
     width: 100%;
+  }
+
+  /* Quick View: keep square photo + thumbnail strip fully visible */
+  .quick-view-modal-content .modal-image {
+    aspect-ratio: auto;
+    max-height: none;
+    height: auto;
+    overflow: visible;
+  }
+
+  .quick-view-modal-content .modal-thumbnails {
+    display: flex;
+    flex-shrink: 0;
   }
 
   .modal-details {
