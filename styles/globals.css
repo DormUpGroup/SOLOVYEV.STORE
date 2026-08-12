@@ -2097,19 +2097,35 @@ main {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .modal-price-row .modal-price {
   margin: 0;
+  line-height: 1.2;
 }
 
+.modal-price-row .favorite-btn,
 .modal-price-row .favorite-btn--inline {
-  min-height: 36px;
-  width: 36px;
-  padding: 0;
+  position: static !important;
+  top: auto !important;
+  inset: auto !important;
+  inset-inline-end: auto !important;
+  float: none !important;
+  width: 36px !important;
+  min-width: 36px;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0;
   border: 1px solid var(--border-color);
-  justify-content: center;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  flex-shrink: 0;
+  transform: none !important;
 }
 
 /* Quick View modal layout */
@@ -2344,8 +2360,8 @@ main {
 
 .modal-thumbnails {
   display: flex;
-  gap: 4px;
-  padding: 10px 12px;
+  gap: 8px;
+  padding: 12px 16px;
   overflow-x: auto;
   background: var(--bg-studio);
   border-top: 1px solid var(--border-soft);
@@ -2359,28 +2375,27 @@ main {
 
 .modal-thumb-btn {
   position: relative;
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
+  box-sizing: border-box;
   flex-shrink: 0;
-  border: 1.5px solid transparent;
+  border: 1px solid transparent;
   overflow: hidden;
   cursor: pointer;
   padding: 0;
   background: var(--thumb-bg);
-  opacity: 0.5;
-  transition: opacity 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  opacity: 0.55;
+  transition: opacity 0.18s ease, border-color 0.18s ease;
   border-radius: 2px;
 }
 
 .modal-thumb-btn:hover {
-  opacity: 0.8;
-  transform: translateY(-2px);
+  opacity: 0.85;
 }
 
 .modal-thumb-btn.active {
   border-color: var(--border-strong);
   opacity: 1;
-  transform: translateY(-2px);
 }
 
 .quick-view-modal-content .modal-img-loupe {
@@ -2401,8 +2416,8 @@ main {
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  gap: 10px;
-  padding: clamp(28px, 3.5vw, 40px);
+  gap: 14px;
+  padding: clamp(20px, 3.5vw, 36px);
   background-color: var(--bg-card);
 }
 
@@ -2410,11 +2425,12 @@ main {
   font-size: 11px;
   letter-spacing: 1.5px;
   color: var(--text-primary);
+  margin: 0;
 }
 
 .quick-view-modal-content .modal-details h2 {
   font-size: clamp(20px, 2.6vw, 28px);
-  line-height: 1.15;
+  line-height: 1.2;
   margin: 0;
 }
 
@@ -2422,16 +2438,18 @@ main {
   font-size: 22px;
   margin: 0;
   font-weight: 700;
+  color: var(--text-primary);
 }
 
 .quick-view-modal-content .modal-price-row {
-  margin: 0 0 4px;
+  margin: 0;
+  min-height: 36px;
 }
 
 .quick-view-modal-content .product-specs {
   padding: 14px 0;
-  gap: 10px;
-  margin: 4px 0;
+  gap: 12px;
+  margin: 0;
 }
 
 .quick-view-modal-content .spec-row {
@@ -2440,6 +2458,10 @@ main {
 
 .quick-view-modal-content .size-selection-area {
   gap: 10px;
+}
+
+.quick-view-modal-content .size-selection-area h4 {
+  margin: 0;
 }
 
 .quick-view-modal-content .size-selection-area h4 {
@@ -2487,7 +2509,8 @@ main {
   .quick-view-modal-content .modal-details {
     overflow: visible;
     height: auto;
-    padding: 24px;
+    gap: 16px;
+    padding: 20px 16px 24px;
   }
 
   .quick-view-modal-content .modal-details h2 {
@@ -2503,6 +2526,30 @@ main {
   .quick-view-modal-content .modal-img-loupe {
     aspect-ratio: 1 / 1;
     min-height: 0;
+  }
+
+  .quick-view-modal-content .modal-thumbnails {
+    padding: 12px 16px 14px;
+    gap: 8px;
+  }
+
+  .quick-view-modal-content .modal-actions {
+    margin-top: 8px;
+    gap: 10px;
+    padding-top: 4px;
+  }
+
+  .quick-view-modal-content .modal-price-row .favorite-btn,
+  .quick-view-modal-content .modal-price-row .favorite-btn--inline {
+    position: static !important;
+    top: auto !important;
+    inset-inline-end: auto !important;
+    width: 36px !important;
+    height: 36px !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--text-primary) !important;
   }
 }
 
@@ -4404,7 +4451,9 @@ body.no-scroll {
 }
 
 .favorite-btn--inline {
-  position: static;
+  position: static !important;
+  top: auto !important;
+  inset-inline-end: auto !important;
   width: auto;
   min-height: 48px;
   padding: 0 18px;
