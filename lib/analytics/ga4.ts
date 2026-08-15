@@ -17,15 +17,46 @@ function emptyOverview(days: number, error?: string): GaOverview {
   };
 }
 
+function normalizePrivateKey(raw: string): string {
+  let key = raw.trim();
+  // Vercel / copy-paste often keeps surrounding quotes as part of the value.
+  if (
+    (key.startsWith('"') && key.endsWith('"')) ||
+    (key.startsWith("'") && key.endsWith("'"))
+  ) {
+    key = key.slice(1, -1).trim();
+  }
+  // dotenv may already expand \n; Vercel usually leaves them escaped.
+  key = key.replace(/\\n/g, "\n").replace(/\\r/g, "");
+  return key.trim();
+}
+
 function getCredentials(): {
   clientEmail: string;
   privateKey: string;
   propertyId: string;
 } | null {
   const propertyId = (process.env.GA4_PROPERTY_ID || "").trim();
+
+  const jsonRaw = (process.env.GA4_SERVICE_ACCOUNT_JSON || "").trim();
+  if (jsonRaw) {
+    try {
+      const parsed = JSON.parse(jsonRaw) as {
+        client_email?: string;
+        private_key?: string;
+      };
+      const clientEmail = (parsed.client_email || "").trim();
+      const privateKey = normalizePrivateKey(parsed.private_key || "");
+      if (propertyId && clientEmail && privateKey) {
+        return { clientEmail, privateKey, propertyId };
+      }
+    } catch {
+      /* fall through to discrete env vars */
+    }
+  }
+
   const clientEmail = (process.env.GA4_CLIENT_EMAIL || "").trim();
-  const privateKeyRaw = process.env.GA4_PRIVATE_KEY || "";
-  const privateKey = privateKeyRaw.replace(/\\n/g, "\n").trim();
+  const privateKey = normalizePrivateKey(process.env.GA4_PRIVATE_KEY || "");
 
   if (!propertyId || !clientEmail || !privateKey) return null;
   return { clientEmail, privateKey, propertyId };
