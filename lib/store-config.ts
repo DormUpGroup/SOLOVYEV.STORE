@@ -3,6 +3,14 @@ import type { StoreConfig } from "@/lib/types";
 
 export const DEFAULT_STORE_CONFIG = configData as StoreConfig;
 
+/** Legacy CMS/DB paths still point at the old multi-MB PNG. */
+function resolveHeroPhoto(url?: string | null): string {
+  const fallback = DEFAULT_STORE_CONFIG.images.heroPhoto;
+  if (!url?.trim()) return fallback;
+  if (url === "/assets/hiro_photo.png") return fallback;
+  return url;
+}
+
 export function normalizeStoreConfig(
   partial?: Partial<StoreConfig> | null,
 ): StoreConfig {
@@ -35,7 +43,7 @@ export function normalizeStoreConfig(
         base.sizes?.clothingOrder ?? DEFAULT_STORE_CONFIG.sizes.clothingOrder,
     },
     images: {
-      heroPhoto: base.images?.heroPhoto ?? DEFAULT_STORE_CONFIG.images.heroPhoto,
+      heroPhoto: resolveHeroPhoto(base.images?.heroPhoto),
       heroVideo: base.images?.heroVideo ?? DEFAULT_STORE_CONFIG.images.heroVideo,
       instagramPosts:
         base.images?.instagramPosts ?? DEFAULT_STORE_CONFIG.images.instagramPosts,
