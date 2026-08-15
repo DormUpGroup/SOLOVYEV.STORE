@@ -26,7 +26,7 @@
 | **Orders** | WhatsApp-заказы |
 | **FAQ** | Вопросы–ответы на сайте |
 | **Settings** | Контакты, валюта, анонсы, hero |
-| **Analytics** | События: просмотры, корзина, checkout |
+| **Analytics** | Google Analytics (визиты, страницы, источники, realtime) + воронка магазина |
 
 После правок каталога, FAQ или Settings нажмите **Publish**, чтобы изменения быстрее появились на витрине.
 
@@ -161,7 +161,21 @@ pending_whatsapp → in_chat → paid → shipped → completed
 
 ---
 
-## 11. Безопасность
+## 11. Google Analytics в админке
+
+В **Overview** и **Analytics** показываются метрики GA4 (realtime, users, sessions, page views, источники, топ страниц), если на сервере заданы:
+
+- `GA4_PROPERTY_ID` — цифровой Property ID (Admin → Property settings), не `G-...`
+- `GA4_CLIENT_EMAIL` — email service account из GCP
+- `GA4_PRIVATE_KEY` — private_key из JSON-ключа (в `.env` переносы как `\\n`)
+
+Service account нужно добавить в GA4 property с ролью **Viewer**, и в GCP включить **Google Analytics Data API**.
+
+Тег на витрине по-прежнему через `NEXT_PUBLIC_GA_ID`.
+
+---
+
+## 12. Безопасность
 
 - Не шарить админ-URL и пароль.
 - Выходить через **Logout** на чужих компьютерах.
@@ -169,7 +183,7 @@ pending_whatsapp → in_chat → paid → shipped → completed
 
 ---
 
-## 12. Кому писать, если сломалось
+## 13. Кому писать, если сломалось
 
 Если не логинится админка, не создаются заказы `SS-…`, Publish не обновляет сайт или падает загрузка фото — передайте разработчику: что делали, время, номер заказа / email клиента, скрин ошибки.
 

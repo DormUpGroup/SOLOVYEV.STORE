@@ -14,7 +14,9 @@ import {
 import { Line } from "react-chartjs-2";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FaqItem, Product, StoreConfig } from "@/lib/types";
+import type { GaOverview } from "@/lib/analytics/ga-types";
 import { normalizeStoreConfig } from "@/lib/store-config";
+import { GaPanel } from "@/components/admin/legacy/GaPanel";
 import styles from "@/app/admin/admin.module.css";
 
 ChartJS.register(
@@ -48,21 +50,25 @@ export function LegacyTabs({ tab, products, onDirtyChange, showToast }: LegacyTa
   } | null>(null);
   const [chartDays, setChartDays] = useState(7);
   const [loading, setLoading] = useState(false);
+  const [ga, setGa] = useState<GaOverview | null>(null);
 
   const loadLegacy = useCallback(async () => {
     setLoading(true);
     try {
-      const [cRes, fRes, aRes] = await Promise.all([
+      const [cRes, fRes, aRes, gRes] = await Promise.all([
         fetch("/api/admin/config"),
         fetch("/api/admin/faq"),
         fetch(`/api/admin/analytics?days=${chartDays}`),
+        fetch(`/api/admin/analytics/ga?days=${chartDays}`),
       ]);
       const cJson = await cRes.json();
       const fJson = await fRes.json();
       const aJson = await aRes.json();
+      const gJson = (await gRes.json()) as GaOverview;
       setConfig(normalizeStoreConfig(cJson.config));
       setFaq(fJson.items ?? []);
       setAnalytics(aJson);
+      setGa(gJson);
     } catch {
       showToast("Failed to load data", false);
     } finally {
@@ -181,6 +187,7 @@ export function LegacyTabs({ tab, products, onDirtyChange, showToast }: LegacyTa
             <div className={styles.statValue}>{analytics?.wa ?? 0}</div>
           </div>
         </div>
+        <GaPanel data={ga} compact />
         <div className={styles.panel}>
           <div className={styles.panelHead}>
             <h3>Recent activity</h3>
@@ -397,6 +404,13 @@ export function LegacyTabs({ tab, products, onDirtyChange, showToast }: LegacyTa
               {d}d
             </button>
           ))}
+        </div>
+        <div className={styles.panelHead} style={{ marginBottom: 8 }}>
+          <h3>Google Analytics</h3>
+        </div>
+        <GaPanel data={ga} />
+        <div className={styles.panelHead} style={{ margin: "20px 0 8px" }}>
+          <h3>Store funnel</h3>
         </div>
         <div className={styles.stats}>
           <div className={styles.stat}>
