@@ -39,7 +39,7 @@
     "clothingOrder": ["S", "M", "L", "XL", "XXL", "One Size", "O/S"]
   },
   "images": {
-    "heroPhoto": "/assets/hiro_photo.png",
+    "heroPhoto": "/assets/hiro_photo.webp",
     "heroVideo": "",
     "instagramPosts": [
       "/assets/instagram/ig_post_1.png",

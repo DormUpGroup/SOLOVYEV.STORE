@@ -31,14 +31,14 @@ export const metadata: Metadata = {
     title: "SOLOVYEV STORE | Buy, Sell & Trade Streetwear",
     description:
       "Premium streetwear & sneakers consignment store. Buy, sell, and trade 100% authentic items.",
-    images: [{ url: "/assets/hiro_photo.png", width: 1200, height: 630 }],
+    images: [{ url: "/assets/hiro_photo.jpg", width: 1023, height: 1537 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "SOLOVYEV STORE",
     description:
       "Premium streetwear & sneakers consignment store.",
-    images: ["/assets/hiro_photo.png"],
+    images: ["/assets/hiro_photo.jpg"],
   },
   alternates: {
     canonical: siteUrl,
@@ -60,8 +60,18 @@ export default async function RootLayout({
     getFaqItems(),
   ]);
 
+  const heroPhoto = config.images.heroPhoto;
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link
+          rel="preload"
+          as="image"
+          href={heroPhoto}
+          fetchPriority="high"
+        />
+      </head>
       <body suppressHydrationWarning>
         <Script id="theme-init" strategy="beforeInteractive">
           {`(function(){try{var t=localStorage.getItem('solovyev_theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`}

@@ -67,11 +67,16 @@ export function HeroSection() {
             <source src={heroVideo} type="video/mp4" />
           </video>
         ) : (
-          <div
+          <Image
+            src={config.images.heroPhoto}
+            alt={hero.photoAlt}
+            fill
+            priority
+            fetchPriority="high"
+            decoding="async"
+            unoptimized
+            sizes="100vw"
             className="hero-video-poster"
-            style={{ backgroundImage: `url(${config.images.heroPhoto})` }}
-            role="img"
-            aria-label={hero.photoAlt}
           />
         )}
       </div>

@@ -798,13 +798,13 @@ main {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 
 .hero-video-poster {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  position: absolute;
+  inset: 0;
 }
 
 .hero-video-overlay {
