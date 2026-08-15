@@ -88,8 +88,15 @@ export async function POST(request: NextRequest) {
     const supabase = createServiceClient();
     const { error } = await supabase.from("analytics_events").insert(rows);
     if (error) {
-      console.error("[POST /api/analytics] insert failed");
-      return NextResponse.json({ error: "Failed to record events" }, { status: 500 });
+      // Stale/unknown product_id trips the FK; still record the event count.
+      const fallback = rows.map((row) => ({ ...row, product_id: null }));
+      const { error: retryError } = await supabase
+        .from("analytics_events")
+        .insert(fallback);
+      if (retryError) {
+        console.error("[POST /api/analytics] insert failed");
+        return NextResponse.json({ error: "Failed to record events" }, { status: 500 });
+      }
     }
     return NextResponse.json({ ok: true });
   } catch {
