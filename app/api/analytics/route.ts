@@ -14,12 +14,26 @@ function isAllowedOrigin(request: NextRequest): boolean {
 
   if (origin) {
     try {
+      const requestOrigin = new URL(origin).origin;
+      const allowed = new Set<string>();
+
+      allowed.add(request.nextUrl.origin);
+
       const configured = process.env.NEXT_PUBLIC_SITE_URL || "";
       if (configured) {
-        return new URL(origin).origin === new URL(configured).origin;
+        try {
+          allowed.add(new URL(configured).origin);
+        } catch {
+          /* ignore invalid SITE_URL */
+        }
       }
-      const host = new URL(origin).hostname;
-      return host === "localhost" || host === "127.0.0.1";
+
+      const vercelHost = process.env.VERCEL_URL || "";
+      if (vercelHost) {
+        allowed.add(`https://${vercelHost}`);
+      }
+
+      return allowed.has(requestOrigin);
     } catch {
       return false;
     }
