@@ -426,8 +426,9 @@ export async function getCommerceSummary(daysInput = 7): Promise<CommerceSummary
     ORDER_STATUSES.map((status) => [status, 0]),
   ) as Record<OrderStatus, number>;
 
-  let subtotalSum = 0;
-  const dailyMap = new Map<string, { count: number; subtotal: number }>();
+  let revenueSum = 0;
+  let paidOrdersCount = 0;
+  const dailyMap = new Map<string, { count: number; revenue: number }>();
   const productMap = new Map<
     string,
     {
@@ -442,7 +443,7 @@ export async function getCommerceSummary(daysInput = 7): Promise<CommerceSummary
   for (let i = 0; i < days; i++) {
     const d = new Date(since);
     d.setUTCDate(since.getUTCDate() + i);
-    dailyMap.set(d.toISOString().slice(0, 10), { count: 0, subtotal: 0 });
+    dailyMap.set(d.toISOString().slice(0, 10), { count: 0, revenue: 0 });
   }
 
   let currencySymbol = "₪";
@@ -451,27 +452,30 @@ export async function getCommerceSummary(daysInput = 7): Promise<CommerceSummary
     const status = isOrderStatus(order.status) ? order.status : "pending_whatsapp";
     byStatus[status] += 1;
     const subtotal = Number(order.subtotal) || 0;
-    subtotalSum += subtotal;
     currencySymbol = order.currency_symbol || currencySymbol;
     const day = order.created_at.slice(0, 10);
-    const bucket = dailyMap.get(day) ?? { count: 0, subtotal: 0 };
+    const bucket = dailyMap.get(day) ?? { count: 0, revenue: 0 };
     bucket.count += 1;
-    bucket.subtotal += subtotal;
-    dailyMap.set(day, bucket);
+    if (status === "paid") {
+      paidOrdersCount += 1;
+      revenueSum += subtotal;
+      bucket.revenue += subtotal;
 
-    for (const item of order.order_items ?? []) {
-      const key = String(item.product_id ?? item.product_slug);
-      const current = productMap.get(key) ?? {
-        productId: item.product_id,
-        productTitle: item.product_title,
-        productSlug: item.product_slug,
-        quantity: 0,
-        subtotal: 0,
-      };
-      current.quantity += Number(item.quantity) || 0;
-      current.subtotal += (Number(item.unit_price) || 0) * (Number(item.quantity) || 0);
-      productMap.set(key, current);
+      for (const item of order.order_items ?? []) {
+        const key = String(item.product_id ?? item.product_slug);
+        const current = productMap.get(key) ?? {
+          productId: item.product_id,
+          productTitle: item.product_title,
+          productSlug: item.product_slug,
+          quantity: 0,
+          subtotal: 0,
+        };
+        current.quantity += Number(item.quantity) || 0;
+        current.subtotal += (Number(item.unit_price) || 0) * (Number(item.quantity) || 0);
+        productMap.set(key, current);
+      }
     }
+    dailyMap.set(day, bucket);
   }
 
   const ordersCount = rows.length;
@@ -482,13 +486,14 @@ export async function getCommerceSummary(daysInput = 7): Promise<CommerceSummary
   return {
     days,
     ordersCount,
-    subtotalSum,
-    averageOrderValue: ordersCount ? subtotalSum / ordersCount : 0,
+    paidOrdersCount,
+    revenueSum,
+    averageOrderRevenue: paidOrdersCount ? revenueSum / paidOrdersCount : 0,
     byStatus,
     dailyOrders: [...dailyMap.entries()].map(([date, value]) => ({
       date,
       count: value.count,
-      subtotal: value.subtotal,
+      revenue: value.revenue,
     })),
     topProducts,
     currencySymbol,

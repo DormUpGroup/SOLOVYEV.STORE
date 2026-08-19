@@ -84,7 +84,7 @@ export function ReportingTab({ showToast }: ReportingTabProps) {
             className={`${styles.btn} ${days === value ? styles.btnPrimary : ""}`}
             onClick={() => setDays(value)}
           >
-            {value}d
+            {value} days
           </button>
         ))}
         <button type="button" className={styles.btn} onClick={() => void loadSummary()} disabled={loading}>
@@ -109,32 +109,31 @@ export function ReportingTab({ showToast }: ReportingTabProps) {
         </div>
         <div className={styles.panelBody}>
           <p style={{ margin: "0 0 12px", color: "var(--admin-muted, #999)", fontSize: 13 }}>
-            Includes order totals, status breakdown, top products, daily activity, recent orders,
-            and site engagement. Order value is cart subtotal at checkout, not confirmed paid
-            revenue.
+            Includes order counts, paid revenue, status breakdown, top sold products, daily activity,
+            recent orders, and site engagement. Revenue counts only orders marked Paid.
           </p>
         </div>
       </div>
 
       <div className={styles.stats}>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>Orders ({days}d)</div>
+          <div className={styles.statLabel}>All orders ({days} days)</div>
           <div className={styles.statValue}>{summary?.ordersCount ?? "—"}</div>
         </div>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>Order value</div>
+          <div className={styles.statLabel}>Revenue (paid)</div>
           <div className={styles.statValue}>
-            {summary ? `${symbol}${Math.round(summary.subtotalSum)}` : "—"}
+            {summary ? `${symbol}${Math.round(summary.revenueSum)}` : "—"}
           </div>
         </div>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>AOV</div>
+          <div className={styles.statLabel}>Average paid order</div>
           <div className={styles.statValue}>
-            {summary ? `${symbol}${Math.round(summary.averageOrderValue)}` : "—"}
+            {summary ? `${symbol}${Math.round(summary.averageOrderRevenue)}` : "—"}
           </div>
         </div>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>Top products</div>
+          <div className={styles.statLabel}>Products sold (paid)</div>
           <div className={styles.statValue}>{summary?.topProducts.length ?? "—"}</div>
         </div>
       </div>
@@ -151,15 +150,15 @@ export function ReportingTab({ showToast }: ReportingTabProps) {
       {summary && summary.topProducts.length > 0 ? (
         <div className={styles.panel}>
           <div className={styles.panelHead}>
-            <h3>Top ordered products ({days}d)</h3>
+            <h3>Top sold products (paid) ({days} days)</h3>
           </div>
           <div className={styles.tableWrap}>
             <table className={styles.table}>
               <thead>
                 <tr>
                   <th>Product</th>
-                  <th>Qty</th>
-                  <th>Value</th>
+                  <th>Quantity</th>
+                  <th>Revenue</th>
                 </tr>
               </thead>
               <tbody>

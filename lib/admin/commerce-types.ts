@@ -9,6 +9,9 @@ export const ORDER_STATUSES: OrderStatus[] = [
   "cancelled",
 ];
 
+/** Order statuses that count toward admin revenue metrics. */
+export const REVENUE_ORDER_STATUSES: OrderStatus[] = ["paid"];
+
 export function isOrderStatus(value: unknown): value is OrderStatus {
   return typeof value === "string" && ORDER_STATUSES.includes(value as OrderStatus);
 }
@@ -71,10 +74,11 @@ export interface AdminOrderDetail extends AdminOrderRow {
 export interface CommerceSummary {
   days: number;
   ordersCount: number;
-  subtotalSum: number;
-  averageOrderValue: number;
+  paidOrdersCount: number;
+  revenueSum: number;
+  averageOrderRevenue: number;
   byStatus: Record<OrderStatus, number>;
-  dailyOrders: Array<{ date: string; count: number; subtotal: number }>;
+  dailyOrders: Array<{ date: string; count: number; revenue: number }>;
   topProducts: Array<{
     productId: number | null;
     productTitle: string;

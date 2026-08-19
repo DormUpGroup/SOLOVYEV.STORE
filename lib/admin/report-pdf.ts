@@ -82,16 +82,13 @@ export async function buildSalesReportPdf(data: SalesReportData): Promise<Buffer
     doc.fontSize(10).fillColor("#333");
     doc.text(`Period: last ${summary.days} days`);
     doc.text(`Generated: ${generatedAt.toISOString().replace("T", " ").slice(0, 19)} UTC`);
-    doc
-      .fontSize(9)
-      .fillColor("#777")
-      .text("Order value = cart subtotal at checkout (not confirmed paid revenue).");
 
     drawSectionTitle(doc, "Summary");
     for (const line of [
-      `Orders: ${summary.ordersCount}`,
-      `Order value: ${money(summary.subtotalSum, symbol)}`,
-      `Average order value: ${money(summary.averageOrderValue, symbol)}`,
+      `All orders: ${summary.ordersCount}`,
+      `Paid orders: ${summary.paidOrdersCount}`,
+      `Revenue (paid): ${money(summary.revenueSum, symbol)}`,
+      `Average paid order: ${money(summary.averageOrderRevenue, symbol)}`,
     ]) {
       doc.text(pdfText(line));
     }
@@ -107,7 +104,7 @@ export async function buildSalesReportPdf(data: SalesReportData): Promise<Buffer
     doc.text(`Begin checkout (WhatsApp): ${analytics.wa}`);
     doc.text(`Sell / trade submits: ${analytics.sell}`);
 
-    drawSectionTitle(doc, "Top ordered products");
+    drawSectionTitle(doc, "Top sold products (paid)");
     if (!summary.topProducts.length) {
       doc.text("No products in this period.");
     } else {
@@ -126,7 +123,7 @@ export async function buildSalesReportPdf(data: SalesReportData): Promise<Buffer
       doc.text("No orders in this period.");
     } else {
       for (const day of activeDays) {
-        doc.text(pdfText(`${day.date}: ${day.count} order(s), ${money(day.subtotal, symbol)}`));
+        doc.text(pdfText(`${day.date}: ${day.count} order(s), ${money(day.revenue, symbol)} paid revenue`));
       }
     }
 

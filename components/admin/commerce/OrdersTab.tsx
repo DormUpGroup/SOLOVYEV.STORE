@@ -159,8 +159,8 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
           tension: 0.3,
         },
         {
-          label: "Order value",
-          data: summary.dailyOrders.map((d) => d.subtotal),
+          label: "Paid revenue",
+          data: summary.dailyOrders.map((d) => d.revenue),
           borderColor: "#43a047",
           tension: 0.3,
           yAxisID: "y1",
@@ -182,7 +182,7 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
             className={`${styles.btn} ${days === value ? styles.btnPrimary : ""}`}
             onClick={() => setDays(value)}
           >
-            {value}d
+            {value} days
           </button>
         ))}
         <button
@@ -199,23 +199,23 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
 
       <div className={styles.stats}>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>Orders ({days}d)</div>
+          <div className={styles.statLabel}>All orders ({days} days)</div>
           <div className={styles.statValue}>{summary?.ordersCount ?? "—"}</div>
         </div>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>Order value</div>
+          <div className={styles.statLabel}>Revenue (paid)</div>
           <div className={styles.statValue}>
-            {summary ? `${symbol}${Math.round(summary.subtotalSum)}` : "—"}
+            {summary ? `${symbol}${Math.round(summary.revenueSum)}` : "—"}
           </div>
         </div>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>AOV</div>
+          <div className={styles.statLabel}>Average paid order</div>
           <div className={styles.statValue}>
-            {summary ? `${symbol}${Math.round(summary.averageOrderValue)}` : "—"}
+            {summary ? `${symbol}${Math.round(summary.averageOrderRevenue)}` : "—"}
           </div>
         </div>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>Pending WA</div>
+          <div className={styles.statLabel}>Pending WhatsApp</div>
           <div className={styles.statValue}>{summary?.byStatus.pending_whatsapp ?? 0}</div>
         </div>
       </div>
@@ -233,7 +233,7 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
         <div className={styles.panel}>
           <div className={styles.panelHead}>
             <h3>Orders over time</h3>
-            <span className={styles.hint}>Order value = cart subtotal at checkout, not paid revenue</span>
+            <span className={styles.hint}>Only orders marked Paid count toward revenue</span>
           </div>
           <div className={styles.panelBody} style={{ height: 280 }}>
             <Line
