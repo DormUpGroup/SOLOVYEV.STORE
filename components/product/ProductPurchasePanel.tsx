@@ -68,29 +68,29 @@ export function ProductPurchasePanel({
 
   return (
     <div className="product-purchase-panel">
-      <h4>{copy.selectSize}:</h4>
-      <div className="size-options">
-        {unavailable ? (
-          <button type="button" className="size-pill disabled" disabled>
-            {copy.outOfStock}
-          </button>
-        ) : product.sizes.length === 0 ? (
-          <span className="size-pill disabled">{copy.contactForSize}</span>
-        ) : (
-          product.sizes.map((size) => (
-            <button
-              key={size}
-              type="button"
-              className={`size-pill ${selectedSize === size ? "active" : ""}`}
-              onClick={() => setSelectedSize(size)}
-            >
-              {size}
+      <div className="product-purchase-sticky sticky-mobile-cta">
+        <h4>{copy.selectSize}:</h4>
+        <div className="size-options">
+          {unavailable ? (
+            <button type="button" className="size-pill disabled" disabled>
+              {copy.outOfStock}
             </button>
-          ))
-        )}
-      </div>
-      <div className="modal-actions">
-        <div className="purchase-primary-actions sticky-mobile-cta">
+          ) : product.sizes.length === 0 ? (
+            <span className="size-pill disabled">{copy.contactForSize}</span>
+          ) : (
+            product.sizes.map((size) => (
+              <button
+                key={size}
+                type="button"
+                className={`size-pill ${selectedSize === size ? "active" : ""}`}
+                onClick={() => setSelectedSize(size)}
+              >
+                {size}
+              </button>
+            ))
+          )}
+        </div>
+        <div className="purchase-primary-actions">
           <button
             type="button"
             className="btn-primary"
@@ -108,6 +108,8 @@ export function ProductPurchasePanel({
             {checkoutBusy ? dict.cart.creatingOrder : copy.orderWhatsApp}
           </button>
         </div>
+      </div>
+      <div className="modal-actions">
         {showQuickView ? (
           <button
             type="button"
