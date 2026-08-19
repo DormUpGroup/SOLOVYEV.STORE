@@ -5,7 +5,7 @@ import { isRotateDegrees, rotateImageAtUrl } from "@/lib/rotate-product-image";
 import {
   deleteProductImage,
   fetchProductById,
-  updateProductImagePosition,
+  updateProductImageCrop,
   updateProductImageUrl,
 } from "@/lib/supabase-products";
 
@@ -21,6 +21,8 @@ export async function PATCH(request: Request, context: RouteContext) {
   const imgId = Number(imageId);
   const body = (await request.json()) as {
     objectPosition?: string;
+    cropZoom?: number;
+    cropMode?: "cover" | "free";
     rotate?: number;
   };
 
@@ -43,14 +45,25 @@ export async function PATCH(request: Request, context: RouteContext) {
     }
   }
 
-  if (!body.objectPosition) {
+  if (!body.objectPosition || body.cropZoom == null) {
     return NextResponse.json(
-      { error: "objectPosition or rotate required" },
+      { error: "objectPosition and cropZoom, or rotate required" },
       { status: 400 },
     );
   }
 
-  await updateProductImagePosition(productId, imgId, body.objectPosition);
+  const cropZoom = Math.max(0.5, Math.min(3, Number(body.cropZoom)));
+  if (!Number.isFinite(cropZoom)) {
+    return NextResponse.json({ error: "Invalid cropZoom" }, { status: 400 });
+  }
+
+  await updateProductImageCrop(
+    productId,
+    imgId,
+    body.objectPosition,
+    cropZoom,
+    body.cropMode === "cover" ? "cover" : "free",
+  );
   const product = await fetchProductById(productId);
   revalidateStore(product?.slug);
   return NextResponse.json({ product });

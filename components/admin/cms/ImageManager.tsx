@@ -13,13 +13,12 @@ import {
 import {
   SortableContext,
   arrayMove,
+  horizontalListSortingStrategy,
   sortableKeyboardCoordinates,
   useSortable,
-  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { ProductImage } from "@/lib/types";
-import type { RotateDegrees } from "@/lib/image-optimize";
+import { addPendingRotate, type PendingRotate } from "@/lib/image-crop";
 import { AdminProductImage } from "@/lib/admin-images";
 import { ImagePositionEditor } from "./ImagePositionEditor";
 
@@ -28,43 +27,29 @@ export type TempImage = {
   imageUrl: string;
   altText?: string;
   objectPosition: string;
+  cropZoom: number;
+  cropMode: "cover" | "free";
+  pendingRotate?: PendingRotate;
+  file?: File;
   id?: number;
 };
 
 interface ImageManagerProps {
-  productId?: number;
   images: TempImage[];
   onChange: (images: TempImage[]) => void;
-  onPersistReorder?: (imageIds: number[]) => Promise<void>;
-  onPersistPosition?: (imageId: number, position: string) => Promise<void>;
-  onPersistRotate?: (imageId: number, degrees: RotateDegrees) => Promise<ProductImage | void>;
-  onPersistDelete?: (imageId: number) => Promise<void>;
-  onPersistAdd?: (url: string) => Promise<ProductImage | void>;
   onRefreshProduct?: () => Promise<void>;
 }
 
-function SortableImageRow({
+function SortableThumbnail({
   image,
   index,
-  isEditing,
-  isRotating,
-  onEdit,
-  onDelete,
-  onMoveUp,
-  onMoveDown,
-  onPositionChange,
-  onRotate,
+  selected,
+  onSelect,
 }: {
   image: TempImage;
   index: number;
-  isEditing: boolean;
-  isRotating: boolean;
-  onEdit: () => void;
-  onDelete: () => void;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
-  onPositionChange: (pos: string) => void;
-  onRotate: (degrees: RotateDegrees) => void;
+  selected: boolean;
+  onSelect: () => void;
 }) {
   const id = image.id ? String(image.id) : image.tempId;
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
@@ -76,96 +61,54 @@ function SortableImageRow({
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="border border-admin-border bg-admin-bg p-3">
-      <div className="flex gap-3">
-        <button
-          type="button"
-          className="cursor-grab px-1 text-admin-muted active:cursor-grabbing"
-          {...attributes}
-          {...listeners}
-        >
-          ⋮⋮
-        </button>
-        <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-admin-border">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`relative w-24 shrink-0 rounded-lg border-2 p-1 ${
+        selected ? "border-white bg-white/10" : "border-admin-border bg-admin-bg"
+      }`}
+    >
+      <button
+        type="button"
+        className="block w-full"
+        onClick={onSelect}
+        aria-label={`Edit image ${index + 1}`}
+      >
+        <div className="relative aspect-square w-full overflow-hidden rounded bg-white">
           <AdminProductImage
             src={image.imageUrl}
-            size="editor"
-            className="h-full w-full object-cover"
+            size="thumb"
+            className="h-full w-full object-contain"
             objectPosition={image.objectPosition}
+            cropZoom={image.cropZoom}
+            cropMode={image.cropMode}
+            rotateDeg={image.pendingRotate ?? 0}
           />
         </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-xs text-admin-muted">
-            {index === 0 ? "MAIN" : `#${index + 1}`}
-            {image.id ? ` · id ${image.id}` : " · temp"}
-          </p>
-          <p className="truncate text-xs">{image.imageUrl.split("/").pop()}</p>
-          <div className="mt-2 flex flex-wrap gap-1">
-            <button type="button" className="border border-admin-border px-2 py-0.5 text-xs" onClick={onEdit}>
-              Crop
-            </button>
-            <button
-              type="button"
-              className="border border-admin-border px-2 py-0.5 text-xs disabled:opacity-50"
-              disabled={isRotating}
-              onClick={() => onRotate(-90)}
-              title="Rotate left 90°"
-            >
-              ↺
-            </button>
-            <button
-              type="button"
-              className="border border-admin-border px-2 py-0.5 text-xs disabled:opacity-50"
-              disabled={isRotating}
-              onClick={() => onRotate(90)}
-              title="Rotate right 90°"
-            >
-              ↻
-            </button>
-            <button type="button" className="border border-admin-border px-2 py-0.5 text-xs" onClick={onMoveUp}>
-              ↑
-            </button>
-            <button type="button" className="border border-admin-border px-2 py-0.5 text-xs" onClick={onMoveDown}>
-              ↓
-            </button>
-            <button
-              type="button"
-              className="border border-admin-danger px-2 py-0.5 text-xs text-admin-danger"
-              onClick={onDelete}
-            >
-              Delete
-            </button>
-          </div>
-          {isRotating ? <p className="mt-1 text-xs text-admin-muted">Rotating…</p> : null}
-        </div>
-      </div>
-      {isEditing ? (
-        <div className="mt-3">
-          <ImagePositionEditor
-            imageUrl={image.imageUrl}
-            objectPosition={image.objectPosition}
-            onChange={onPositionChange}
-          />
-        </div>
-      ) : null}
+        <span className="mt-1 block truncate text-center text-[10px] text-admin-muted">
+          {index === 0 ? "MAIN" : `#${index + 1}`}
+        </span>
+      </button>
+      <button
+        type="button"
+        className="absolute left-1 top-1 z-10 cursor-grab rounded bg-black/75 px-1.5 py-0.5 text-xs text-white active:cursor-grabbing"
+        aria-label={`Reorder image ${index + 1}`}
+        {...attributes}
+        {...listeners}
+      >
+        ⠿
+      </button>
     </div>
   );
 }
 
 export function ImageManager({
-  productId,
   images,
   onChange,
-  onPersistReorder,
-  onPersistPosition,
-  onPersistRotate,
-  onPersistDelete,
-  onPersistAdd,
   onRefreshProduct,
 }: ImageManagerProps) {
-  const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [rotatingId, setRotatingId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   const sensors = useSensors(
@@ -174,137 +117,84 @@ export function ImageManager({
   );
 
   const sortableIds = images.map((img) => (img.id ? String(img.id) : img.tempId));
+  const selectedKey =
+    selectedId && sortableIds.includes(selectedId)
+      ? selectedId
+      : (sortableIds[0] ?? null);
+  const selectedIndex = selectedKey ? sortableIds.indexOf(selectedKey) : -1;
+  const selectedImage = selectedIndex >= 0 ? images[selectedIndex] : undefined;
 
   const uploadFiles = async (files: FileList | null) => {
     if (!files?.length) return;
-    setUploading(true);
     setError("");
-    try {
-      const fd = new FormData();
-      for (const file of Array.from(files)) fd.append("files", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-      if (!res.ok) {
-        const json = await res.json().catch(() => ({}));
-        throw new Error(json.error ?? "Upload failed");
+    const next = [...images];
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith("image/")) {
+        setError("Only image files are allowed");
+        continue;
       }
-      const json = (await res.json()) as { urls: string[] };
-      const newImages = [...images];
-
-      for (const url of json.urls) {
-        if (productId && onPersistAdd) {
-          const added = await onPersistAdd(url);
-          if (added) {
-            newImages.push({
-              tempId: `db-${added.id}`,
-              id: added.id,
-              imageUrl: added.imageUrl,
-              objectPosition: added.objectPosition,
-              altText: added.altText,
-            });
-          }
-        } else {
-          newImages.push({
-            tempId: `temp-${crypto.randomUUID()}`,
-            imageUrl: url,
-            objectPosition: "50% 50%",
-          });
-        }
+      if (file.size > 10 * 1024 * 1024) {
+        setError("File too large (max 10MB)");
+        continue;
       }
-      onChange(newImages);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
-    } finally {
-      setUploading(false);
+      next.push({
+        tempId: `temp-${crypto.randomUUID()}`,
+        imageUrl: URL.createObjectURL(file),
+        objectPosition: "50% 50%",
+        cropZoom: 1,
+        cropMode: "cover",
+        pendingRotate: 0,
+        file,
+      });
     }
+    onChange(next);
   };
 
   const handleDragEnd = useCallback(
-    async (event: DragEndEvent) => {
+    (event: DragEndEvent) => {
       const { active, over } = event;
       if (!over || active.id === over.id) return;
       const oldIndex = sortableIds.indexOf(String(active.id));
       const newIndex = sortableIds.indexOf(String(over.id));
       if (oldIndex < 0 || newIndex < 0) return;
-      const next = arrayMove(images, oldIndex, newIndex);
-      onChange(next);
-      if (productId && onPersistReorder) {
-        const ids = next.map((img) => img.id).filter((id): id is number => id != null);
-        if (ids.length) await onPersistReorder(ids);
-      }
+      onChange(arrayMove(images, oldIndex, newIndex));
     },
-    [images, onChange, onPersistReorder, productId, sortableIds],
+    [images, onChange, sortableIds],
   );
 
-  const move = async (index: number, dir: -1 | 1) => {
+  const move = (index: number, dir: -1 | 1) => {
     const target = index + dir;
     if (target < 0 || target >= images.length) return;
-    const next = arrayMove(images, index, target);
-    onChange(next);
-    if (productId && onPersistReorder) {
-      const ids = next.map((img) => img.id).filter((id): id is number => id != null);
-      if (ids.length) await onPersistReorder(ids);
-    }
+    onChange(arrayMove(images, index, target));
   };
 
-  const handleDelete = async (index: number) => {
+  const handleDelete = (index: number) => {
     const img = images[index];
     if (!img) return;
-    if (img.id && productId && onPersistDelete) {
-      await onPersistDelete(img.id);
-    }
+    if (img.imageUrl.startsWith("blob:")) URL.revokeObjectURL(img.imageUrl);
     onChange(images.filter((_, i) => i !== index));
   };
 
-  const handlePositionChange = async (index: number, position: string) => {
-    const next = images.map((img, i) => (i === index ? { ...img, objectPosition: position } : img));
+  const handleCropSave = async (index: number, position: string, cropZoom: number) => {
+    const next = images.map((img, i) =>
+      i === index
+        ? { ...img, objectPosition: position, cropZoom, cropMode: "free" as const }
+        : img,
+    );
     onChange(next);
-    const img = next[index];
-    if (img?.id && productId && onPersistPosition) {
-      await onPersistPosition(img.id, position);
-    }
+    setEditingId(null);
   };
 
-  const handleRotate = async (index: number, degrees: RotateDegrees) => {
+  const handleRotate = (index: number, degrees: -90 | 90) => {
     const img = images[index];
     if (!img) return;
-    const key = img.id ? String(img.id) : img.tempId;
-    setRotatingId(key);
-    setError("");
-    try {
-      if (img.id && productId && onPersistRotate) {
-        const updated = await onPersistRotate(img.id, degrees);
-        if (updated) {
-          onChange(
-            images.map((row, i) =>
-              i === index
-                ? {
-                    ...row,
-                    imageUrl: updated.imageUrl,
-                    objectPosition: updated.objectPosition,
-                    altText: updated.altText,
-                  }
-                : row,
-            ),
-          );
-        }
-      } else {
-        const res = await fetch("/api/admin/images/rotate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ imageUrl: img.imageUrl, degrees }),
-        });
-        if (!res.ok) {
-          const json = await res.json().catch(() => ({}));
-          throw new Error(json.error ?? "Rotate failed");
-        }
-        const json = (await res.json()) as { url: string };
-        onChange(images.map((row, i) => (i === index ? { ...row, imageUrl: json.url } : row)));
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Rotate failed");
-    } finally {
-      setRotatingId(null);
-    }
+    onChange(
+      images.map((row, i) =>
+        i === index
+          ? { ...row, pendingRotate: addPendingRotate(row.pendingRotate, degrees) }
+          : row,
+      ),
+    );
   };
 
   return (
@@ -324,38 +214,129 @@ export function ImageManager({
           accept="image/jpeg,image/png,image/webp,image/gif"
           multiple
           className="hidden"
-          disabled={uploading}
-          onChange={(e) => uploadFiles(e.target.files)}
+          onChange={(e) => void uploadFiles(e.target.files)}
         />
-        {uploading ? "Uploading…" : "+ Upload images (max 10MB each)"}
+        + Add images (saved with the product)
       </label>
 
       {error ? <p className="text-xs text-admin-danger">{error}</p> : null}
 
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
-          <div className="space-y-2">
-            {images.map((img, index) => {
-              const key = img.id ? String(img.id) : img.tempId;
-              return (
-                <SortableImageRow
-                  key={key}
-                  image={img}
-                  index={index}
-                  isEditing={editingId === key}
-                  isRotating={rotatingId === key}
-                  onEdit={() => setEditingId(editingId === key ? null : key)}
-                  onDelete={() => handleDelete(index)}
-                  onMoveUp={() => move(index, -1)}
-                  onMoveDown={() => move(index, 1)}
-                  onPositionChange={(pos) => handlePositionChange(index, pos)}
-                  onRotate={(degrees) => handleRotate(index, degrees)}
-                />
-              );
-            })}
+      {selectedImage && selectedKey ? (
+        <div className="space-y-3 rounded-xl border border-admin-border bg-admin-bg p-3">
+          <div className="relative mx-auto aspect-square w-full max-w-xl overflow-hidden rounded-lg bg-white">
+            <AdminProductImage
+              src={selectedImage.imageUrl}
+              size="preview"
+              className="h-full w-full object-contain"
+              objectPosition={selectedImage.objectPosition}
+              cropZoom={selectedImage.cropZoom}
+              cropMode={selectedImage.cropMode}
+              rotateDeg={selectedImage.pendingRotate ?? 0}
+            />
+            <span className="absolute left-3 top-3 rounded bg-black/75 px-2 py-1 text-xs text-white">
+              {selectedIndex === 0 ? "MAIN" : `PHOTO ${selectedIndex + 1}`}
+            </span>
           </div>
-        </SortableContext>
-      </DndContext>
+
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <button
+              type="button"
+              className="rounded border border-admin-border px-4 py-2 text-sm hover:border-white"
+              onClick={() => setEditingId(selectedKey)}
+            >
+              Crop & edit
+            </button>
+            <button
+              type="button"
+              className="rounded border border-admin-border px-3 py-2 text-lg"
+              onClick={() => handleRotate(selectedIndex, -90)}
+              aria-label="Rotate left"
+            >
+              ↺
+            </button>
+            <button
+              type="button"
+              className="rounded border border-admin-border px-3 py-2 text-lg"
+              onClick={() => handleRotate(selectedIndex, 90)}
+              aria-label="Rotate right"
+            >
+              ↻
+            </button>
+            <button
+              type="button"
+              className="rounded border border-admin-border px-3 py-2 text-sm disabled:opacity-30"
+              disabled={selectedIndex === 0}
+              onClick={() => move(selectedIndex, -1)}
+            >
+              ← Earlier
+            </button>
+            <button
+              type="button"
+              className="rounded border border-admin-border px-3 py-2 text-sm disabled:opacity-30"
+              disabled={selectedIndex === images.length - 1}
+              onClick={() => move(selectedIndex, 1)}
+            >
+              Later →
+            </button>
+            <button
+              type="button"
+              className="rounded border border-admin-danger px-3 py-2 text-sm text-admin-danger"
+              onClick={() => handleDelete(selectedIndex)}
+            >
+              Delete
+            </button>
+          </div>
+
+          <div>
+            <p className="mb-2 text-xs uppercase tracking-widest text-admin-muted">
+              Gallery · click to edit · drag to reorder
+            </p>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={sortableIds}
+                strategy={horizontalListSortingStrategy}
+              >
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  {images.map((img, index) => {
+                    const key = img.id ? String(img.id) : img.tempId;
+                    return (
+                      <SortableThumbnail
+                        key={key}
+                        image={img}
+                        index={index}
+                        selected={selectedKey === key}
+                        onSelect={() => setSelectedId(key)}
+                      />
+                    );
+                  })}
+                </div>
+              </SortableContext>
+            </DndContext>
+          </div>
+
+          {editingId === selectedKey ? (
+            <ImagePositionEditor
+              imageUrl={selectedImage.imageUrl}
+              objectPosition={selectedImage.objectPosition}
+              cropZoom={selectedImage.cropZoom}
+              pendingRotate={selectedImage.pendingRotate ?? 0}
+              onSave={(position, cropZoom) =>
+                handleCropSave(selectedIndex, position, cropZoom)
+              }
+              onRotate={(degrees) => handleRotate(selectedIndex, degrees)}
+              onCancel={() => setEditingId(null)}
+            />
+          ) : null}
+        </div>
+      ) : (
+        <p className="py-8 text-center text-sm text-admin-muted">
+          Upload photos to start editing.
+        </p>
+      )}
     </div>
   );
 }

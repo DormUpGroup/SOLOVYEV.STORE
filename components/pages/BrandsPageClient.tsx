@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { Header } from "@/components/layout/Header";
 import {
   FixedBottomBar,
@@ -16,11 +17,44 @@ import { getBrandsDirectory } from "@/lib/products";
 import { useStore } from "@/components/providers/StoreProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
 
+function BrandMiniLogo({ name, logo }: { name: string; logo: string }) {
+  const [failed, setFailed] = useState(false);
+  const fallbackLabel = name.toUpperCase();
+
+  if (failed) {
+    return (
+      <span className="brand-mini-logo-fallback" aria-hidden="true">
+        {fallbackLabel || "BRAND"}
+      </span>
+    );
+  }
+
+  const isLocalLogo = logo.startsWith("/assets/brands/");
+
+  return (
+    <Image
+      src={logo}
+      alt=""
+      width={137}
+      height={40}
+      className="brand-mini-logo-img"
+      unoptimized={isLocalLogo}
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 export function BrandsPageClient() {
   const { products } = useStore();
   const { dict } = useI18n();
   const brands = getBrandsDirectory(products);
+  const [query, setQuery] = useState("");
   const { catalog, common } = dict;
+  const filteredBrands = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return brands;
+    return brands.filter((brand) => brand.name.toLowerCase().includes(q));
+  }, [brands, query]);
 
   return (
     <>
@@ -36,8 +70,19 @@ export function BrandsPageClient() {
             <p className="brands-page-desc">{catalog.brandsDesc}</p>
           </header>
 
+          <div className="brands-search">
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={catalog.searchPlaceholder}
+              className="brands-search-input"
+              aria-label={catalog.searchPlaceholder}
+            />
+          </div>
+
           <ul className="brands-grid">
-            {brands.map((brand) => {
+            {filteredBrands.map((brand) => {
               const stockLabel = catalog.stockCount.replace(
                 "{count}",
                 String(brand.count),
@@ -51,19 +96,15 @@ export function BrandsPageClient() {
                   >
                     <span className="brand-card-visual">
                       <span className="brand-card-logo">
-                        <Image
-                          src={brand.logo}
-                          alt=""
-                          width={200}
-                          height={200}
-                          className="brand-logo-img"
-                        />
-                      </span>
-                      <span className="brand-card-overlay" aria-hidden="true">
-                        <span className="brand-card-name">{brand.name}</span>
+                        <span className="brand-mini-logo" aria-hidden="true">
+                          <BrandMiniLogo name={brand.name} logo={brand.logo} />
+                        </span>
+                        <span className="brand-card-text">
+                          <span className="brand-card-name">{brand.name}</span>
+                          <span className="brand-card-count">{stockLabel}</span>
+                        </span>
                       </span>
                     </span>
-                    <span className="brand-card-count">{stockLabel}</span>
                   </Link>
                 </li>
               );

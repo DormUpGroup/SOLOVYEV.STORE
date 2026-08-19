@@ -21,6 +21,8 @@ export async function POST(request: Request, context: RouteContext) {
     altText?: string;
     sortOrder?: number;
     objectPosition?: string;
+    cropZoom?: number;
+    cropMode?: "cover" | "free";
   };
 
   if (!body.imageUrl) {
@@ -34,6 +36,8 @@ export async function POST(request: Request, context: RouteContext) {
     altText: body.altText,
     sortOrder: body.sortOrder,
     objectPosition: body.objectPosition,
+    cropZoom: body.cropZoom,
+    cropMode: body.cropMode,
   });
 
   revalidateStore(product.slug);

@@ -1,66 +1,276 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  clampCropZoom,
+  MAX_CROP_ZOOM,
+  MIN_CROP_ZOOM,
+  parseObjectPosition,
+  productImageCropStyle,
+} from "@/lib/image-crop";
 
 interface ImagePositionEditorProps {
   imageUrl: string;
   objectPosition: string;
-  onChange: (position: string) => void;
+  cropZoom: number;
+  pendingRotate?: number;
+  onSave: (position: string, cropZoom: number) => void | Promise<void>;
+  onRotate?: (degrees: -90 | 90) => void;
+  onCancel: () => void;
 }
 
-function parsePosition(pos: string): { x: number; y: number } {
-  const parts = pos.split(/\s+/);
-  const x = parseFloat(parts[0] ?? "50");
-  const y = parseFloat(parts[1] ?? "50");
-  return { x: Number.isNaN(x) ? 50 : x, y: Number.isNaN(y) ? 50 : y };
+type PointerPoint = { x: number; y: number };
+type DragStart = PointerPoint & { positionX: number; positionY: number };
+
+function formatPosition(x: number, y: number): string {
+  const clamp = (value: number) => Math.max(0, Math.min(100, value));
+  return `${clamp(x).toFixed(1)}% ${clamp(y).toFixed(1)}%`;
 }
 
-export function ImagePositionEditor({ imageUrl, objectPosition, onChange }: ImagePositionEditorProps) {
+export function ImagePositionEditor({
+  imageUrl,
+  objectPosition,
+  cropZoom,
+  pendingRotate = 0,
+  onSave,
+  onRotate,
+  onCancel,
+}: ImagePositionEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [dragging, setDragging] = useState(false);
-  const { x, y } = parsePosition(objectPosition);
+  const pointersRef = useRef(new Map<number, PointerPoint>());
+  const pinchRef = useRef<{ distance: number; zoom: number } | null>(null);
+  const dragRef = useRef<DragStart | null>(null);
+  const [position, setPosition] = useState(objectPosition);
+  const [zoom, setZoom] = useState(clampCropZoom(cropZoom));
+  const [saving, setSaving] = useState(false);
 
-  const updateFromEvent = useCallback(
-    (clientX: number, clientY: number) => {
-      const el = containerRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const px = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
-      const py = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100));
-      onChange(`${Math.round(px)}% ${Math.round(py)}%`);
-    },
-    [onChange],
-  );
+  useEffect(() => {
+    setPosition(objectPosition);
+    setZoom(clampCropZoom(cropZoom));
+  }, [cropZoom, objectPosition]);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onCancel();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [onCancel]);
+
+  const pointerDistance = () => {
+    const points = [...pointersRef.current.values()];
+    if (points.length < 2) return 0;
+    return Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+  };
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      await onSave(position, Number(zoom.toFixed(2)));
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
-    <div className="space-y-2">
-      <p className="text-xs text-admin-muted">Drag to adjust crop focus ({objectPosition})</p>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-2 backdrop-blur-sm sm:p-5">
+      <div
+        className="flex max-h-[96dvh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-white/15 bg-[#111] shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Photo crop editor"
+      >
+      <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3">
+        <button
+          type="button"
+          className="min-w-16 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white"
+          onClick={onCancel}
+        >
+          Cancel
+        </button>
+        <div className="text-center">
+          <p className="text-sm font-bold">Edit photo</p>
+          <p className="text-[11px] text-white/50">Square crop</p>
+        </div>
+        <button
+          type="button"
+          className="min-w-16 rounded-lg bg-white px-3 py-2 text-sm font-bold text-black disabled:opacity-50"
+          disabled={saving}
+          onClick={() => void save()}
+        >
+          {saving ? "Saving…" : "Done"}
+        </button>
+      </div>
+      <div className="min-h-0 overflow-y-auto p-3 sm:p-5">
       <div
         ref={containerRef}
-        className="relative aspect-square cursor-crosshair overflow-hidden border border-admin-border bg-neutral-900 select-none"
+        className="relative mx-auto aspect-square w-full max-w-sm cursor-grab touch-none overflow-hidden bg-white select-none active:cursor-grabbing"
         onPointerDown={(e) => {
-          setDragging(true);
           e.currentTarget.setPointerCapture(e.pointerId);
-          updateFromEvent(e.clientX, e.clientY);
+          pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+          if (pointersRef.current.size === 1) {
+            const current = parseObjectPosition(position);
+            dragRef.current = {
+              x: e.clientX,
+              y: e.clientY,
+              positionX: current.x,
+              positionY: current.y,
+            };
+          } else if (pointersRef.current.size === 2) {
+            pinchRef.current = { distance: pointerDistance(), zoom };
+            dragRef.current = null;
+          }
         }}
         onPointerMove={(e) => {
-          if (!dragging) return;
-          updateFromEvent(e.clientX, e.clientY);
+          if (!pointersRef.current.has(e.pointerId)) return;
+          pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+          if (pointersRef.current.size === 2 && pinchRef.current) {
+            const distance = pointerDistance();
+            const ratio = distance / Math.max(1, pinchRef.current.distance);
+            setZoom(clampCropZoom(pinchRef.current.zoom * ratio));
+          } else if (pointersRef.current.size === 1 && dragRef.current) {
+            const rect = containerRef.current?.getBoundingClientRect();
+            if (!rect) return;
+            const dx = e.clientX - dragRef.current.x;
+            const dy = e.clientY - dragRef.current.y;
+            setPosition(
+              formatPosition(
+                dragRef.current.positionX - (dx / rect.width) * (100 / zoom),
+                dragRef.current.positionY - (dy / rect.height) * (100 / zoom),
+              ),
+            );
+          }
         }}
-        onPointerUp={() => setDragging(false)}
+        onPointerUp={(e) => {
+          pointersRef.current.delete(e.pointerId);
+          pinchRef.current = null;
+          dragRef.current = null;
+        }}
+        onPointerCancel={(e) => {
+          pointersRef.current.delete(e.pointerId);
+          pinchRef.current = null;
+          dragRef.current = null;
+        }}
+        onWheel={(e) => {
+          e.preventDefault();
+          setZoom((current) => clampCropZoom(current + (e.deltaY < 0 ? 0.1 : -0.1)));
+        }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imageUrl}
           alt=""
-          className="h-full w-full object-cover pointer-events-none"
-          style={{ objectPosition }}
+          className="h-full w-full object-contain pointer-events-none"
+          style={productImageCropStyle(position, zoom, "free", pendingRotate)}
           draggable={false}
         />
+        <div className="pointer-events-none absolute inset-0">
+          <span className="absolute left-1/3 top-0 h-full w-px bg-white/35" />
+          <span className="absolute left-2/3 top-0 h-full w-px bg-white/35" />
+          <span className="absolute left-0 top-1/3 h-px w-full bg-white/35" />
+          <span className="absolute left-0 top-2/3 h-px w-full bg-white/35" />
+          <span className="absolute inset-0 border border-white/70" />
+        </div>
         <div
-          className="pointer-events-none absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-admin-accent"
-          style={{ left: `${x}%`, top: `${y}%` }}
-        />
+          className="absolute right-3 top-3 z-10 flex flex-col gap-2"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <button
+            type="button"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/70 text-2xl font-medium text-white shadow-lg backdrop-blur hover:bg-black"
+            aria-label="Zoom in"
+            onClick={() => setZoom((current) => clampCropZoom(current + 0.1))}
+          >
+            +
+          </button>
+          <button
+            type="button"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/70 text-2xl font-medium text-white shadow-lg backdrop-blur hover:bg-black"
+            aria-label="Zoom out"
+            onClick={() => setZoom((current) => clampCropZoom(current - 0.1))}
+          >
+            −
+          </button>
+        </div>
+      </div>
+
+      <p className="mt-3 text-center text-xs text-white/55">
+        Drag the photo to position it · Pinch or scroll to zoom
+      </p>
+
+      <div className="mx-auto mt-4 max-w-md space-y-3 rounded-xl bg-white/[0.06] p-4">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className="h-9 w-9 shrink-0 rounded-full bg-white/10 text-lg hover:bg-white/20"
+            aria-label="Zoom out"
+            onClick={() => setZoom((current) => clampCropZoom(current - 0.1))}
+          >
+            −
+          </button>
+          <input
+            type="range"
+            min={MIN_CROP_ZOOM}
+            max={MAX_CROP_ZOOM}
+            step="0.02"
+            value={zoom}
+            onChange={(e) => setZoom(clampCropZoom(Number(e.target.value)))}
+            className="h-2 min-w-0 flex-1 cursor-pointer accent-white"
+            aria-label="Crop zoom"
+          />
+          <button
+            type="button"
+            className="h-9 w-9 shrink-0 rounded-full bg-white/10 text-lg hover:bg-white/20"
+            aria-label="Zoom in"
+            onClick={() => setZoom((current) => clampCropZoom(current + 0.1))}
+          >
+            +
+          </button>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-xs tabular-nums text-white/60">
+            Zoom {Math.round(zoom * 100)}%
+          </span>
+          <div className="flex items-center gap-1">
+            {onRotate ? (
+              <>
+                <button
+                  type="button"
+                  className="rounded-lg px-3 py-2 text-lg text-white/80 hover:bg-white/10"
+                  onClick={() => onRotate?.(-90)}
+                  aria-label="Rotate left"
+                >
+                  ↺
+                </button>
+                <button
+                  type="button"
+                  className="rounded-lg px-3 py-2 text-lg text-white/80 hover:bg-white/10"
+                  onClick={() => onRotate?.(90)}
+                  aria-label="Rotate right"
+                >
+                  ↻
+                </button>
+              </>
+            ) : null}
+            <button
+              type="button"
+              className="rounded-lg px-3 py-2 text-xs text-white/70 hover:bg-white/10 hover:text-white"
+              onClick={() => {
+                setPosition("50% 50%");
+                setZoom(1);
+              }}
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+      </div>
       </div>
     </div>
   );

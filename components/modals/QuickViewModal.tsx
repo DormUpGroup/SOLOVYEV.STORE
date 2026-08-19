@@ -16,6 +16,7 @@ import { checkoutLoginHref } from "@/lib/customer-auth";
 import { ProductImageLoupe } from "@/components/ui/ProductImageLoupe";
 import { FavoriteButton } from "@/components/catalog/FavoriteButton";
 import type { ProductStatus } from "@/lib/types";
+import { productImageCropStyle } from "@/lib/image-crop";
 
 export function QuickViewModal() {
   const { config } = useStore();
@@ -67,6 +68,10 @@ export function QuickViewModal() {
 
   const unavailable = isProductUnavailable(selectedProduct);
   const statusLabel = statusLabels[selectedProduct.status];
+  const activeImage =
+    selectedProduct.images?.find(
+      (image) => image.imageUrl === (activeImg || selectedProduct.img),
+    ) ?? selectedProduct.images?.[0];
 
   const handleWhatsApp = async () => {
     if (unavailable) return;
@@ -126,28 +131,40 @@ export function QuickViewModal() {
               lensSize={160}
               priority
               quality={75}
+              objectPosition={activeImage?.objectPosition}
+              cropZoom={activeImage?.cropZoom}
+              cropMode={activeImage?.cropMode}
             />
             {galleryImages.length > 1 && (
               <div className="modal-thumbnails">
-                {galleryImages.map((url, idx) => (
-                  <button
-                    key={url + idx}
-                    type="button"
-                    className={`modal-thumb-btn${activeImg === url ? " active" : ""}`}
-                    onClick={() => setActiveImg(url)}
-                    aria-label={product.photoN.replace("{n}", String(idx + 1))}
-                  >
-                    <Image
-                      src={url}
-                      alt={`${selectedProduct.title} ${idx + 1}`}
-                      fill
-                      sizes="64px"
-                      quality={55}
-                      loading="lazy"
-                      style={{ objectFit: "cover" }}
-                    />
-                  </button>
-                ))}
+                {galleryImages.map((url, idx) => {
+                  const image = selectedProduct.images?.find(
+                    (item) => item.imageUrl === url,
+                  );
+                  return (
+                    <button
+                      key={url + idx}
+                      type="button"
+                      className={`modal-thumb-btn${activeImg === url ? " active" : ""}`}
+                      onClick={() => setActiveImg(url)}
+                      aria-label={product.photoN.replace("{n}", String(idx + 1))}
+                    >
+                      <Image
+                        src={url}
+                        alt={`${selectedProduct.title} ${idx + 1}`}
+                        fill
+                        sizes="64px"
+                        quality={55}
+                        loading="lazy"
+                        style={productImageCropStyle(
+                          image?.objectPosition,
+                          image?.cropZoom,
+                          image?.cropMode,
+                        )}
+                      />
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -156,7 +173,7 @@ export function QuickViewModal() {
               className={`modal-badge ${unavailable ? "sold-out" : ""} ${statusLabel ? `status-${selectedProduct.status}` : ""}`}
               id="modal-product-badge"
             >
-              {statusLabel || selectedProduct.badge.toUpperCase()}
+              {statusLabel || (selectedProduct.badge || "hot").toUpperCase()}
             </span>
             <h2 id="modal-product-title">{selectedProduct.title}</h2>
             <div className="modal-price-row">

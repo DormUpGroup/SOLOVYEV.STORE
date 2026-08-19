@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
 import { productImageSrc } from "@/lib/product-image";
+import { productImageCropStyle } from "@/lib/image-crop";
+import type { CropMode } from "@/lib/image-crop";
 
 const DEFAULT_LENS_SIZE = 112;
 const DEFAULT_LENS_ZOOM = 2.25;
@@ -27,6 +29,9 @@ interface ProductImageLoupeProps {
   priority?: boolean;
   /** Catalog thumbs default lower; detail views can raise. */
   quality?: number;
+  objectPosition?: string;
+  cropZoom?: number;
+  cropMode?: CropMode;
 }
 
 export function ProductImageLoupe({
@@ -38,6 +43,9 @@ export function ProductImageLoupe({
   lensZoom = DEFAULT_LENS_ZOOM,
   priority = false,
   quality = 70,
+  objectPosition = "50% 50%",
+  cropZoom = 1,
+  cropMode = "cover",
 }: ProductImageLoupeProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [lens, setLens] = useState<LensState | null>(null);
@@ -97,6 +105,7 @@ export function ProductImageLoupe({
           quality={quality}
           priority={priority}
           loading={priority ? undefined : "lazy"}
+          style={productImageCropStyle(objectPosition, cropZoom, cropMode)}
         />
       ) : (
         <div className="product-img-placeholder" aria-hidden="true" />

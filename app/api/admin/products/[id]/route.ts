@@ -4,7 +4,6 @@ import { revalidateStore } from "@/lib/admin-api";
 import {
   deleteProduct,
   fetchProductById,
-  isSlugTaken,
   updateProduct,
   validateCategory,
   validateStatus,
@@ -28,7 +27,13 @@ type PutBody = {
   sold?: boolean;
   instagramUrl?: string;
   sortOrder?: number;
-  images?: Array<{ imageUrl: string; altText?: string; objectPosition?: string }>;
+  images?: Array<{
+    imageUrl: string;
+    altText?: string;
+    objectPosition?: string;
+    cropZoom?: number;
+    cropMode?: "cover" | "free";
+  }>;
   imageIds?: number[];
 };
 
@@ -51,9 +56,6 @@ export async function PUT(request: Request, context: RouteContext) {
   const productId = Number(id);
   const body = (await request.json()) as PutBody;
 
-  if (body.slug && (await isSlugTaken(body.slug, productId))) {
-    return NextResponse.json({ error: "Slug already exists" }, { status: 409 });
-  }
   if (body.category && !validateCategory(body.category)) {
     return NextResponse.json({ error: "Invalid category" }, { status: 400 });
   }

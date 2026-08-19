@@ -2,6 +2,8 @@ import type { Product, ProductCategory, ProductImage, ProductStatus } from "@/li
 import { getSupabaseAdmin, hasSupabaseServiceRole, isSupabaseConfigured } from "@/lib/supabase";
 import { deleteImageUrl } from "@/lib/supabase-storage";
 import { isBrandNewCondition } from "@/lib/products";
+import { decodeCropSettings, encodeCropSettings } from "@/lib/image-crop";
+import { uniqueSlugFromTitle } from "@/lib/slug";
 
 type DbProduct = {
   id: number;
@@ -52,13 +54,16 @@ const PUBLIC_CATALOG_STATUSES: ProductStatus[] = [
 ];
 
 function mapImage(row: DbProductImage): ProductImage {
+  const crop = decodeCropSettings(row.object_position);
   return {
     id: row.id,
     productId: row.product_id,
     imageUrl: row.image_url,
     altText: row.alt_text ?? undefined,
     sortOrder: row.sort_order,
-    objectPosition: row.object_position,
+    objectPosition: crop.objectPosition,
+    cropZoom: crop.cropZoom,
+    cropMode: crop.cropMode,
   };
 }
 
@@ -255,9 +260,13 @@ export async function isSlugTaken(slug: string, excludeId?: number): Promise<boo
   return Boolean(data);
 }
 
+export async function resolveUniqueSlug(title: string, excludeId?: number): Promise<string> {
+  return uniqueSlugFromTitle(title, (slug) => isSlugTaken(slug, excludeId));
+}
+
 export type CreateProductInput = {
   title: string;
-  slug: string;
+  slug?: string;
   category: ProductCategory;
   brand: string;
   badge?: string;
@@ -271,16 +280,23 @@ export type CreateProductInput = {
   instagramUrl?: string;
   sortOrder?: number;
   source?: Product["source"];
-  images?: Array<{ imageUrl: string; altText?: string; objectPosition?: string }>;
+  images?: Array<{
+    imageUrl: string;
+    altText?: string;
+    objectPosition?: string;
+    cropZoom?: number;
+    cropMode?: ProductImage["cropMode"];
+  }>;
 };
 
 export async function createProduct(input: CreateProductInput): Promise<Product> {
   const supabase = getSupabaseAdmin();
   const primaryImg = input.images?.[0]?.imageUrl ?? "";
+  const slug = await resolveUniqueSlug(input.title);
   const row = productToDbRow(
     {
       title: input.title,
-      slug: input.slug,
+      slug,
       category: input.category,
       brand: input.brand,
       badge: input.badge,
@@ -310,7 +326,11 @@ export async function createProduct(input: CreateProductInput): Promise<Product>
       image_url: img.imageUrl,
       alt_text: img.altText ?? input.title,
       sort_order: i,
-      object_position: img.objectPosition ?? "50% 50%",
+      object_position: encodeCropSettings(
+        img.objectPosition ?? "50% 50%",
+        img.cropZoom ?? 1,
+        img.cropMode ?? "cover",
+      ),
     }));
     const { error: imgErr } = await supabase.from("product_images").insert(imageRows);
     if (imgErr) {
@@ -333,9 +353,11 @@ export async function updateProduct(id: number, input: UpdateProductInput): Prom
   const existing = await fetchProductById(id);
   if (!existing) throw new Error("Product not found");
 
+  const title = input.title ?? existing.title;
+  const slug = await resolveUniqueSlug(title, id);
   const merged = {
-    slug: input.slug ?? existing.slug,
-    title: input.title ?? existing.title,
+    slug,
+    title,
     category: input.category ?? existing.category,
     brand: input.brand ?? existing.brand,
     badge: input.badge ?? existing.badge,
@@ -432,7 +454,13 @@ async function syncProductPrimaryImage(productId: number): Promise<void> {
 export async function addProductImage(
   productId: number,
   imageUrl: string,
-  opts?: { altText?: string; sortOrder?: number; objectPosition?: string },
+  opts?: {
+    altText?: string;
+    sortOrder?: number;
+    objectPosition?: string;
+    cropZoom?: number;
+    cropMode?: ProductImage["cropMode"];
+  },
 ): Promise<ProductImage> {
   const supabase = getSupabaseAdmin();
   const { data: existing } = await supabase
@@ -452,7 +480,11 @@ export async function addProductImage(
       image_url: imageUrl,
       alt_text: opts?.altText ?? null,
       sort_order: sortOrder,
-      object_position: opts?.objectPosition ?? "50% 50%",
+      object_position: encodeCropSettings(
+        opts?.objectPosition ?? "50% 50%",
+        opts?.cropZoom ?? 1,
+        opts?.cropMode ?? "cover",
+      ),
     })
     .select()
     .single();
@@ -479,15 +511,17 @@ export async function reorderProductImages(productId: number, imageIds: number[]
   await syncProductPrimaryImage(productId);
 }
 
-export async function updateProductImagePosition(
+export async function updateProductImageCrop(
   productId: number,
   imageId: number,
   objectPosition: string,
+  cropZoom: number,
+  cropMode: ProductImage["cropMode"] = "free",
 ): Promise<void> {
   const supabase = getSupabaseAdmin();
   const { error } = await supabase
     .from("product_images")
-    .update({ object_position: objectPosition })
+    .update({ object_position: encodeCropSettings(objectPosition, cropZoom, cropMode) })
     .eq("id", imageId)
     .eq("product_id", productId);
   if (error) throw error;

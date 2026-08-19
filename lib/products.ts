@@ -7,6 +7,14 @@ import type {
 } from "./types";
 
 export const brandLogos = brandLogosData as Record<string, string>;
+/** Bump when brand logo files change to bust browser/CDN cache. */
+export const brandLogosVersion = "2026-08-19e";
+
+const BRAND_SLUG_ALIASES: Record<string, string> = {
+  "d-and-g": "dandg",
+  "d-g": "dandg",
+  "cp-company": "c-p-company",
+};
 
 export function getProductBySlug(
   items: Product[],
@@ -118,7 +126,17 @@ export function getBrandBySlug(
 
 export function getBrandLogoPath(brand: string): string {
   const slug = brandToSlug(brand);
-  return brandLogos[slug] || `/assets/brands/${slug}.svg`;
+  const resolvedSlug = BRAND_SLUG_ALIASES[slug] ?? slug;
+  const compactSlug = resolvedSlug.replace(/-/g, "");
+
+  const path =
+    brandLogos[slug] ??
+    brandLogos[resolvedSlug] ??
+    brandLogos[compactSlug] ??
+    `/assets/brands/${resolvedSlug}.svg`;
+
+  const joiner = path.includes("?") ? "&" : "?";
+  return `${path}${joiner}v=${brandLogosVersion}`;
 }
 
 export function getBrandProductCount(brand: string, items: Product[]): number {

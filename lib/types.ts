@@ -50,6 +50,8 @@ export interface ProductImage {
   altText?: string;
   sortOrder: number;
   objectPosition: string;
+  cropZoom: number;
+  cropMode: "cover" | "free";
 }
 
 export interface Product {

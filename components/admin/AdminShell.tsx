@@ -59,6 +59,21 @@ export function AdminShell({ initialProducts }: AdminShellProps) {
       .catch(() => undefined);
   }, []);
 
+  const refreshProducts = useCallback(async () => {
+    const res = await fetch("/api/admin/products");
+    if (!res.ok) {
+      showToast("Failed to load products", false);
+      return;
+    }
+    const json = await res.json();
+    setProducts(json.products ?? []);
+  }, [showToast]);
+
+  // Always reload from API on mount so catalog is not stuck on a stale/empty SSR list.
+  useEffect(() => {
+    void refreshProducts();
+  }, [refreshProducts]);
+
   const publish = async () => {
     const res = await fetch("/api/admin/publish", { method: "POST" });
     if (res.ok) {
@@ -75,14 +90,6 @@ export function AdminShell({ initialProducts }: AdminShellProps) {
     form.action = "/api/auth/logout";
     document.body.appendChild(form);
     form.submit();
-  };
-
-  const refreshProducts = async () => {
-    const res = await fetch("/api/admin/products");
-    if (res.ok) {
-      const json = await res.json();
-      setProducts(json.products ?? []);
-    }
   };
 
   return (

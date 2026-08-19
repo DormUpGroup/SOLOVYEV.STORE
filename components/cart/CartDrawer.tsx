@@ -7,6 +7,7 @@ import {
   getProductById,
 } from "@/lib/products";
 import { productImageSrc } from "@/lib/product-image";
+import { productImageCropStyle } from "@/lib/image-crop";
 import { useStore } from "@/components/providers/StoreProvider";
 import { trackBeginCheckout } from "@/lib/analytics";
 import { useCart } from "@/components/providers/CartProvider";
@@ -116,6 +117,9 @@ export function CartDrawer() {
             cart.map((item) => {
               const product = getProductById(products, item.id);
               if (!product) return null;
+              const mainImage =
+                product.images?.find((image) => image.imageUrl === product.img) ??
+                product.images?.[0];
               return (
                 <div
                   key={`${item.id}-${item.size}`}
@@ -133,6 +137,11 @@ export function CartDrawer() {
                         sizes="88px"
                         quality={55}
                         loading="lazy"
+                        style={productImageCropStyle(
+                          mainImage?.objectPosition,
+                          mainImage?.cropZoom,
+                          mainImage?.cropMode,
+                        )}
                       />
                     ) : (
                       <div className="product-img-placeholder" aria-hidden="true" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState, type ReactNode } from "react";
 import {
   DndContext,
   closestCenter,
@@ -49,6 +49,8 @@ interface ProductListProps {
   onReorder: (ids: number[]) => void;
   onAdd: () => void;
   addLabel?: string;
+  editingProductId?: number | null;
+  inlineEditor?: ReactNode;
 }
 
 function SortableRow({
@@ -88,9 +90,16 @@ function SortableRow({
       >
         ⋮⋮
       </button>
-      <div className="relative h-20 w-20 shrink-0 overflow-hidden border border-admin-border">
+      <div className="relative h-20 w-20 shrink-0 overflow-hidden border border-admin-border bg-white">
         {product.img ? (
-          <AdminProductImage src={product.img} size="thumb" className="h-full w-full object-cover" />
+          <AdminProductImage
+            src={product.img}
+            size="thumb"
+            className="h-full w-full object-contain"
+            objectPosition={product.images?.[0]?.objectPosition}
+            cropZoom={product.images?.[0]?.cropZoom}
+            cropMode={product.images?.[0]?.cropMode}
+          />
         ) : null}
       </div>
       <div className="min-w-0">
@@ -137,6 +146,8 @@ export function ProductList({
   onReorder,
   onAdd,
   addLabel,
+  editingProductId,
+  inlineEditor,
 }: ProductListProps) {
   const [brandFilter, setBrandFilter] = useState("");
   const [search, setSearch] = useState("");
@@ -245,13 +256,19 @@ export function ProductList({
                 >
                   <div className="space-y-1">
                     {catProducts.map((p) => (
-                      <SortableRow
-                        key={p.id}
-                        product={p}
-                        highlighted={highlightedId === p.id}
-                        onEdit={() => onEdit(p)}
-                        onDelete={() => onDelete(p.id)}
-                      />
+                      <Fragment key={p.id}>
+                        <SortableRow
+                          product={p}
+                          highlighted={highlightedId === p.id}
+                          onEdit={() => onEdit(p)}
+                          onDelete={() => onDelete(p.id)}
+                        />
+                        {editingProductId === p.id && inlineEditor ? (
+                          <div className="my-3 border-l-2 border-admin-accent pl-3">
+                            {inlineEditor}
+                          </div>
+                        ) : null}
+                      </Fragment>
                     ))}
                   </div>
                 </SortableContext>

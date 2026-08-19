@@ -4,7 +4,6 @@ import { revalidateStore } from "@/lib/admin-api";
 import {
   createProduct,
   fetchProductsAdmin,
-  isSlugTaken,
   validateCategory,
   validateStatus,
 } from "@/lib/supabase-products";
@@ -20,7 +19,7 @@ export async function GET() {
 
 type PostBody = {
   title: string;
-  slug: string;
+  slug?: string;
   category: ProductCategory;
   brand: string;
   badge?: string;
@@ -33,7 +32,13 @@ type PostBody = {
   sold?: boolean;
   instagramUrl?: string;
   sortOrder?: number;
-  images?: Array<{ imageUrl: string; altText?: string; objectPosition?: string }>;
+  images?: Array<{
+    imageUrl: string;
+    altText?: string;
+    objectPosition?: string;
+    cropZoom?: number;
+    cropMode?: "cover" | "free";
+  }>;
 };
 
 export async function POST(request: Request) {
@@ -42,17 +47,14 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json()) as PostBody;
-  if (!body.title?.trim() || !body.slug?.trim()) {
-    return NextResponse.json({ error: "Title and slug required" }, { status: 400 });
+  if (!body.title?.trim()) {
+    return NextResponse.json({ error: "Title required" }, { status: 400 });
   }
   if (!validateCategory(body.category)) {
     return NextResponse.json({ error: "Invalid category" }, { status: 400 });
   }
   if (body.status && !validateStatus(body.status)) {
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
-  }
-  if (await isSlugTaken(body.slug)) {
-    return NextResponse.json({ error: "Slug already exists" }, { status: 409 });
   }
 
   let product;

@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { productImageCropStyle } from "@/lib/image-crop";
+import type { CropMode } from "@/lib/image-crop";
 
 type ImageSize = "thumb" | "grid" | "preview" | "editor";
 
@@ -22,8 +24,11 @@ export function AdminProductImage({
   src,
   alt = "",
   size = "thumb",
-  className = "h-full w-full object-cover",
+  className = "h-full w-full object-contain",
   objectPosition,
+  cropZoom = 1,
+  cropMode = "cover",
+  rotateDeg = 0,
   priority = false,
 }: {
   src: string;
@@ -31,11 +36,23 @@ export function AdminProductImage({
   size?: ImageSize;
   className?: string;
   objectPosition?: string;
+  cropZoom?: number;
+  cropMode?: CropMode;
+  rotateDeg?: number;
   priority?: boolean;
 }) {
   const safe = adminProductImageSrc(src, size);
   if (!safe) return null;
   const preset = SIZE_PRESETS[size];
+  const cropStyle = productImageCropStyle(objectPosition, cropZoom, cropMode, rotateDeg);
+  const isLocal = safe.startsWith("blob:") || safe.startsWith("data:");
+
+  if (isLocal) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={safe} alt={alt} className={className} style={cropStyle} />
+    );
+  }
 
   return (
     <Image
@@ -46,7 +63,7 @@ export function AdminProductImage({
       sizes={preset.sizes}
       quality={preset.quality}
       className={className}
-      style={objectPosition ? { objectPosition } : undefined}
+      style={cropStyle}
       priority={priority}
       loading={priority ? undefined : "lazy"}
     />

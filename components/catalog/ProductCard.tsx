@@ -49,8 +49,11 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
   const statusLabel = getStatusLabel(product.status, dict.product);
   const categoryLabel = dict.categories[product.category];
   const metaRight = statusLabel || formatConditionScore(product.condition);
-
-  const open = () => openQuickView(product);
+  const href = `/product/${product.slug}`;
+  const viewLabel = dict.product.viewProduct.replace("{title}", product.title);
+  const mainImage =
+    product.images?.find((image) => image.imageUrl === product.img) ??
+    product.images?.[0];
 
   return (
     <article
@@ -58,20 +61,18 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       data-id={product.id}
     >
       <FavoriteButton productId={product.id} />
-      <button
-        type="button"
-        className="product-img-hit"
-        onClick={open}
-        aria-label={dict.product.viewProduct.replace("{title}", product.title)}
-      >
+      <Link href={href} className="product-img-hit" aria-label={viewLabel}>
         <ProductImageLoupe
           src={product.img}
           alt={product.title}
           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
           priority={priority}
           quality={65}
+          objectPosition={mainImage?.objectPosition}
+          cropZoom={mainImage?.cropZoom}
+          cropMode={mainImage?.cropMode}
         />
-      </button>
+      </Link>
 
       <div className="product-info">
         <div className="product-info-header">
@@ -79,34 +80,33 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           <span className="product-condition-score">{metaRight}</span>
         </div>
 
-        <h3 className="product-title">{product.title}</h3>
+        <Link href={href} className="product-title-link">
+          <h3 className="product-title">{product.title}</h3>
+        </Link>
 
         <div className="product-footer">
-          <div className="product-price-block">
+          <Link href={href} className="product-price-block">
             <span className="product-price">{formatPriceOrDm(product.price, sym)}</span>
             {product.originalPrice ? (
               <span className="original-price">
                 {formatPrice(product.originalPrice, sym)}
               </span>
             ) : null}
-          </div>
+          </Link>
           <button
             type="button"
             className="quick-view-btn"
-            onClick={open}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              openQuickView(product);
+            }}
             aria-label={`View ${product.title}`}
           >
             <EyeIcon />
           </button>
         </div>
       </div>
-
-      <Link
-        href={`/product/${product.slug}`}
-        className="product-seo-link visually-hidden"
-      >
-        {product.title}
-      </Link>
     </article>
   );
 }

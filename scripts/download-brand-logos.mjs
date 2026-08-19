@@ -35,6 +35,7 @@ const COLORED_PNG = {
   "dolce-and-gabbana":
     "https://logos-world.net/wp-content/uploads/2020/12/Dolce-Gabbana-Logo.png",
   prada: "https://logos-world.net/wp-content/uploads/2020/06/Prada-Logo.png",
+  "project-g-r": "https://projectgrr.com/wp-content/uploads/2025/07/cropped-projectgrr-favicon-180x180.png",
 };
 
 /** SVG sources that need light-background stripping or recoloring. */
@@ -65,6 +66,7 @@ const ALL_SLUGS = [
   "nike",
   "off-white",
   "prada",
+  "project-g-r",
   "represent",
   "stussy",
   "supreme",
@@ -86,6 +88,7 @@ const BRAND_LABELS = {
   nike: "Nike",
   "off-white": "Off-White",
   prada: "Prada",
+  "project-g-r": "Project G/R",
   represent: "Represent",
   stussy: "Stussy",
   supreme: "Supreme",

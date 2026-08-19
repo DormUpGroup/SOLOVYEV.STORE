@@ -30,7 +30,10 @@ export async function uploadToStorage(
 ): Promise<string> {
   const supabase = getSupabaseAdmin();
   const path = `${crypto.randomUUID()}.${ext}`;
-  const { error } = await supabase.storage.from(bucket).upload(path, buffer, {
+  // Copy into a plain ArrayBuffer-backed view. Some Sharp/Buffer instances can
+  // expose SharedArrayBuffer, which Supabase's upload client rejects.
+  const uploadBody = Uint8Array.from(buffer);
+  const { error } = await supabase.storage.from(bucket).upload(path, uploadBody, {
     contentType,
     upsert: false,
     cacheControl: "31536000",

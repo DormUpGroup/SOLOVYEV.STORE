@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Product, ProductImage, ProductStatus, StoreConfig } from "@/lib/types";
-import type { RotateDegrees } from "@/lib/image-optimize";
+import { normalizePendingRotate } from "@/lib/image-crop";
 import { ProductList } from "./ProductList";
 import { ProductForm, emptyFormProduct, type FormProduct } from "./ProductForm";
 import type { TempImage } from "./ImageManager";
@@ -15,6 +15,9 @@ function productToTempImages(product: Product | FormProduct): TempImage[] {
     imageUrl: img.imageUrl,
     altText: img.altText,
     objectPosition: img.objectPosition,
+    cropZoom: img.cropZoom,
+    cropMode: img.cropMode,
+    pendingRotate: 0,
   }));
 }
 
@@ -23,6 +26,8 @@ function tempImagesToPayload(images: TempImage[]) {
     imageUrl: img.imageUrl,
     altText: img.altText,
     objectPosition: img.objectPosition,
+    cropZoom: img.cropZoom,
+    cropMode: img.cropMode,
   }));
 }
 
@@ -43,6 +48,11 @@ export function AdminClient({
 }: AdminClientProps) {
   const [products, setProducts] = useState(initialProducts);
 
+  // Keep in sync when parent Refresh / router.refresh() passes a new list.
+  useEffect(() => {
+    setProducts(initialProducts);
+  }, [initialProducts]);
+
   const updateProducts = (updater: Product[] | ((prev: Product[]) => Product[])) => {
     setProducts((prev) => {
       const next = typeof updater === "function" ? updater(prev) : updater;
@@ -58,6 +68,7 @@ export function AdminClient({
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
   const [slugError, setSlugError] = useState("");
   const formRef = useRef<HTMLDivElement>(null);
+  const originalImageIdsRef = useRef<number[]>([]);
 
   const router = useRouter();
 
@@ -93,6 +104,7 @@ export function AdminClient({
           : "available";
     setFormProduct(emptyFormProduct(defaultStatus));
     setFormImages([]);
+    originalImageIdsRef.current = [];
     setIsFormDirty(false);
     setSlugError("");
     setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
@@ -102,6 +114,7 @@ export function AdminClient({
     if (isFormDirty && !confirm("Discard unsaved changes?")) return;
     setFormProduct({ ...product });
     setFormImages(productToTempImages(product));
+    originalImageIdsRef.current = (product.images ?? []).map((img) => img.id);
     setIsFormDirty(false);
     setSlugError("");
     setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
@@ -111,6 +124,7 @@ export function AdminClient({
     if (isFormDirty && !confirm("Discard unsaved changes?")) return;
     setFormProduct(null);
     setFormImages([]);
+    originalImageIdsRef.current = [];
     setIsFormDirty(false);
     setSlugError("");
   };
@@ -124,6 +138,7 @@ export function AdminClient({
   }, [isFormDirty]);
 
   const refreshProduct = useCallback(async (id: number) => {
+    if (isFormDirty && !confirm("Discard unsaved changes?")) return;
     const res = await fetch(`/api/admin/products/${id}`);
     if (!res.ok) {
       flash("Failed to refresh product", false);
@@ -134,14 +149,19 @@ export function AdminClient({
     if (formProduct?.id === id) {
       setFormProduct(json.product);
       setFormImages(productToTempImages(json.product));
+      originalImageIdsRef.current = (json.product.images ?? []).map((img) => img.id);
+      setIsFormDirty(false);
     }
-  }, [formProduct?.id]);
+  }, [formProduct?.id, isFormDirty]);
 
   const handleSave = async () => {
     if (!formProduct) return;
     setIsBusy(true);
     setSlugError("");
     try {
+      const images = await persistLocalEdits(formProduct.id || undefined, formImages);
+      setFormImages(images);
+
       const payload = {
         title: formProduct.title,
         slug: formProduct.slug,
@@ -157,8 +177,8 @@ export function AdminClient({
         sold: formProduct.status === "sold",
         instagramUrl: formProduct.instagramUrl,
         sortOrder: formProduct.sortOrder,
-        images: tempImagesToPayload(formImages),
-        imageIds: formImages.map((img) => img.id).filter((id): id is number => id != null),
+        images: tempImagesToPayload(images),
+        imageIds: images.map((img) => img.id).filter((id): id is number => id != null),
       };
 
       const isNew = !formProduct.id;
@@ -186,16 +206,20 @@ export function AdminClient({
         updateProducts((prev) => [...prev, json.product]);
         setFormProduct(json.product);
         setFormImages(productToTempImages(json.product));
+        originalImageIdsRef.current = (json.product.images ?? []).map((img) => img.id);
       } else {
         updateProducts((prev) => prev.map((p) => (p.id === json.product.id ? json.product : p)));
         setFormProduct(json.product);
         setFormImages(productToTempImages(json.product));
+        originalImageIdsRef.current = (json.product.images ?? []).map((img) => img.id);
       }
       setIsFormDirty(false);
       setHighlightedId(json.product.id);
       setTimeout(() => setHighlightedId(null), 2200);
       await publishSite();
       flash("Product saved — live on site");
+    } catch (err) {
+      flash(err instanceof Error ? err.message : "Save failed", false);
     } finally {
       setIsBusy(false);
     }
@@ -237,77 +261,159 @@ export function AdminClient({
     await publishSite();
   };
 
-  const persistAddImage = async (url: string) => {
-    if (!formProduct?.id) return;
-    const res = await fetch(`/api/admin/products/${formProduct.id}/images`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ imageUrl: url }),
-    });
-    if (!res.ok) throw new Error("Failed to add image");
-    const json = (await res.json()) as { image: ProductImage; product: Product };
-    setFormProduct(json.product);
-    setFormImages(productToTempImages(json.product));
-    updateProducts((prev) => prev.map((p) => (p.id === json.product.id ? json.product : p)));
-    await publishSite();
-    return json.image;
-  };
+  async function persistLocalEdits(
+    productId: number | undefined,
+    images: TempImage[],
+  ): Promise<TempImage[]> {
+    let next = images;
 
-  const persistReorderImages = async (imageIds: number[]) => {
-    if (!formProduct?.id) return;
-    const res = await fetch(`/api/admin/products/${formProduct.id}/images`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ imageIds }),
-    });
-    if (!res.ok) throw new Error("Failed to reorder images");
-    const json = (await res.json()) as { product: Product };
-    setFormProduct(json.product);
-    setFormImages(productToTempImages(json.product));
-    await publishSite();
-  };
-
-  const persistPosition = async (imageId: number, objectPosition: string) => {
-    if (!formProduct?.id) return;
-    const res = await fetch(`/api/admin/products/${formProduct.id}/images/${imageId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ objectPosition }),
-    });
-    if (!res.ok) throw new Error("Failed to save image position");
-    setIsFormDirty(true);
-  };
-
-  const persistRotate = async (imageId: number, degrees: RotateDegrees) => {
-    if (!formProduct?.id) return;
-    const res = await fetch(`/api/admin/products/${formProduct.id}/images/${imageId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rotate: degrees }),
-    });
-    if (!res.ok) {
-      const json = await res.json().catch(() => ({}));
-      throw new Error(json.error ?? "Failed to rotate image");
+    for (const img of next) {
+      if (!img.file) continue;
+      const fd = new FormData();
+      fd.append("files", img.file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error(json.error ?? "Upload failed");
+      }
+      const json = (await res.json()) as { urls: string[] };
+      const url = json.urls?.[0];
+      if (!url) throw new Error("Upload failed");
+      if (img.imageUrl.startsWith("blob:")) URL.revokeObjectURL(img.imageUrl);
+      next = next.map((row) =>
+        row.tempId === img.tempId ? { ...row, imageUrl: url, file: undefined } : row,
+      );
     }
-    const json = (await res.json()) as { product: Product; image: ProductImage };
-    setFormProduct(json.product);
-    setFormImages(productToTempImages(json.product));
-    updateProducts((prev) => prev.map((p) => (p.id === json.product.id ? json.product : p)));
-    await publishSite();
-    return json.image;
-  };
 
-  const persistDeleteImage = async (imageId: number) => {
-    if (!formProduct?.id) return;
-    const res = await fetch(`/api/admin/products/${formProduct.id}/images/${imageId}`, {
-      method: "DELETE",
-    });
-    if (!res.ok) throw new Error("Failed to delete image");
-    const json = (await res.json()) as { product: Product };
-    setFormProduct(json.product);
-    setFormImages(productToTempImages(json.product));
-    await publishSite();
-  };
+    for (const img of next) {
+      const rotate = normalizePendingRotate(img.pendingRotate ?? 0);
+      if (!rotate) continue;
+
+      if (productId && img.id) {
+        const res = await fetch(`/api/admin/products/${productId}/images/${img.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ rotate }),
+        });
+        if (!res.ok) {
+          const json = await res.json().catch(() => ({}));
+          throw new Error(json.error ?? "Failed to rotate image");
+        }
+        const json = (await res.json()) as { image: ProductImage };
+        next = next.map((row) =>
+          row.tempId === img.tempId
+            ? { ...row, imageUrl: json.image.imageUrl, pendingRotate: 0 }
+            : row,
+        );
+      } else {
+        const res = await fetch("/api/admin/images/rotate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageUrl: img.imageUrl, degrees: rotate }),
+        });
+        if (!res.ok) {
+          const json = await res.json().catch(() => ({}));
+          throw new Error(json.error ?? "Failed to rotate image");
+        }
+        const json = (await res.json()) as { url: string };
+        next = next.map((row) =>
+          row.tempId === img.tempId
+            ? { ...row, imageUrl: json.url, pendingRotate: 0 }
+            : row,
+        );
+      }
+    }
+
+    if (!productId) return next;
+
+    const keepIds = new Set(
+      next.map((img) => img.id).filter((id): id is number => id != null),
+    );
+    for (const imageId of originalImageIdsRef.current) {
+      if (keepIds.has(imageId)) continue;
+      const res = await fetch(`/api/admin/products/${productId}/images/${imageId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete image");
+    }
+
+    for (const img of next) {
+      if (img.id) continue;
+      const res = await fetch(`/api/admin/products/${productId}/images`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          imageUrl: img.imageUrl,
+          objectPosition: img.objectPosition,
+          cropZoom: img.cropZoom,
+          cropMode: img.cropMode,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to add image");
+      const json = (await res.json()) as { image: ProductImage };
+      next = next.map((row) =>
+        row.tempId === img.tempId
+          ? {
+              ...row,
+              id: json.image.id,
+              tempId: `db-${json.image.id}`,
+              imageUrl: json.image.imageUrl,
+            }
+          : row,
+      );
+    }
+
+    for (const img of next) {
+      if (!img.id) continue;
+      const res = await fetch(`/api/admin/products/${productId}/images/${img.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          objectPosition: img.objectPosition,
+          cropZoom: img.cropZoom,
+          cropMode: img.cropMode,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to save image crop");
+    }
+
+    const imageIds = next.map((img) => img.id).filter((id): id is number => id != null);
+    if (imageIds.length) {
+      const res = await fetch(`/api/admin/products/${productId}/images`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageIds }),
+      });
+      if (!res.ok) throw new Error("Failed to reorder images");
+    }
+
+    return next;
+  }
+
+  const productEditor = formProduct ? (
+    <div ref={formRef}>
+      <ProductForm
+        product={formProduct}
+        config={config}
+        images={formImages}
+        slugError={slugError}
+        isBusy={isBusy}
+        onChange={(p) => {
+          setFormProduct(p);
+          setIsFormDirty(true);
+        }}
+        onImagesChange={(imgs) => {
+          setFormImages(imgs);
+          setIsFormDirty(true);
+        }}
+        onSave={handleSave}
+        onCancel={closeForm}
+        onRefreshProduct={
+          formProduct.id ? () => refreshProduct(formProduct.id) : undefined
+        }
+      />
+    </div>
+  ) : null;
 
   return (
     <div className="space-y-6">
@@ -337,6 +443,8 @@ export function AdminClient({
         onDelete={handleDelete}
         onReorder={handleReorder}
         onAdd={openAdd}
+        editingProductId={formProduct?.id || null}
+        inlineEditor={formProduct?.id ? productEditor : null}
         addLabel={
           mode === "made_to_order"
             ? "+ Add made-to-order item"
@@ -346,33 +454,7 @@ export function AdminClient({
         }
       />
 
-      {formProduct ? (
-        <div ref={formRef}>
-          <ProductForm
-            product={formProduct}
-            config={config}
-            images={formImages}
-            slugError={slugError}
-            isBusy={isBusy}
-            onChange={(p) => {
-              setFormProduct(p);
-              setIsFormDirty(true);
-            }}
-            onImagesChange={(imgs) => {
-              setFormImages(imgs);
-              setIsFormDirty(true);
-            }}
-            onSave={handleSave}
-            onCancel={closeForm}
-            onPersistReorder={formProduct.id ? persistReorderImages : undefined}
-            onPersistPosition={formProduct.id ? persistPosition : undefined}
-            onPersistRotate={formProduct.id ? persistRotate : undefined}
-            onPersistDelete={formProduct.id ? persistDeleteImage : undefined}
-            onPersistAdd={formProduct.id ? persistAddImage : undefined}
-            onRefreshProduct={formProduct.id ? () => refreshProduct(formProduct.id) : undefined}
-          />
-        </div>
-      ) : null}
+      {formProduct && !formProduct.id ? productEditor : null}
 
       {message ? (
         <div

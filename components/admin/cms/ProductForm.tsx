@@ -1,8 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import type { Product, ProductCategory, ProductImage, ProductStatus, StoreConfig } from "@/lib/types";
-import type { RotateDegrees } from "@/lib/image-optimize";
+import type { Product, ProductCategory, ProductStatus, StoreConfig } from "@/lib/types";
 import { slugify } from "@/lib/slug";
 import { ImageManager, type TempImage } from "./ImageManager";
 import { ProductPreview } from "./ProductPreview";
@@ -27,11 +25,6 @@ interface ProductFormProps {
   onImagesChange: (images: TempImage[]) => void;
   onSave: () => void;
   onCancel: () => void;
-  onPersistReorder?: (imageIds: number[]) => Promise<void>;
-  onPersistPosition?: (imageId: number, position: string) => Promise<void>;
-  onPersistRotate?: (imageId: number, degrees: RotateDegrees) => Promise<ProductImage | void>;
-  onPersistDelete?: (imageId: number) => Promise<void>;
-  onPersistAdd?: (url: string) => Promise<ProductImage | void>;
   onRefreshProduct?: () => Promise<void>;
 }
 
@@ -45,14 +38,8 @@ export function ProductForm({
   onImagesChange,
   onSave,
   onCancel,
-  onPersistReorder,
-  onPersistPosition,
-  onPersistRotate,
-  onPersistDelete,
-  onPersistAdd,
   onRefreshProduct,
 }: ProductFormProps) {
-  const slugTouched = useRef(false);
   const isNew = !product.id;
 
   const isPublished = product.status !== "draft";
@@ -110,20 +97,18 @@ export function ProductForm({
                 onChange({
                   ...product,
                   title,
-                  slug: !slugTouched.current ? slugify(title) : product.slug,
+                  slug: slugify(title),
                 });
               }}
             />
           </label>
           <label className="block sm:col-span-2">
-            <span className="text-xs text-admin-muted">Slug</span>
+            <span className="text-xs text-admin-muted">Slug (from title)</span>
             <input
-              className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
+              readOnly
+              tabIndex={-1}
+              className="mt-1 w-full cursor-default border border-admin-border bg-admin-bg/60 px-2 py-1.5 text-admin-muted"
               value={product.slug}
-              onChange={(e) => {
-                slugTouched.current = true;
-                onChange({ ...product, slug: e.target.value });
-              }}
             />
             {slugError ? <p className="mt-1 text-xs text-admin-danger">{slugError}</p> : null}
           </label>
@@ -310,14 +295,8 @@ export function ProductForm({
         </div>
 
         <ImageManager
-          productId={product.id || undefined}
           images={images}
           onChange={onImagesChange}
-          onPersistReorder={onPersistReorder}
-          onPersistPosition={onPersistPosition}
-          onPersistRotate={onPersistRotate}
-          onPersistDelete={onPersistDelete}
-          onPersistAdd={onPersistAdd}
           onRefreshProduct={onRefreshProduct}
         />
       </div>
