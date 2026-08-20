@@ -23,6 +23,7 @@ function productToTempImages(product: Product | FormProduct): TempImage[] {
 
 function tempImagesToPayload(images: TempImage[]) {
   return images.map((img) => ({
+    id: img.id,
     imageUrl: img.imageUrl,
     altText: img.altText,
     objectPosition: img.objectPosition,
@@ -216,7 +217,6 @@ export function AdminClient({
       setIsFormDirty(false);
       setHighlightedId(json.product.id);
       setTimeout(() => setHighlightedId(null), 2200);
-      await publishSite();
       flash("Product saved — live on site");
     } catch (err) {
       flash(err instanceof Error ? err.message : "Save failed", false);
@@ -266,62 +266,73 @@ export function AdminClient({
     images: TempImage[],
   ): Promise<TempImage[]> {
     let next = images;
+    const deferQs = "?deferRevalidate=1";
 
-    for (const img of next) {
-      if (!img.file) continue;
-      const fd = new FormData();
-      fd.append("files", img.file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-      if (!res.ok) {
-        const json = await res.json().catch(() => ({}));
-        throw new Error(json.error ?? "Upload failed");
-      }
-      const json = (await res.json()) as { urls: string[] };
-      const url = json.urls?.[0];
-      if (!url) throw new Error("Upload failed");
-      if (img.imageUrl.startsWith("blob:")) URL.revokeObjectURL(img.imageUrl);
-      next = next.map((row) =>
-        row.tempId === img.tempId ? { ...row, imageUrl: url, file: undefined } : row,
+    const toUpload = next.filter((img) => img.file);
+    if (toUpload.length) {
+      const uploaded = await Promise.all(
+        toUpload.map(async (img) => {
+          const fd = new FormData();
+          fd.append("files", img.file!);
+          const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+          if (!res.ok) {
+            const json = await res.json().catch(() => ({}));
+            throw new Error(json.error ?? "Upload failed");
+          }
+          const json = (await res.json()) as { urls: string[] };
+          const url = json.urls?.[0];
+          if (!url) throw new Error("Upload failed");
+          return { tempId: img.tempId, url, prevUrl: img.imageUrl };
+        }),
       );
+      const byTemp = new Map(uploaded.map((row) => [row.tempId, row]));
+      next = next.map((row) => {
+        const hit = byTemp.get(row.tempId);
+        if (!hit) return row;
+        if (hit.prevUrl.startsWith("blob:")) URL.revokeObjectURL(hit.prevUrl);
+        return { ...row, imageUrl: hit.url, file: undefined };
+      });
     }
 
-    for (const img of next) {
-      const rotate = normalizePendingRotate(img.pendingRotate ?? 0);
-      if (!rotate) continue;
-
-      if (productId && img.id) {
-        const res = await fetch(`/api/admin/products/${productId}/images/${img.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ rotate }),
-        });
-        if (!res.ok) {
-          const json = await res.json().catch(() => ({}));
-          throw new Error(json.error ?? "Failed to rotate image");
-        }
-        const json = (await res.json()) as { image: ProductImage };
-        next = next.map((row) =>
-          row.tempId === img.tempId
-            ? { ...row, imageUrl: json.image.imageUrl, pendingRotate: 0 }
-            : row,
-        );
-      } else {
-        const res = await fetch("/api/admin/images/rotate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ imageUrl: img.imageUrl, degrees: rotate }),
-        });
-        if (!res.ok) {
-          const json = await res.json().catch(() => ({}));
-          throw new Error(json.error ?? "Failed to rotate image");
-        }
-        const json = (await res.json()) as { url: string };
-        next = next.map((row) =>
-          row.tempId === img.tempId
-            ? { ...row, imageUrl: json.url, pendingRotate: 0 }
-            : row,
-        );
-      }
+    const toRotate = next.filter((img) => normalizePendingRotate(img.pendingRotate ?? 0));
+    if (toRotate.length) {
+      const rotated = await Promise.all(
+        toRotate.map(async (img) => {
+          const rotate = normalizePendingRotate(img.pendingRotate ?? 0);
+          if (productId && img.id) {
+            const res = await fetch(
+              `/api/admin/products/${productId}/images/${img.id}${deferQs}`,
+              {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ rotate }),
+              },
+            );
+            if (!res.ok) {
+              const json = await res.json().catch(() => ({}));
+              throw new Error(json.error ?? "Failed to rotate image");
+            }
+            const json = (await res.json()) as { image: ProductImage };
+            return { tempId: img.tempId, imageUrl: json.image.imageUrl };
+          }
+          const res = await fetch("/api/admin/images/rotate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ imageUrl: img.imageUrl, degrees: rotate }),
+          });
+          if (!res.ok) {
+            const json = await res.json().catch(() => ({}));
+            throw new Error(json.error ?? "Failed to rotate image");
+          }
+          const json = (await res.json()) as { url: string };
+          return { tempId: img.tempId, imageUrl: json.url };
+        }),
+      );
+      const byTemp = new Map(rotated.map((row) => [row.tempId, row.imageUrl]));
+      next = next.map((row) => {
+        const url = byTemp.get(row.tempId);
+        return url ? { ...row, imageUrl: url, pendingRotate: 0 } : row;
+      });
     }
 
     if (!productId) return next;
@@ -329,64 +340,52 @@ export function AdminClient({
     const keepIds = new Set(
       next.map((img) => img.id).filter((id): id is number => id != null),
     );
-    for (const imageId of originalImageIdsRef.current) {
-      if (keepIds.has(imageId)) continue;
-      const res = await fetch(`/api/admin/products/${productId}/images/${imageId}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed to delete image");
-    }
-
-    for (const img of next) {
-      if (img.id) continue;
-      const res = await fetch(`/api/admin/products/${productId}/images`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          imageUrl: img.imageUrl,
-          objectPosition: img.objectPosition,
-          cropZoom: img.cropZoom,
-          cropMode: img.cropMode,
+    const toDelete = originalImageIdsRef.current.filter((imageId) => !keepIds.has(imageId));
+    if (toDelete.length) {
+      await Promise.all(
+        toDelete.map(async (imageId) => {
+          const res = await fetch(
+            `/api/admin/products/${productId}/images/${imageId}${deferQs}`,
+            { method: "DELETE" },
+          );
+          if (!res.ok) throw new Error("Failed to delete image");
         }),
-      });
-      if (!res.ok) throw new Error("Failed to add image");
-      const json = (await res.json()) as { image: ProductImage };
-      next = next.map((row) =>
-        row.tempId === img.tempId
-          ? {
-              ...row,
-              id: json.image.id,
-              tempId: `db-${json.image.id}`,
-              imageUrl: json.image.imageUrl,
-            }
-          : row,
       );
     }
 
-    for (const img of next) {
-      if (!img.id) continue;
-      const res = await fetch(`/api/admin/products/${productId}/images/${img.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          objectPosition: img.objectPosition,
-          cropZoom: img.cropZoom,
-          cropMode: img.cropMode,
+    const toAdd = next.filter((img) => !img.id);
+    if (toAdd.length) {
+      const added = await Promise.all(
+        toAdd.map(async (img) => {
+          const res = await fetch(`/api/admin/products/${productId}/images${deferQs}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              imageUrl: img.imageUrl,
+              objectPosition: img.objectPosition,
+              cropZoom: img.cropZoom,
+              cropMode: img.cropMode,
+            }),
+          });
+          if (!res.ok) throw new Error("Failed to add image");
+          const json = (await res.json()) as { image: ProductImage };
+          return { tempId: img.tempId, image: json.image };
         }),
+      );
+      const byTemp = new Map(added.map((row) => [row.tempId, row.image]));
+      next = next.map((row) => {
+        const image = byTemp.get(row.tempId);
+        if (!image) return row;
+        return {
+          ...row,
+          id: image.id,
+          tempId: `db-${image.id}`,
+          imageUrl: image.imageUrl,
+        };
       });
-      if (!res.ok) throw new Error("Failed to save image crop");
     }
 
-    const imageIds = next.map((img) => img.id).filter((id): id is number => id != null);
-    if (imageIds.length) {
-      const res = await fetch(`/api/admin/products/${productId}/images`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageIds }),
-      });
-      if (!res.ok) throw new Error("Failed to reorder images");
-    }
-
+    // Crop + reorder applied by the following product PUT
     return next;
   }
 

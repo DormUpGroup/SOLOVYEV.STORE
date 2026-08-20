@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/auth";
-import { revalidateStore } from "@/lib/admin-api";
+import { revalidateStore, shouldDeferRevalidate } from "@/lib/admin-api";
 import {
   addProductImage,
   fetchProductById,
@@ -16,6 +16,7 @@ export async function POST(request: Request, context: RouteContext) {
 
   const { id } = await context.params;
   const productId = Number(id);
+  const defer = shouldDeferRevalidate(request);
   const body = (await request.json()) as {
     imageUrl?: string;
     altText?: string;
@@ -40,8 +41,8 @@ export async function POST(request: Request, context: RouteContext) {
     cropMode: body.cropMode,
   });
 
-  revalidateStore(product.slug);
-  const updated = await fetchProductById(productId);
+  if (!defer) revalidateStore(product.slug);
+  const updated = defer ? null : await fetchProductById(productId);
   return NextResponse.json({ image, product: updated }, { status: 201 });
 }
 
@@ -52,6 +53,7 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   const { id } = await context.params;
   const productId = Number(id);
+  const defer = shouldDeferRevalidate(request);
   const body = (await request.json()) as { imageIds?: number[] };
 
   if (!body.imageIds?.length) {
@@ -59,7 +61,7 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 
   await reorderProductImages(productId, body.imageIds);
-  const product = await fetchProductById(productId);
-  revalidateStore(product?.slug);
+  const product = defer ? null : await fetchProductById(productId);
+  if (!defer) revalidateStore(product?.slug);
   return NextResponse.json({ product });
 }

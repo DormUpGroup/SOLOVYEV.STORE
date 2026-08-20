@@ -12,6 +12,14 @@ const REVALIDATE_PATHS = [
   "/sell-trade",
 ];
 
+export function shouldDeferRevalidate(request: Request): boolean {
+  try {
+    return new URL(request.url).searchParams.get("deferRevalidate") === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function revalidateStore(productSlug?: string): void {
   try {
     revalidateTag(STORE_TAG);

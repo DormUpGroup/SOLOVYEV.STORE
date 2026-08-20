@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/auth";
-import { revalidateStore } from "@/lib/admin-api";
+import { revalidateStore, shouldDeferRevalidate } from "@/lib/admin-api";
 import { isRotateDegrees, rotateImageAtUrl } from "@/lib/rotate-product-image";
 import {
   deleteProductImage,
@@ -19,6 +19,7 @@ export async function PATCH(request: Request, context: RouteContext) {
   const { id, imageId } = await context.params;
   const productId = Number(id);
   const imgId = Number(imageId);
+  const defer = shouldDeferRevalidate(request);
   const body = (await request.json()) as {
     objectPosition?: string;
     cropZoom?: number;
@@ -36,8 +37,8 @@ export async function PATCH(request: Request, context: RouteContext) {
     try {
       const newUrl = await rotateImageAtUrl(existing.imageUrl, body.rotate);
       const image = await updateProductImageUrl(productId, imgId, newUrl);
-      const updated = await fetchProductById(productId);
-      revalidateStore(updated?.slug);
+      const updated = defer ? null : await fetchProductById(productId);
+      if (!defer) revalidateStore(updated?.slug);
       return NextResponse.json({ product: updated, image });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Rotate failed";
@@ -64,20 +65,21 @@ export async function PATCH(request: Request, context: RouteContext) {
     cropZoom,
     body.cropMode === "cover" ? "cover" : "free",
   );
-  const product = await fetchProductById(productId);
-  revalidateStore(product?.slug);
+  const product = defer ? null : await fetchProductById(productId);
+  if (!defer) revalidateStore(product?.slug);
   return NextResponse.json({ product });
 }
 
-export async function DELETE(_request: Request, context: RouteContext) {
+export async function DELETE(request: Request, context: RouteContext) {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { id, imageId } = await context.params;
+  const defer = shouldDeferRevalidate(request);
   const existing = await fetchProductById(Number(id));
   await deleteProductImage(Number(id), Number(imageId));
-  revalidateStore(existing?.slug);
-  const product = await fetchProductById(Number(id));
+  if (!defer) revalidateStore(existing?.slug);
+  const product = defer ? null : await fetchProductById(Number(id));
   return NextResponse.json({ product });
 }

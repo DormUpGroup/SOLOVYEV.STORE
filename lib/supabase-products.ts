@@ -281,6 +281,7 @@ export type CreateProductInput = {
   sortOrder?: number;
   source?: Product["source"];
   images?: Array<{
+    id?: number;
     imageUrl: string;
     altText?: string;
     objectPosition?: string;
@@ -388,15 +389,39 @@ export async function updateProduct(id: number, input: UpdateProductInput): Prom
   const { error } = await supabase.from("products").update(row).eq("id", id);
   if (error) throw error;
 
-  if (input.imageIds?.length) {
+  const cropById = new Map(
+    (input.images ?? [])
+      .filter((img): img is typeof img & { id: number } => img.id != null)
+      .map((img) => [img.id, img]),
+  );
+  const orderedIds = input.imageIds?.length
+    ? input.imageIds
+    : cropById.size
+      ? [...cropById.keys()]
+      : [];
+
+  if (orderedIds.length) {
     await Promise.all(
-      input.imageIds.map((imageId, index) =>
-        supabase
+      orderedIds.map((imageId, index) => {
+        const crop = cropById.get(imageId);
+        const patch: Record<string, unknown> = {};
+        if (input.imageIds?.length) {
+          patch.sort_order = index;
+        }
+        if (crop && (crop.objectPosition != null || crop.cropZoom != null)) {
+          patch.object_position = encodeCropSettings(
+            crop.objectPosition ?? "50% 50%",
+            crop.cropZoom ?? 1,
+            crop.cropMode === "free" ? "free" : "cover",
+          );
+        }
+        if (Object.keys(patch).length === 0) return Promise.resolve();
+        return supabase
           .from("product_images")
-          .update({ sort_order: index })
+          .update(patch)
           .eq("id", imageId)
-          .eq("product_id", id),
-      ),
+          .eq("product_id", id);
+      }),
     );
     await syncProductPrimaryImage(id);
   } else if (input.images?.length) {

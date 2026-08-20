@@ -82,10 +82,6 @@ export function LegacyTabs({ tab, products, onDirtyChange, showToast }: LegacyTa
     loadLegacy();
   }, [loadLegacy]);
 
-  const publishSite = async () => {
-    await fetch("/api/admin/publish", { method: "POST" });
-  };
-
   const saveFaq = async () => {
     const res = await fetch("/api/admin/faq", {
       method: "PUT",
@@ -96,7 +92,6 @@ export function LegacyTabs({ tab, products, onDirtyChange, showToast }: LegacyTa
       showToast("FAQ save failed", false);
       return;
     }
-    await publishSite();
     onDirtyChange(false);
     showToast("FAQ saved — live on site");
   };
@@ -112,7 +107,6 @@ export function LegacyTabs({ tab, products, onDirtyChange, showToast }: LegacyTa
       showToast("Settings save failed", false);
       return;
     }
-    await publishSite();
     onDirtyChange(false);
     showToast("Settings saved — live on site");
   };

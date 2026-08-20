@@ -28,6 +28,7 @@ type PutBody = {
   instagramUrl?: string;
   sortOrder?: number;
   images?: Array<{
+    id?: number;
     imageUrl: string;
     altText?: string;
     objectPosition?: string;
