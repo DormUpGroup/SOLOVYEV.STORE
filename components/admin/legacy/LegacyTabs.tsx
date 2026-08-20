@@ -17,6 +17,7 @@ import type { FaqItem, Product, StoreConfig } from "@/lib/types";
 import type { GaOverview } from "@/lib/analytics/ga-types";
 import { normalizeStoreConfig } from "@/lib/store-config";
 import { GaPanel } from "@/components/admin/legacy/GaPanel";
+import { ADMIN_CHART_COLORS, adminLineChartOptions } from "@/lib/admin/chart-theme";
 import styles from "@/app/admin/admin.module.css";
 
 ChartJS.register(
@@ -155,9 +156,9 @@ export function LegacyTabs({ tab, products, onDirtyChange, showToast }: LegacyTa
     return {
       labels,
       datasets: [
-        { label: "Views", data: views, borderColor: "#5c9eff", tension: 0.3 },
-        { label: "Cart", data: carts, borderColor: "#a855f7", tension: 0.3 },
-        { label: "WhatsApp", data: was, borderColor: "#43a047", tension: 0.3 },
+        { label: "Views", data: views, borderColor: ADMIN_CHART_COLORS.primary, tension: 0.35 },
+        { label: "Cart", data: carts, borderColor: "#bf5af2", tension: 0.35 },
+        { label: "WhatsApp", data: was, borderColor: ADMIN_CHART_COLORS.success, tension: 0.35 },
       ],
     };
   }, [analytics, chartDays]);
@@ -197,7 +198,7 @@ export function LegacyTabs({ tab, products, onDirtyChange, showToast }: LegacyTa
               <p className={styles.hint}>No events yet.</p>
             ) : (
               analytics?.recent.map((e, i) => (
-                <div key={i} style={{ padding: "6px 0", borderBottom: "1px solid #222" }}>
+                <div key={i} style={{ padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                   {e.event_type} {e.product_id ? `#${e.product_id}` : ""}{" "}
                   <span className={styles.hint}>{new Date(e.created_at).toLocaleString()}</span>
                 </div>
@@ -394,36 +395,46 @@ export function LegacyTabs({ tab, products, onDirtyChange, showToast }: LegacyTa
     return (
       <>
         <div className={styles.toolbar}>
-          {[7, 30, 90].map((d) => (
-            <button
-              key={d}
-              type="button"
-              className={`${styles.btn} ${chartDays === d ? styles.btnPrimary : ""}`}
-              onClick={() => setChartDays(d)}
-            >
-              {d}d
-            </button>
-          ))}
-        </div>
-        <div className={styles.panelHead} style={{ marginBottom: 8 }}>
-          <h3>Google Analytics</h3>
-        </div>
-        <GaPanel data={ga} />
-        <div className={styles.panelHead} style={{ margin: "20px 0 8px" }}>
-          <h3>Store funnel</h3>
-        </div>
-        <div className={styles.stats}>
-          <div className={styles.stat}>
-            <div className={styles.statLabel}>Views</div>
-            <div className={styles.statValue}>{analytics?.views ?? 0}</div>
+          <div className={styles.segmentedControl}>
+            {[7, 30, 90].map((d) => (
+              <button
+                key={d}
+                type="button"
+                className={`${styles.segmentedBtn} ${chartDays === d ? styles.segmentedBtnActive : ""}`}
+                onClick={() => setChartDays(d)}
+              >
+                {d} days
+              </button>
+            ))}
           </div>
-          <div className={styles.stat}>
-            <div className={styles.statLabel}>Cart</div>
-            <div className={styles.statValue}>{analytics?.cart ?? 0}</div>
+        </div>
+        <div className={styles.panel}>
+          <div className={styles.panelHead}>
+            <h3>Google Analytics</h3>
           </div>
-          <div className={styles.stat}>
-            <div className={styles.statLabel}>WhatsApp</div>
-            <div className={styles.statValue}>{analytics?.wa ?? 0}</div>
+          <div className={styles.panelBody}>
+            <GaPanel data={ga} />
+          </div>
+        </div>
+        <div className={styles.panel}>
+          <div className={styles.panelHead}>
+            <h3>Store funnel</h3>
+          </div>
+          <div className={styles.panelBody}>
+            <div className={styles.stats}>
+              <div className={styles.stat}>
+                <div className={styles.statLabel}>Views</div>
+                <div className={styles.statValue}>{analytics?.views ?? 0}</div>
+              </div>
+              <div className={styles.stat}>
+                <div className={styles.statLabel}>Cart</div>
+                <div className={styles.statValue}>{analytics?.cart ?? 0}</div>
+              </div>
+              <div className={styles.stat}>
+                <div className={styles.statLabel}>WhatsApp</div>
+                <div className={styles.statValue}>{analytics?.wa ?? 0}</div>
+              </div>
+            </div>
           </div>
         </div>
         <div className={styles.panel}>
@@ -431,20 +442,7 @@ export function LegacyTabs({ tab, products, onDirtyChange, showToast }: LegacyTa
             <h3>Trend</h3>
           </div>
           <div className={styles.chartBox}>
-            {chartData ? (
-              <Line
-                data={chartData}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: { legend: { labels: { color: "#888" } } },
-                  scales: {
-                    x: { ticks: { color: "#888" }, grid: { color: "#222" } },
-                    y: { ticks: { color: "#888" }, grid: { color: "#222" } },
-                  },
-                }}
-              />
-            ) : null}
+            {chartData ? <Line data={chartData} options={adminLineChartOptions()} /> : null}
           </div>
         </div>
       </>

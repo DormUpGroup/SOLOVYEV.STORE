@@ -4,6 +4,32 @@
 
 @layer base {
   .admin-cms {
-    @apply bg-admin-bg text-white font-mono text-sm antialiased;
+    @apply bg-admin-bg text-admin-text font-sans text-sm antialiased;
+  }
+}
+
+@layer components {
+  .admin-input {
+    @apply w-full rounded-lg border border-admin-border bg-admin-panel px-3 py-2.5 text-admin-text outline-none transition-shadow focus:border-admin-accent focus:ring-[3px] focus:ring-admin-accent/20;
+  }
+
+  .admin-btn {
+    @apply inline-flex items-center justify-center rounded-full border border-admin-border-strong bg-white/5 px-4 py-2 text-sm font-medium text-admin-text transition hover:bg-white/10;
+  }
+
+  .admin-btn-primary {
+    @apply border-admin-accent bg-admin-accent font-semibold text-white hover:bg-[#0077ed];
+  }
+
+  .admin-btn-danger {
+    @apply border-transparent bg-admin-danger/15 text-admin-danger hover:bg-admin-danger/25;
+  }
+
+  .admin-card {
+    @apply rounded-xl border border-admin-border bg-admin-surface shadow-admin-soft;
+  }
+
+  .admin-pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
 }

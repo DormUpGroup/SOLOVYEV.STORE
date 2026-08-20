@@ -418,7 +418,7 @@ export function AdminClient({
   return (
     <div className="space-y-6">
       {mode === "made_to_order" ? (
-        <p className="border border-admin-border bg-admin-panel px-4 py-3 text-sm text-admin-muted">
+        <p className="admin-card px-4 py-3 text-sm text-admin-muted">
           Products here appear on the public page{" "}
           <a href="/made-to-order" target="_blank" rel="noreferrer" className="text-admin-accent underline">
             /made-to-order
@@ -427,7 +427,7 @@ export function AdminClient({
         </p>
       ) : null}
       {mode === "brand_new" ? (
-        <p className="border border-admin-border bg-admin-panel px-4 py-3 text-sm text-admin-muted">
+        <p className="admin-card px-4 py-3 text-sm text-admin-muted">
           Products here appear on the public page{" "}
           <a href="/brand-new" target="_blank" rel="noreferrer" className="text-admin-accent underline">
             /brand-new
@@ -458,8 +458,10 @@ export function AdminClient({
 
       {message ? (
         <div
-          className={`fixed bottom-4 right-4 z-50 border px-4 py-2 ${
-            message.ok ? "border-admin-success bg-admin-panel" : "border-admin-danger bg-admin-panel"
+          className={`fixed bottom-6 right-6 z-50 rounded-xl border px-4 py-3 text-sm font-medium shadow-admin ${
+            message.ok
+              ? "border-admin-success/35 bg-admin-surface text-admin-success"
+              : "border-admin-danger/35 bg-admin-surface text-admin-danger"
           }`}
         >
           {message.text}

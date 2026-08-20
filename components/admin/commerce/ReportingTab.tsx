@@ -77,22 +77,24 @@ export function ReportingTab({ showToast }: ReportingTabProps) {
   return (
     <>
       <div className={styles.toolbar}>
-        {[7, 30, 90].map((value) => (
-          <button
-            key={value}
-            type="button"
-            className={`${styles.btn} ${days === value ? styles.btnPrimary : ""}`}
-            onClick={() => setDays(value)}
-          >
-            {value} days
-          </button>
-        ))}
+        <div className={styles.segmentedControl}>
+          {[7, 30, 90].map((value) => (
+            <button
+              key={value}
+              type="button"
+              className={`${styles.segmentedBtn} ${days === value ? styles.segmentedBtnActive : ""}`}
+              onClick={() => setDays(value)}
+            >
+              {value} days
+            </button>
+          ))}
+        </div>
         <button type="button" className={styles.btn} onClick={() => void loadSummary()} disabled={loading}>
           {loading ? "Loading…" : "Refresh"}
         </button>
         <button
           type="button"
-          className={`${styles.btn} ${styles.btnSuccess}`}
+          className={`${styles.btn} ${styles.btnPrimary}`}
           onClick={() => void downloadPdf()}
           disabled={downloading}
         >
@@ -108,7 +110,7 @@ export function ReportingTab({ showToast }: ReportingTabProps) {
           </span>
         </div>
         <div className={styles.panelBody}>
-          <p style={{ margin: "0 0 12px", color: "var(--admin-muted, #999)", fontSize: 13 }}>
+          <p style={{ margin: "0 0 12px", color: "var(--adm-muted)", fontSize: 14 }}>
             Includes order counts, paid revenue, status breakdown, top sold products, daily activity,
             recent orders, and site engagement. Revenue counts only orders marked Paid.
           </p>

@@ -2,6 +2,24 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import {
+  LayoutDashboard,
+  Package,
+  Clock,
+  Sparkles,
+  Users,
+  ShoppingBag,
+  BarChart3,
+  HelpCircle,
+  Settings,
+  LineChart,
+  Store,
+  LogOut,
+  Menu,
+  RefreshCw,
+  Upload,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { Product, StoreConfig } from "@/lib/types";
 import { AdminClient } from "@/components/admin/cms/AdminClient";
 import { LegacyTabs } from "@/components/admin/legacy/LegacyTabs";
@@ -34,6 +52,26 @@ const TAB_LABELS: Record<Tab, string> = {
   settings: "Settings",
   analytics: "Analytics",
 };
+
+const TAB_ICONS: Record<Tab, LucideIcon> = {
+  overview: LayoutDashboard,
+  catalog: Package,
+  made_to_order: Clock,
+  brand_new: Sparkles,
+  users: Users,
+  orders: ShoppingBag,
+  reporting: BarChart3,
+  faq: HelpCircle,
+  settings: Settings,
+  analytics: LineChart,
+};
+
+const NAV_GROUPS: Array<{ label: string; tabs: Tab[] }> = [
+  { label: "Store", tabs: ["catalog", "made_to_order", "brand_new"] },
+  { label: "Commerce", tabs: ["orders", "users", "reporting"] },
+  { label: "Content", tabs: ["faq", "settings"] },
+  { label: "Insights", tabs: ["overview", "analytics"] },
+];
 
 interface AdminShellProps {
   initialProducts: Product[];
@@ -69,7 +107,6 @@ export function AdminShell({ initialProducts }: AdminShellProps) {
     setProducts(json.products ?? []);
   }, [showToast]);
 
-  // Always reload from API on mount so catalog is not stuck on a stale/empty SSR list.
   useEffect(() => {
     void refreshProducts();
   }, [refreshProducts]);
@@ -92,53 +129,86 @@ export function AdminShell({ initialProducts }: AdminShellProps) {
     form.submit();
   };
 
+  const selectTab = (next: Tab) => {
+    setTab(next);
+    setSidebarOpen(false);
+  };
+
   return (
     <div className={`${styles.adminRoot} admin-cms`}>
+      {sidebarOpen ? (
+        <button
+          type="button"
+          className={styles.backdrop}
+          aria-label="Close menu"
+          onClick={() => setSidebarOpen(false)}
+        />
+      ) : null}
+
       <div className={styles.shell}>
         <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ""}`}>
-          <div className={styles.brand}>SOLOVYEV STORE</div>
-          {(Object.keys(TAB_LABELS) as Tab[]).map((t) => (
-            <button
-              key={t}
-              type="button"
-              className={`${styles.navBtn} ${tab === t ? styles.navBtnActive : ""}`}
-              onClick={() => {
-                setTab(t);
-                setSidebarOpen(false);
-              }}
-            >
-              {TAB_LABELS[t]}
-            </button>
+          <div className={styles.brand}>Solovyev Store</div>
+
+          {NAV_GROUPS.map((group) => (
+            <div key={group.label} className={styles.navGroup}>
+              <span className={styles.navGroupLabel}>{group.label}</span>
+              {group.tabs.map((t) => {
+                const Icon = TAB_ICONS[t];
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    className={`${styles.navBtn} ${tab === t ? styles.navBtnActive : ""}`}
+                    onClick={() => selectTab(t)}
+                  >
+                    <Icon size={18} strokeWidth={1.75} />
+                    {TAB_LABELS[t]}
+                  </button>
+                );
+              })}
+            </div>
           ))}
+
           <div className={styles.sidebarFoot}>
-            <Link href="/" className={styles.navBtn} style={{ display: "block", textAlign: "left" }}>
-              ← Store
+            <Link href="/" className={styles.navBtn}>
+              <Store size={18} strokeWidth={1.75} />
+              View store
             </Link>
             <button type="button" className={`${styles.navBtn} ${styles.btnDanger}`} onClick={logout}>
-              Logout
+              <LogOut size={18} strokeWidth={1.75} />
+              Log out
             </button>
           </div>
         </aside>
 
         <main className={styles.main}>
           <div className={styles.topbar}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div className={styles.topbarMeta}>
               <button
                 type="button"
                 className={`${styles.btn} ${styles.menuBtn}`}
+                aria-label="Open menu"
                 onClick={() => setSidebarOpen((v) => !v)}
               >
-                ☰
+                <Menu size={18} />
               </button>
-              <h2>{TAB_LABELS[tab]}</h2>
-              {dirty ? <span className={styles.hint}>Unsaved changes</span> : null}
+              <div>
+                <h1 className={styles.pageTitle}>{TAB_LABELS[tab]}</h1>
+                {dirty ? <span className={styles.hint}>Unsaved changes</span> : null}
+              </div>
             </div>
             <div className={styles.topbarActions}>
               <button type="button" className={styles.btn} onClick={refreshProducts}>
-                Refresh
+                <span className="inline-flex items-center gap-1.5">
+                  <RefreshCw size={14} />
+                  Refresh
+                </span>
               </button>
               <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={publish}>
-                Publish to site
+                <span className="inline-flex items-center gap-1.5">
+                  <Upload size={14} />
+                  Publish to site
+                </span>
               </button>
             </div>
           </div>

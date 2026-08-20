@@ -88,7 +88,7 @@ export function GaPanel({ data, compact = false }: GaPanelProps) {
                       justifyContent: "space-between",
                       gap: 12,
                       padding: "6px 0",
-                      borderBottom: "1px solid #222",
+                      borderBottom: "1px solid rgba(255,255,255,0.06)",
                     }}
                   >
                     <span>{s.source}</span>
@@ -115,7 +115,7 @@ export function GaPanel({ data, compact = false }: GaPanelProps) {
                       justifyContent: "space-between",
                       gap: 12,
                       padding: "6px 0",
-                      borderBottom: "1px solid #222",
+                      borderBottom: "1px solid rgba(255,255,255,0.06)",
                     }}
                   >
                     <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>

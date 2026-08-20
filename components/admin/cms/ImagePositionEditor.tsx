@@ -80,7 +80,7 @@ export function ImagePositionEditor({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-2 backdrop-blur-sm sm:p-5">
       <div
-        className="flex max-h-[96dvh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-white/15 bg-[#111] shadow-2xl"
+        className="flex max-h-[96dvh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#1c1c1e] shadow-admin"
         role="dialog"
         aria-modal="true"
         aria-label="Photo crop editor"
@@ -99,7 +99,7 @@ export function ImagePositionEditor({
         </div>
         <button
           type="button"
-          className="min-w-16 rounded-lg bg-white px-3 py-2 text-sm font-bold text-black disabled:opacity-50"
+          className="min-w-16 rounded-full bg-admin-accent px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
           disabled={saving}
           onClick={() => void save()}
         >
@@ -220,7 +220,7 @@ export function ImagePositionEditor({
             step="0.02"
             value={zoom}
             onChange={(e) => setZoom(clampCropZoom(Number(e.target.value)))}
-            className="h-2 min-w-0 flex-1 cursor-pointer accent-white"
+            className="h-2 min-w-0 flex-1 cursor-pointer accent-[#0a84ff]"
             aria-label="Crop zoom"
           />
           <button

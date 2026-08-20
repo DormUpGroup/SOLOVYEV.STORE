@@ -68,17 +68,17 @@ export function ProductForm({
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
-      <div className="space-y-4 border border-admin-border bg-admin-panel p-4">
+      <div className="admin-card space-y-5 p-5">
         <div className="flex items-center justify-between">
-          <h3 className="font-bold">{isNew ? "New product" : `Edit #${product.id}`}</h3>
+          <h3 className="text-lg font-semibold">{isNew ? "New product" : `Edit #${product.id}`}</h3>
           <div className="flex gap-2">
-            <button type="button" className="border border-admin-border px-3 py-1" onClick={onCancel}>
+            <button type="button" className="admin-btn px-4 py-1.5" onClick={onCancel}>
               Cancel
             </button>
             <button
               type="button"
               disabled={isBusy}
-              className="bg-admin-accent px-3 py-1 font-bold text-black disabled:opacity-50"
+              className="admin-btn admin-btn-primary px-4 py-1.5 disabled:opacity-50"
               onClick={onSave}
             >
               {isBusy ? "Saving…" : "Save"}
@@ -88,9 +88,9 @@ export function ProductForm({
 
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block sm:col-span-2">
-            <span className="text-xs text-admin-muted">Title</span>
+            <span className="text-sm font-medium text-admin-muted">Title</span>
             <input
-              className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
+              className="admin-input mt-1.5"
               value={product.title}
               onChange={(e) => {
                 const title = e.target.value;
@@ -103,27 +103,27 @@ export function ProductForm({
             />
           </label>
           <label className="block sm:col-span-2">
-            <span className="text-xs text-admin-muted">Slug (from title)</span>
+            <span className="text-sm font-medium text-admin-muted">Slug (from title)</span>
             <input
               readOnly
               tabIndex={-1}
-              className="mt-1 w-full cursor-default border border-admin-border bg-admin-bg/60 px-2 py-1.5 text-admin-muted"
+              className="admin-input mt-1.5 cursor-default text-admin-muted opacity-80"
               value={product.slug}
             />
             {slugError ? <p className="mt-1 text-xs text-admin-danger">{slugError}</p> : null}
           </label>
           <label className="block">
-            <span className="text-xs text-admin-muted">Brand</span>
+            <span className="text-sm font-medium text-admin-muted">Brand</span>
             <input
-              className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
+              className="admin-input mt-1.5"
               value={product.brand}
               onChange={(e) => onChange({ ...product, brand: e.target.value })}
             />
           </label>
           <label className="block">
-            <span className="text-xs text-admin-muted">Category</span>
+            <span className="text-sm font-medium text-admin-muted">Category</span>
             <select
-              className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
+              className="admin-input mt-1.5"
               value={product.category}
               onChange={(e) => onChange({ ...product, category: e.target.value as ProductCategory })}
             >
@@ -135,19 +135,19 @@ export function ProductForm({
             </select>
           </label>
           <label className="block">
-            <span className="text-xs text-admin-muted">Price</span>
+            <span className="text-sm font-medium text-admin-muted">Price</span>
             <input
               type="number"
-              className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
+              className="admin-input mt-1.5"
               value={product.price}
               onChange={(e) => onChange({ ...product, price: Number(e.target.value) })}
             />
           </label>
           <label className="block">
-            <span className="text-xs text-admin-muted">Original price</span>
+            <span className="text-sm font-medium text-admin-muted">Original price</span>
             <input
               type="number"
-              className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
+              className="admin-input mt-1.5"
               value={product.originalPrice ?? ""}
               onChange={(e) =>
                 onChange({
@@ -158,9 +158,9 @@ export function ProductForm({
             />
           </label>
           <label className="block">
-            <span className="text-xs text-admin-muted">Status</span>
+            <span className="text-sm font-medium text-admin-muted">Status</span>
             <select
-              className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
+              className="admin-input mt-1.5"
               value={
                 product.status === "new_drop" ||
                 product.status === "made_to_order" ||
@@ -178,9 +178,9 @@ export function ProductForm({
             </select>
           </label>
           <label className="block">
-            <span className="text-xs text-admin-muted">Badge</span>
+            <span className="text-sm font-medium text-admin-muted">Badge</span>
             <select
-              className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
+              className="admin-input mt-1.5"
               value={product.badge}
               onChange={(e) => onChange({ ...product, badge: e.target.value })}
             >
@@ -196,7 +196,7 @@ export function ProductForm({
         <label className="block">
           <span className="text-xs text-admin-muted">Sizes (comma-separated)</span>
           <input
-            className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
+            className="admin-input mt-1.5"
             value={product.sizes.join(", ")}
             onChange={(e) =>
               onChange({
@@ -213,7 +213,7 @@ export function ProductForm({
         <label className="block">
           <span className="text-xs text-admin-muted">Condition</span>
           <input
-            className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
+            className="admin-input mt-1.5"
             value={product.condition}
             onChange={(e) => onChange({ ...product, condition: e.target.value })}
           />
@@ -223,7 +223,7 @@ export function ProductForm({
           <span className="text-xs text-admin-muted">Description</span>
           <textarea
             rows={3}
-            className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
+            className="admin-input mt-1.5"
             value={product.description ?? ""}
             onChange={(e) => onChange({ ...product, description: e.target.value })}
           />
@@ -232,14 +232,14 @@ export function ProductForm({
         <label className="block">
           <span className="text-xs text-admin-muted">Instagram URL</span>
           <input
-            className="mt-1 w-full border border-admin-border bg-admin-bg px-2 py-1.5"
+            className="admin-input mt-1.5"
             value={product.instagramUrl ?? ""}
             onChange={(e) => onChange({ ...product, instagramUrl: e.target.value })}
           />
         </label>
 
-        <div className="flex flex-wrap gap-4">
-          <label className="flex items-center gap-2 text-xs">
+        <div className="flex flex-wrap gap-3 rounded-xl bg-admin-panel/60 p-4">
+          <label className="flex items-center gap-2 text-sm">
             <input
               type="checkbox"
               checked={isPublished}
@@ -256,7 +256,7 @@ export function ProductForm({
             />
             Published (visible on site)
           </label>
-          <label className="flex items-center gap-2 text-xs">
+          <label className="flex items-center gap-2 text-sm">
             <input
               type="radio"
               name="special-status"
@@ -265,7 +265,7 @@ export function ProductForm({
             />
             Regular catalog
           </label>
-          <label className="flex items-center gap-2 text-xs">
+          <label className="flex items-center gap-2 text-sm">
             <input
               type="radio"
               name="special-status"
@@ -274,7 +274,7 @@ export function ProductForm({
             />
             New drop
           </label>
-          <label className="flex items-center gap-2 text-xs">
+          <label className="flex items-center gap-2 text-sm">
             <input
               type="radio"
               name="special-status"
@@ -283,7 +283,7 @@ export function ProductForm({
             />
             Made to order (shows on /made-to-order page)
           </label>
-          <label className="flex items-center gap-2 text-xs">
+          <label className="flex items-center gap-2 text-sm">
             <input
               type="radio"
               name="special-status"

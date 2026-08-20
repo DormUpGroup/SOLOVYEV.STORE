@@ -64,8 +64,8 @@ function SortableThumbnail({
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative w-24 shrink-0 rounded-lg border-2 p-1 ${
-        selected ? "border-white bg-white/10" : "border-admin-border bg-admin-bg"
+      className={`relative w-24 shrink-0 rounded-xl border-2 p-1 transition ${
+        selected ? "border-admin-accent bg-admin-accent/10" : "border-admin-border bg-admin-panel"
       }`}
     >
       <button
@@ -85,13 +85,13 @@ function SortableThumbnail({
             rotateDeg={image.pendingRotate ?? 0}
           />
         </div>
-        <span className="mt-1 block truncate text-center text-[10px] text-admin-muted">
-          {index === 0 ? "MAIN" : `#${index + 1}`}
+        <span className="mt-1 block truncate text-center text-[10px] font-medium text-admin-muted">
+          {index === 0 ? "Main" : `#${index + 1}`}
         </span>
       </button>
       <button
         type="button"
-        className="absolute left-1 top-1 z-10 cursor-grab rounded bg-black/75 px-1.5 py-0.5 text-xs text-white active:cursor-grabbing"
+        className="absolute left-1 top-1 z-10 cursor-grab rounded-md bg-black/60 px-1.5 py-0.5 text-admin-muted active:cursor-grabbing"
         aria-label={`Reorder image ${index + 1}`}
         {...attributes}
         {...listeners}
@@ -200,15 +200,15 @@ export function ImageManager({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-xs uppercase tracking-widest text-admin-muted">Images</label>
+        <label className="text-sm font-medium text-admin-muted">Images</label>
         {onRefreshProduct ? (
-          <button type="button" className="text-xs text-admin-accent" onClick={() => onRefreshProduct()}>
+          <button type="button" className="text-sm text-admin-accent hover:underline" onClick={() => onRefreshProduct()}>
             Refresh product
           </button>
         ) : null}
       </div>
 
-      <label className="flex cursor-pointer items-center justify-center border border-dashed border-admin-border py-6 hover:border-admin-accent">
+      <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-admin-border-strong bg-admin-panel/40 py-8 text-sm text-admin-muted transition hover:border-admin-accent hover:bg-admin-accent/5 hover:text-admin-text">
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif"
@@ -216,13 +216,13 @@ export function ImageManager({
           className="hidden"
           onChange={(e) => void uploadFiles(e.target.files)}
         />
-        + Add images (saved with the product)
+        + Add images
       </label>
 
-      {error ? <p className="text-xs text-admin-danger">{error}</p> : null}
+      {error ? <p className="text-sm text-admin-danger">{error}</p> : null}
 
       {selectedImage && selectedKey ? (
-        <div className="space-y-3 rounded-xl border border-admin-border bg-admin-bg p-3">
+        <div className="admin-card space-y-4 p-4">
           <div className="relative mx-auto aspect-square w-full max-w-xl overflow-hidden rounded-lg bg-white">
             <AdminProductImage
               src={selectedImage.imageUrl}
@@ -233,22 +233,18 @@ export function ImageManager({
               cropMode={selectedImage.cropMode}
               rotateDeg={selectedImage.pendingRotate ?? 0}
             />
-            <span className="absolute left-3 top-3 rounded bg-black/75 px-2 py-1 text-xs text-white">
-              {selectedIndex === 0 ? "MAIN" : `PHOTO ${selectedIndex + 1}`}
+            <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-xs font-medium text-white">
+              {selectedIndex === 0 ? "Main" : `Photo ${selectedIndex + 1}`}
             </span>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <button
-              type="button"
-              className="rounded border border-admin-border px-4 py-2 text-sm hover:border-white"
-              onClick={() => setEditingId(selectedKey)}
-            >
+            <button type="button" className="admin-btn px-4 py-2" onClick={() => setEditingId(selectedKey)}>
               Crop & edit
             </button>
             <button
               type="button"
-              className="rounded border border-admin-border px-3 py-2 text-lg"
+              className="admin-btn px-3 py-2 text-lg"
               onClick={() => handleRotate(selectedIndex, -90)}
               aria-label="Rotate left"
             >
@@ -256,7 +252,7 @@ export function ImageManager({
             </button>
             <button
               type="button"
-              className="rounded border border-admin-border px-3 py-2 text-lg"
+              className="admin-btn px-3 py-2 text-lg"
               onClick={() => handleRotate(selectedIndex, 90)}
               aria-label="Rotate right"
             >
@@ -264,7 +260,7 @@ export function ImageManager({
             </button>
             <button
               type="button"
-              className="rounded border border-admin-border px-3 py-2 text-sm disabled:opacity-30"
+              className="admin-btn px-3 py-2 text-sm disabled:opacity-30"
               disabled={selectedIndex === 0}
               onClick={() => move(selectedIndex, -1)}
             >
@@ -272,7 +268,7 @@ export function ImageManager({
             </button>
             <button
               type="button"
-              className="rounded border border-admin-border px-3 py-2 text-sm disabled:opacity-30"
+              className="admin-btn px-3 py-2 text-sm disabled:opacity-30"
               disabled={selectedIndex === images.length - 1}
               onClick={() => move(selectedIndex, 1)}
             >
@@ -280,7 +276,7 @@ export function ImageManager({
             </button>
             <button
               type="button"
-              className="rounded border border-admin-danger px-3 py-2 text-sm text-admin-danger"
+              className="admin-btn admin-btn-danger px-3 py-2 text-sm"
               onClick={() => handleDelete(selectedIndex)}
             >
               Delete
@@ -288,7 +284,7 @@ export function ImageManager({
           </div>
 
           <div>
-            <p className="mb-2 text-xs uppercase tracking-widest text-admin-muted">
+            <p className="mb-2 text-xs font-medium text-admin-muted">
               Gallery · click to edit · drag to reorder
             </p>
             <DndContext

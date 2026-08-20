@@ -13,12 +13,14 @@ const LABELS: Record<OrderStatus, string> = {
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
   const className =
     status === "completed"
-      ? styles.badgeNew
+      ? styles.badgeSuccess
       : status === "cancelled"
         ? styles.badgeSold
-        : status === "paid" || status === "shipped" || status === "in_chat"
-          ? styles.badgeReserved
-          : styles.badge;
+        : status === "paid" || status === "shipped"
+          ? styles.badgeNew
+          : status === "in_chat"
+            ? styles.badgeReserved
+            : styles.badge;
 
   return <span className={`${styles.badge} ${className}`}>{LABELS[status]}</span>;
 }

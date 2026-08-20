@@ -26,12 +26,12 @@ export function ProductPreview({ product, images }: ProductPreviewProps) {
   const pendingRotate = main && "pendingRotate" in main ? main.pendingRotate : 0;
 
   return (
-    <div className="sticky top-4 space-y-4">
-      <p className="text-xs uppercase tracking-widest text-admin-muted">Live preview</p>
+    <div className="sticky top-24 space-y-4">
+      <p className="text-sm font-medium text-admin-muted">Live preview</p>
 
-      <div className="border border-admin-border bg-admin-panel p-3">
-        <p className="mb-2 text-xs text-admin-muted">Catalog card</p>
-        <div className="overflow-hidden border border-admin-border bg-admin-bg">
+      <div className="admin-card p-4">
+        <p className="mb-3 text-xs font-medium text-admin-muted">Catalog card</p>
+        <div className="overflow-hidden rounded-xl border border-admin-border bg-admin-panel">
           <div className="relative aspect-square bg-white">
             {mainUrl ? (
               <AdminProductImage
@@ -47,14 +47,14 @@ export function ProductPreview({ product, images }: ProductPreviewProps) {
               <div className="flex h-full items-center justify-center text-admin-muted">No image</div>
             )}
             {product.status === "new_drop" ? (
-              <span className="absolute left-2 top-2 bg-white px-2 py-0.5 text-xs font-bold text-black">
-                NEW DROP
+              <span className="absolute left-2 top-2 rounded-full bg-admin-accent px-2.5 py-0.5 text-xs font-semibold text-white">
+                New drop
               </span>
             ) : null}
           </div>
-          <div className="p-3">
+          <div className="p-4">
             <p className="text-xs text-admin-muted">{product.brand}</p>
-            <p className="font-bold">{product.title || "Product title"}</p>
+            <p className="font-semibold">{product.title || "Product title"}</p>
             <p className="mt-1">
               {product.price > 0 ? `₪${product.price}` : "—"}
               {product.originalPrice ? (
@@ -65,11 +65,11 @@ export function ProductPreview({ product, images }: ProductPreviewProps) {
         </div>
       </div>
 
-      <div className="border border-admin-border bg-admin-panel p-3">
-        <p className="mb-2 text-xs text-admin-muted">Product page</p>
+      <div className="admin-card p-4">
+        <p className="mb-3 text-xs font-medium text-admin-muted">Product page</p>
         <div className="grid grid-cols-2 gap-2">
           {images.slice(0, 4).map((img, i) => (
-            <div key={i} className="aspect-square overflow-hidden border border-admin-border bg-white">
+            <div key={i} className="aspect-square overflow-hidden rounded-lg bg-white">
               <AdminProductImage
                 src={img.imageUrl}
                 size="grid"
@@ -82,7 +82,7 @@ export function ProductPreview({ product, images }: ProductPreviewProps) {
             </div>
           ))}
         </div>
-        <p className="mt-3 font-bold">{product.title || "Product title"}</p>
+        <p className="mt-3 font-semibold">{product.title || "Product title"}</p>
         <p className="text-xs text-admin-muted">{product.condition}</p>
         {product.description ? (
           <p className="mt-2 line-clamp-4 text-xs text-admin-muted">{product.description}</p>

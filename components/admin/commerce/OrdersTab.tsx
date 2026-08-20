@@ -21,6 +21,7 @@ import {
 } from "@/lib/admin/commerce-types";
 import { OrderStatusBadge } from "@/components/admin/commerce/OrderStatusBadge";
 import { buildAdminOrderReplyMessage } from "@/lib/whatsapp";
+import { ADMIN_CHART_COLORS, adminLineChartOptions } from "@/lib/admin/chart-theme";
 import styles from "@/app/admin/admin.module.css";
 
 ChartJS.register(
@@ -155,14 +156,16 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
         {
           label: "Orders",
           data: summary.dailyOrders.map((d) => d.count),
-          borderColor: "#5c9eff",
-          tension: 0.3,
+          borderColor: ADMIN_CHART_COLORS.primary,
+          backgroundColor: "rgba(10, 132, 255, 0.08)",
+          tension: 0.35,
         },
         {
           label: "Paid revenue",
           data: summary.dailyOrders.map((d) => d.revenue),
-          borderColor: "#43a047",
-          tension: 0.3,
+          borderColor: ADMIN_CHART_COLORS.success,
+          backgroundColor: "rgba(48, 209, 88, 0.08)",
+          tension: 0.35,
           yAxisID: "y1",
         },
       ],
@@ -175,16 +178,18 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
   return (
     <>
       <div className={styles.toolbar}>
-        {[7, 30, 90].map((value) => (
-          <button
-            key={value}
-            type="button"
-            className={`${styles.btn} ${days === value ? styles.btnPrimary : ""}`}
-            onClick={() => setDays(value)}
-          >
-            {value} days
-          </button>
-        ))}
+        <div className={styles.segmentedControl}>
+          {[7, 30, 90].map((value) => (
+            <button
+              key={value}
+              type="button"
+              className={`${styles.segmentedBtn} ${days === value ? styles.segmentedBtnActive : ""}`}
+              onClick={() => setDays(value)}
+            >
+              {value} days
+            </button>
+          ))}
+        </div>
         <button
           type="button"
           className={styles.btn}
@@ -236,21 +241,7 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
             <span className={styles.hint}>Only orders marked Paid count toward revenue</span>
           </div>
           <div className={styles.panelBody} style={{ height: 280 }}>
-            <Line
-              data={chartData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                  y: { beginAtZero: true, ticks: { precision: 0 } },
-                  y1: {
-                    beginAtZero: true,
-                    position: "right",
-                    grid: { drawOnChartArea: false },
-                  },
-                },
-              }}
-            />
+            <Line data={chartData} options={adminLineChartOptions()} />
           </div>
         </div>
       ) : null}

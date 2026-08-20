@@ -18,27 +18,28 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { GripVertical, Plus } from "lucide-react";
 import type { Product, ProductCategory } from "@/lib/types";
 import { AdminProductImage } from "@/lib/admin-images";
 
 const STATUS_LABELS: Record<Product["status"], string> = {
-  available: "AVAILABLE",
-  new_drop: "NEW DROP",
-  reserved: "RESERVED",
-  sold: "SOLD",
-  draft: "DRAFT",
-  made_to_order: "MADE TO ORDER",
-  brand_new: "BRAND NEW",
+  available: "Available",
+  new_drop: "New drop",
+  reserved: "Reserved",
+  sold: "Sold",
+  draft: "Draft",
+  made_to_order: "Made to order",
+  brand_new: "Brand new",
 };
 
 const STATUS_BADGE_CLASS: Record<Product["status"], string> = {
-  available: "border-admin-success/60 bg-admin-success/15 text-admin-success",
-  new_drop: "border-admin-accent/70 bg-admin-accent/20 text-admin-accent",
-  reserved: "border-amber-400/70 bg-amber-400/15 text-amber-300",
-  sold: "border-admin-danger/70 bg-admin-danger/15 text-admin-danger",
-  draft: "border-admin-border bg-admin-panel text-admin-muted",
-  made_to_order: "border-sky-400/70 bg-sky-400/15 text-sky-300",
-  brand_new: "border-emerald-400/70 bg-emerald-400/15 text-emerald-300",
+  available: "bg-admin-success/15 text-admin-success",
+  new_drop: "bg-admin-accent/15 text-[#64b5ff]",
+  reserved: "bg-admin-warning/15 text-[#ffe066]",
+  sold: "bg-admin-danger/15 text-[#ff6961]",
+  draft: "bg-white/8 text-admin-muted",
+  made_to_order: "bg-sky-400/15 text-sky-300",
+  brand_new: "bg-emerald-400/15 text-emerald-300",
 };
 
 interface ProductListProps {
@@ -78,19 +79,19 @@ function SortableRow({
     <div
       ref={setNodeRef}
       style={style}
-      className={`grid grid-cols-[auto_5rem_minmax(0,1fr)_5rem_7.5rem_auto] items-center gap-3 border border-admin-border bg-admin-bg p-2 ${
-        highlighted ? "ring-2 ring-admin-accent" : ""
+      className={`grid grid-cols-[auto_5rem_minmax(0,1fr)_5rem_7.5rem_auto] items-center gap-3 rounded-xl border border-admin-border bg-admin-surface p-3 transition hover:bg-white/[0.03] ${
+        highlighted ? "ring-2 ring-admin-accent/50" : ""
       }`}
     >
       <button
         type="button"
-        className="cursor-grab shrink-0 px-1 text-admin-muted active:cursor-grabbing"
+        className="cursor-grab shrink-0 rounded-md p-1 text-admin-muted hover:bg-white/5 active:cursor-grabbing"
         {...attributes}
         {...listeners}
       >
-        ⋮⋮
+        <GripVertical size={16} />
       </button>
-      <div className="relative h-20 w-20 shrink-0 overflow-hidden border border-admin-border bg-white">
+      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-white">
         {product.img ? (
           <AdminProductImage
             src={product.img}
@@ -103,34 +104,24 @@ function SortableRow({
         ) : null}
       </div>
       <div className="min-w-0">
-        <p className="truncate font-bold">{product.title}</p>
+        <p className="truncate font-semibold">{product.title}</p>
         <p className="text-xs text-admin-muted">
           #{product.id} · {product.brand}
         </p>
       </div>
-      <span className="text-base font-bold tabular-nums text-white">
+      <span className="text-base font-semibold tabular-nums text-admin-text">
         {product.price > 0 ? `₪${product.price}` : "—"}
       </span>
       <div className="flex justify-center">
-        <span
-          className={`shrink-0 border px-2 py-0.5 text-[10px] font-bold tracking-wide ${STATUS_BADGE_CLASS[product.status]}`}
-        >
+        <span className={`admin-pill ${STATUS_BADGE_CLASS[product.status]}`}>
           {STATUS_LABELS[product.status]}
         </span>
       </div>
       <div className="flex items-center gap-2">
-        <button
-          type="button"
-          className="border border-admin-border px-2 py-0.5 text-xs hover:bg-admin-panel"
-          onClick={onEdit}
-        >
+        <button type="button" className="admin-btn px-3 py-1 text-xs" onClick={onEdit}>
           Edit
         </button>
-        <button
-          type="button"
-          className="border border-admin-danger px-2 py-0.5 text-xs text-admin-danger hover:bg-admin-danger/10"
-          onClick={onDelete}
-        >
+        <button type="button" className="admin-btn admin-btn-danger px-3 py-1 text-xs" onClick={onDelete}>
           Delete
         </button>
       </div>
@@ -213,15 +204,15 @@ export function ProductList({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <input
-          placeholder="Search…"
+          placeholder="Search products…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border border-admin-border bg-admin-bg px-3 py-1.5"
+          className="admin-input max-w-xs"
         />
         <select
           value={brandFilter}
           onChange={(e) => setBrandFilter(e.target.value)}
-          className="border border-admin-border bg-admin-bg px-3 py-1.5"
+          className="admin-input w-auto"
         >
           <option value="">All brands</option>
           {brands.map((b) => (
@@ -230,21 +221,20 @@ export function ProductList({
             </option>
           ))}
         </select>
-        <button
-          type="button"
-          className="ml-auto bg-admin-success px-3 py-1.5 font-bold text-black"
-          onClick={onAdd}
-        >
-          {addLabel ?? "+ Add product"}
+        <button type="button" className="admin-btn admin-btn-primary ml-auto gap-1.5" onClick={onAdd}>
+          <Plus size={16} />
+          {addLabel ?? "Add product"}
         </button>
       </div>
 
       {[...grouped.entries()].map(([brand, catMap]) => (
-        <div key={brand} className="border border-admin-border">
-          <div className="border-b border-admin-border bg-admin-panel px-3 py-2 font-bold">{brand}</div>
+        <div key={brand} className="admin-card overflow-hidden">
+          <div className="border-b border-admin-border bg-admin-panel/50 px-4 py-3 font-semibold">
+            {brand}
+          </div>
           {[...catMap.entries()].map(([category, catProducts]) => (
             <div key={category} className="p-3">
-              <p className="mb-2 text-xs uppercase tracking-widest text-admin-muted">{category}</p>
+              <p className="mb-2 text-xs font-medium capitalize text-admin-muted">{category}</p>
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -254,7 +244,7 @@ export function ProductList({
                   items={catProducts.map((p) => String(p.id))}
                   strategy={verticalListSortingStrategy}
                 >
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     {catProducts.map((p) => (
                       <Fragment key={p.id}>
                         <SortableRow
@@ -264,7 +254,7 @@ export function ProductList({
                           onDelete={() => onDelete(p.id)}
                         />
                         {editingProductId === p.id && inlineEditor ? (
-                          <div className="my-3 border-l-2 border-admin-accent pl-3">
+                          <div className="my-3 rounded-xl border border-admin-accent/30 bg-admin-accent/5 p-4">
                             {inlineEditor}
                           </div>
                         ) : null}
@@ -279,7 +269,7 @@ export function ProductList({
       ))}
 
       {filtered.length === 0 ? (
-        <p className="text-center text-admin-muted py-8">No products match filters.</p>
+        <p className="py-12 text-center text-admin-muted">No products match filters.</p>
       ) : null}
     </div>
   );
