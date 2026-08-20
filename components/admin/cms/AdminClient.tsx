@@ -447,9 +447,9 @@ export function AdminClient({
         inlineEditor={formProduct?.id ? productEditor : null}
         addLabel={
           mode === "made_to_order"
-            ? "+ Add made-to-order item"
+            ? "Add made-to-order item"
             : mode === "brand_new"
-              ? "+ Add brand-new item"
+              ? "Add brand-new item"
               : undefined
         }
       />
