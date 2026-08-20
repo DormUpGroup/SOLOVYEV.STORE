@@ -17,6 +17,7 @@ import type { FaqItem, Product, StoreConfig } from "@/lib/types";
 import type { GaOverview } from "@/lib/analytics/ga-types";
 import { normalizeStoreConfig } from "@/lib/store-config";
 import { GaPanel } from "@/components/admin/legacy/GaPanel";
+import { FunnelChart } from "@/components/admin/charts/FunnelChart";
 import { ADMIN_CHART_COLORS, adminLineChartOptions } from "@/lib/admin/chart-theme";
 import styles from "@/app/admin/admin.module.css";
 
@@ -434,6 +435,13 @@ export function LegacyTabs({ tab, products, onDirtyChange, showToast }: LegacyTa
                 <div className={styles.statLabel}>WhatsApp</div>
                 <div className={styles.statValue}>{analytics?.wa ?? 0}</div>
               </div>
+            </div>
+            <div style={{ marginTop: 20 }}>
+              <FunnelChart
+                views={analytics?.views ?? 0}
+                cart={analytics?.cart ?? 0}
+                whatsapp={analytics?.wa ?? 0}
+              />
             </div>
           </div>
         </div>

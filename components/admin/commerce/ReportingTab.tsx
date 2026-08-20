@@ -6,6 +6,8 @@ import {
   ORDER_STATUSES,
   type CommerceSummary,
 } from "@/lib/admin/commerce-types";
+import { OrderStatusChart } from "@/components/admin/charts/OrderStatusChart";
+import { TopProductsChart } from "@/components/admin/charts/TopProductsChart";
 import styles from "@/app/admin/admin.module.css";
 
 interface ReportingTabProps {
@@ -137,6 +139,41 @@ export function ReportingTab({ showToast }: ReportingTabProps) {
         <div className={styles.stat}>
           <div className={styles.statLabel}>Products sold (paid)</div>
           <div className={styles.statValue}>{summary?.topProducts.length ?? "—"}</div>
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gap: 16,
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          marginBottom: 16,
+        }}
+      >
+        <div className={styles.panel}>
+          <div className={styles.panelHead}>
+            <h3>Orders by status</h3>
+          </div>
+          <div className={styles.panelBody}>
+            {summary ? (
+              <OrderStatusChart byStatus={summary.byStatus} />
+            ) : (
+              <p className={styles.hint}>Loading…</p>
+            )}
+          </div>
+        </div>
+
+        <div className={styles.panel}>
+          <div className={styles.panelHead}>
+            <h3>Top products by revenue</h3>
+          </div>
+          <div className={styles.panelBody}>
+            {summary ? (
+              <TopProductsChart products={summary.topProducts} currencySymbol={symbol} />
+            ) : (
+              <p className={styles.hint}>Loading…</p>
+            )}
+          </div>
         </div>
       </div>
 
