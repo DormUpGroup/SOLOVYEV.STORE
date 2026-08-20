@@ -9,7 +9,7 @@ import {
 import { Doughnut } from "react-chartjs-2";
 import { useMemo } from "react";
 import type { OrderStatus } from "@/lib/types";
-import { ORDER_STATUSES } from "@/lib/admin/commerce-types";
+import { ORDER_STATUSES, ORDER_STATUS_LABELS } from "@/lib/admin/commerce-types";
 import {
   ADMIN_CHART_COLORS,
   ORDER_STATUS_CHART_COLORS,
@@ -18,14 +18,7 @@ import {
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const STATUS_LABELS: Record<OrderStatus, string> = {
-  pending_whatsapp: "Pending WhatsApp",
-  in_chat: "In chat",
-  paid: "Paid",
-  shipped: "Shipped",
-  completed: "Completed",
-  cancelled: "Cancelled",
-};
+const STATUS_LABELS = ORDER_STATUS_LABELS;
 
 interface OrderStatusChartProps {
   byStatus: Record<OrderStatus, number>;

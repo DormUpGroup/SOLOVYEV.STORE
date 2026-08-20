@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { OrderStatus } from "@/lib/types";
 import {
   ORDER_STATUSES,
+  ORDER_STATUS_LABELS,
   type CommerceSummary,
 } from "@/lib/admin/commerce-types";
 import { OrderStatusChart } from "@/components/admin/charts/OrderStatusChart";
@@ -14,14 +14,7 @@ interface ReportingTabProps {
   showToast: (msg: string, ok?: boolean) => void;
 }
 
-const STATUS_LABELS: Record<OrderStatus, string> = {
-  pending_whatsapp: "Pending WhatsApp",
-  in_chat: "In chat",
-  paid: "Paid",
-  shipped: "Shipped",
-  completed: "Completed",
-  cancelled: "Cancelled",
-};
+const STATUS_LABELS = ORDER_STATUS_LABELS;
 
 export function ReportingTab({ showToast }: ReportingTabProps) {
   const [days, setDays] = useState(30);

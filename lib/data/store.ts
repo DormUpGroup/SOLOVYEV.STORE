@@ -3,11 +3,13 @@ import type { FaqItem, StoreConfig } from "@/lib/types";
 import configData from "@/data/config.json";
 import faqData from "@/data/faq.json";
 import { createServiceClient } from "@/utils/supabase/admin";
+import { isSupabaseConfigured } from "@/lib/supabase";
 import { normalizeStoreConfig } from "@/lib/store-config";
 import { getProducts, getProductBySlugFromStore, STORE_TAG } from "@/lib/products-server";
 
 export { STORE_TAG, getProducts, getProductBySlugFromStore };
 export { productToDbRow } from "@/lib/supabase-products";
+export { isSupabaseConfigured };
 
 type DbFaq = {
   id: number;
@@ -15,14 +17,6 @@ type DbFaq = {
   question: string;
   answer: string;
 };
-
-export function isSupabaseConfigured(): boolean {
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
-  );
-}
 
 function hasServiceRole(): boolean {
   return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);

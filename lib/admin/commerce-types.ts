@@ -9,6 +9,16 @@ export const ORDER_STATUSES: OrderStatus[] = [
   "cancelled",
 ];
 
+/** Display labels for order statuses (admin UI + PDF reports). */
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  pending_whatsapp: "Pending WhatsApp",
+  in_chat: "In chat",
+  paid: "Paid",
+  shipped: "Shipped",
+  completed: "Completed",
+  cancelled: "Cancelled",
+};
+
 /** Order statuses that count toward admin revenue metrics. */
 export const REVENUE_ORDER_STATUSES: OrderStatus[] = ["paid"];
 

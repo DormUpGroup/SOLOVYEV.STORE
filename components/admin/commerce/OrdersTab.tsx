@@ -15,6 +15,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { OrderStatus } from "@/lib/types";
 import {
   ORDER_STATUSES,
+  ORDER_STATUS_LABELS,
   type AdminOrderDetail,
   type AdminOrderRow,
   type CommerceSummary,
@@ -40,12 +41,7 @@ interface OrdersTabProps {
 
 const STATUS_LABELS: Record<OrderStatus | "", string> = {
   "": "All statuses",
-  pending_whatsapp: "Pending WhatsApp",
-  in_chat: "In chat",
-  paid: "Paid",
-  shipped: "Shipped",
-  completed: "Completed",
-  cancelled: "Cancelled",
+  ...ORDER_STATUS_LABELS,
 };
 
 export function OrdersTab({ showToast }: OrdersTabProps) {

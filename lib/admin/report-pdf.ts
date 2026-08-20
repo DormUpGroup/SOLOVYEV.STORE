@@ -1,16 +1,9 @@
 import PDFDocument from "pdfkit";
 import type { AdminOrderRow, CommerceSummary } from "@/lib/admin/commerce-types";
-import { ORDER_STATUSES } from "@/lib/admin/commerce-types";
+import { ORDER_STATUSES, ORDER_STATUS_LABELS } from "@/lib/admin/commerce-types";
 import type { AnalyticsSummary } from "@/lib/data/store";
 
-const STATUS_LABELS: Record<string, string> = {
-  pending_whatsapp: "Pending WhatsApp",
-  in_chat: "In chat",
-  paid: "Paid",
-  shipped: "Shipped",
-  completed: "Completed",
-  cancelled: "Cancelled",
-};
+const STATUS_LABELS = ORDER_STATUS_LABELS;
 
 export type SalesReportData = {
   summary: CommerceSummary;
