@@ -4390,11 +4390,11 @@ body.no-scroll {
   }
 
   .product-page-image {
-    width: min(75%, calc(100svh - 320px));
+    width: 100%;
   }
 
   .product-page-thumbnails {
-    width: min(75%, calc(100svh - 320px));
+    width: 100%;
   }
 
   .sticky-mobile-cta,
@@ -5127,7 +5127,7 @@ body.no-scroll {
 
   .product-page-image,
   .product-page-thumbnails {
-    width: min(70%, calc(100svh - 300px));
+    width: 100%;
   }
 }
 
