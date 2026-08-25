@@ -4,7 +4,6 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Header } from "@/components/layout/Header";
 import {
-  FixedBottomBar,
   MinimalFooter,
   ToastNotification,
 } from "@/components/layout/FooterBars";
@@ -97,7 +96,6 @@ export function LegalDocPageClient({ doc }: { doc: LegalDoc }) {
         </div>
       </main>
       <MinimalFooter />
-      <FixedBottomBar />
       <ToastNotification />
       <SellTradeModal />
       <FaqModal />

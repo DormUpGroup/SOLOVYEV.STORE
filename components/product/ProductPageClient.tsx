@@ -2,7 +2,6 @@
 
 import { Header } from "@/components/layout/Header";
 import {
-  FixedBottomBar,
   MinimalFooter,
   ToastNotification,
 } from "@/components/layout/FooterBars";
@@ -29,7 +28,6 @@ export function ProductPageClient({ product, children }: ProductPageClientProps)
       <Header />
       <main>{children}</main>
       <MinimalFooter />
-      <FixedBottomBar />
       <ToastNotification />
       <QuickViewModal />
       <SellTradeModal />

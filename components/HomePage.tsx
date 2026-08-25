@@ -10,7 +10,6 @@ import {
 import { NewestArrivals } from "@/components/catalog/CatalogSection";
 import {
   ConsentBanner,
-  FixedBottomBar,
   MinimalFooter,
   ToastNotification,
 } from "@/components/layout/FooterBars";
@@ -31,7 +30,6 @@ export function HomePage() {
         <InstagramStrip />
       </main>
       <MinimalFooter />
-      <FixedBottomBar />
       <ConsentBanner />
       <ToastNotification />
       <QuickViewModal />

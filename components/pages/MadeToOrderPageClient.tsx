@@ -7,7 +7,6 @@ import { Header } from "@/components/layout/Header";
 import { CatalogSection } from "@/components/catalog/CatalogSection";
 import {
   ConsentBanner,
-  FixedBottomBar,
   MinimalFooter,
   ToastNotification,
 } from "@/components/layout/FooterBars";
@@ -65,7 +64,6 @@ export function MadeToOrderPageClient({ products }: MadeToOrderPageClientProps) 
         />
       </main>
       <MinimalFooter />
-      <FixedBottomBar />
       <ConsentBanner />
       <ToastNotification />
       <QuickViewModal />

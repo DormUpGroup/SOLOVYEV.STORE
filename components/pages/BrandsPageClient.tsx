@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Header } from "@/components/layout/Header";
 import {
-  FixedBottomBar,
   MinimalFooter,
   ToastNotification,
 } from "@/components/layout/FooterBars";
@@ -113,7 +112,6 @@ export function BrandsPageClient() {
         </div>
       </main>
       <MinimalFooter />
-      <FixedBottomBar />
       <ToastNotification />
       <QuickViewModal />
       <SellTradeModal />

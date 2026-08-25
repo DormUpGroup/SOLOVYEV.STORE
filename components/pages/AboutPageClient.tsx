@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import {
-  FixedBottomBar,
   MinimalFooter,
   ToastNotification,
 } from "@/components/layout/FooterBars";
@@ -140,7 +139,6 @@ export function AboutPageClient() {
         </div>
       </main>
       <MinimalFooter />
-      <FixedBottomBar />
       <ToastNotification />
       <SellTradeModal />
       <FaqModal />

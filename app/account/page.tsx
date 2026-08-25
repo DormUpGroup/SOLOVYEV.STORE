@@ -6,7 +6,6 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import {
-  FixedBottomBar,
   MinimalFooter,
   ToastNotification,
 } from "@/components/layout/FooterBars";
@@ -348,7 +347,6 @@ export default function AccountPage() {
         )}
       </main>
       <MinimalFooter />
-      <FixedBottomBar />
       <ToastNotification />
       <QuickViewModal />
       <SellTradeModal />
