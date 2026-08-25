@@ -19,7 +19,7 @@ export function adminProductImageSrc(url: string, _size: ImageSize = "thumb"): s
   return url;
 }
 
-/** Fast admin thumbnails via Next.js image optimizer. */
+/** Admin thumbnails — direct URLs (global `images.unoptimized` bypasses Vercel optimizer). */
 export function AdminProductImage({
   src,
   alt = "",
@@ -66,6 +66,7 @@ export function AdminProductImage({
       style={cropStyle}
       priority={priority}
       loading={priority ? undefined : "lazy"}
+      unoptimized
     />
   );
 }

@@ -94,6 +94,7 @@ export function ProductPageDetails({
                       sizes="64px"
                       quality={55}
                       loading="lazy"
+                      unoptimized
                       style={productImageCropStyle(
                         image?.objectPosition,
                         image?.cropZoom,

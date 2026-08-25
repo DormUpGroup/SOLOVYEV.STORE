@@ -105,6 +105,7 @@ export function ProductImageLoupe({
           quality={quality}
           priority={priority}
           loading={priority ? undefined : "lazy"}
+          unoptimized
           style={productImageCropStyle(objectPosition, cropZoom, cropMode)}
         />
       ) : (

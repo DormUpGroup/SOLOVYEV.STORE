@@ -137,6 +137,7 @@ export function CartDrawer() {
                         sizes="88px"
                         quality={55}
                         loading="lazy"
+                        unoptimized
                         style={productImageCropStyle(
                           mainImage?.objectPosition,
                           mainImage?.cropZoom,

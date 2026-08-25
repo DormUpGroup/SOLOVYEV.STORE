@@ -61,8 +61,10 @@ const supabaseHostname = supabaseImageHostname();
 
 const nextConfig: NextConfig = {
   images: {
-    // Was left over from static `output: "export"`. Enable optimizer so catalog
-    // cards request ~400px derivatives instead of full ~2000px Supabase WebPs.
+    // Product photos are already Sharp→WebP on upload. Vercel Image Optimization
+    // returns 402 (quota) for uncached sources, which breaks admin/catalog thumbs.
+    // Serve Supabase public URLs directly until a paid optimizer quota is available.
+    unoptimized: true,
     formats: ["image/avif", "image/webp"],
     qualities: [50, 55, 65, 70, 75, 78, 82],
     minimumCacheTTL: 60 * 60 * 24 * 30,
