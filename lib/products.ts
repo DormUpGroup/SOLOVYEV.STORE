@@ -169,6 +169,10 @@ export function filterProducts(
     result = result.filter((p) => p.category === filters.category);
   }
 
+  if (filters.clothingType) {
+    result = result.filter((p) => p.clothingType === filters.clothingType);
+  }
+
   if (filters.brand) {
     result = result.filter((p) => p.brand.trim() === filters.brand);
   }

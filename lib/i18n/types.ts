@@ -70,6 +70,13 @@ export interface Dictionary {
     madeToOrderIntro: string;
     brandNewTitle: string;
     brandNewIntro: string;
+    clothingTypes: {
+      pants: string;
+      shorts: string;
+      tshirts: string;
+      sweaters: string;
+      jackets: string;
+    };
   };
   cart: {
     title: string;

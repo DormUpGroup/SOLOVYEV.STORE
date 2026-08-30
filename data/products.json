@@ -139,7 +139,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "sweaters"
   },
   {
     "id": 6,
@@ -167,7 +168,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "tshirts"
   },
   {
     "id": 7,
@@ -225,7 +227,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "shorts"
   },
   {
     "id": 9,
@@ -254,7 +257,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "tshirts"
   },
   {
     "id": 10,
@@ -282,7 +286,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "jackets"
   },
   {
     "id": 11,
@@ -310,7 +315,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "tshirts"
   },
   {
     "id": 12,
@@ -339,7 +345,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "tshirts"
   },
   {
     "id": 13,
@@ -368,7 +375,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "tshirts"
   },
   {
     "id": 14,
@@ -396,7 +404,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "tshirts"
   },
   {
     "id": 15,
@@ -425,7 +434,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "tshirts"
   },
   {
     "id": 16,
@@ -454,7 +464,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "tshirts"
   },
   {
     "id": 17,
@@ -512,7 +523,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "tshirts"
   },
   {
     "id": 19,
@@ -540,7 +552,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "sweaters"
   },
   {
     "id": 20,
@@ -568,7 +581,8 @@
         "sortOrder": 0,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "jackets"
   },
   {
     "id": 21,
@@ -620,7 +634,8 @@
         "sortOrder": 3,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "tshirts"
   },
   {
     "id": 22,
@@ -680,7 +695,8 @@
         "sortOrder": 4,
         "objectPosition": "50% 50%"
       }
-    ]
+    ],
+    "clothingType": "sweaters"
   },
   {
     "id": 23,
@@ -740,6 +756,7 @@
         "sortOrder": 4,
         "objectPosition": "52% 51%"
       }
-    ]
+    ],
+    "clothingType": "sweaters"
   }
 ]

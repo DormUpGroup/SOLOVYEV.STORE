@@ -1,4 +1,6 @@
 import type { Product, ProductCategory, ProductImage, ProductStatus } from "@/lib/types";
+import type { ClothingType } from "@/lib/clothing-types";
+import { inferClothingType, isClothingType } from "@/lib/clothing-types";
 import { getSupabaseAdmin, hasSupabaseServiceRole, isSupabaseConfigured } from "@/lib/supabase";
 import { deleteImageUrl } from "@/lib/supabase-storage";
 import { isBrandNewCondition } from "@/lib/products";
@@ -23,6 +25,7 @@ type DbProduct = {
   instagram_url: string | null;
   source: string | null;
   sort_order: number;
+  clothing_type: string | null;
   updated_at: string;
 };
 
@@ -67,6 +70,12 @@ function mapImage(row: DbProductImage): ProductImage {
   };
 }
 
+function mapClothingType(row: DbProduct): ClothingType | undefined {
+  if (row.category !== "clothing") return undefined;
+  if (isClothingType(row.clothing_type)) return row.clothing_type;
+  return inferClothingType(row.title, row.description ?? "");
+}
+
 function mapProduct(row: DbProduct, images: ProductImage[] = []): Product {
   const sorted = [...images].sort((a, b) => a.sortOrder - b.sortOrder);
   const primaryImg = sorted[0]?.imageUrl ?? row.img ?? "";
@@ -75,6 +84,7 @@ function mapProduct(row: DbProduct, images: ProductImage[] = []): Product {
     slug: row.slug,
     title: row.title,
     category: row.category as Product["category"],
+    clothingType: mapClothingType(row),
     price: Number(row.price),
     originalPrice: row.original_price ? Number(row.original_price) : undefined,
     condition: row.condition,
@@ -127,6 +137,8 @@ export function productToDbRow(
     slug: p.slug,
     title: p.title,
     category: p.category ?? "sneakers",
+    clothing_type:
+      (p.category ?? "sneakers") === "clothing" ? (p.clothingType ?? null) : null,
     price: p.price ?? 0,
     original_price: p.originalPrice ?? null,
     condition: p.condition ?? "See description",
@@ -144,9 +156,25 @@ export function productToDbRow(
   };
 }
 
+function isMissingClothingTypeColumn(error: { message?: string; code?: string } | null) {
+  if (!error) return false;
+  const msg = error.message ?? "";
+  return (
+    /clothing_type/i.test(msg) &&
+    (/does not exist|schema cache/i.test(msg) || error.code === "PGRST204" || error.code === "42703")
+  );
+}
+
+function rowWithoutClothingType(row: ReturnType<typeof productToDbRow>) {
+  const { clothing_type: _ignored, ...rest } = row;
+  return rest;
+}
+
 export function validateCategory(category: string): category is ProductCategory {
   return CATEGORIES.includes(category as ProductCategory);
 }
+
+export { validateClothingType } from "@/lib/clothing-types";
 
 export function validateStatus(status: string): status is ProductStatus {
   return STATUSES.includes(status as ProductStatus);
@@ -268,6 +296,7 @@ export type CreateProductInput = {
   title: string;
   slug?: string;
   category: ProductCategory;
+  clothingType?: ClothingType | null;
   brand: string;
   badge?: string;
   sizes?: string[];
@@ -299,6 +328,8 @@ export async function createProduct(input: CreateProductInput): Promise<Product>
       title: input.title,
       slug,
       category: input.category,
+      clothingType:
+        input.category === "clothing" ? (input.clothingType ?? undefined) : undefined,
       brand: input.brand,
       badge: input.badge,
       sizes: input.sizes,
@@ -315,7 +346,12 @@ export async function createProduct(input: CreateProductInput): Promise<Product>
     primaryImg,
   );
 
-  const { data, error } = await supabase.from("products").insert(row).select().single();
+  let { data, error } = await supabase.from("products").insert(row).select().single();
+  if (isMissingClothingTypeColumn(error)) {
+    const retry = await supabase.from("products").insert(rowWithoutClothingType(row)).select().single();
+    data = retry.data;
+    error = retry.error;
+  }
   if (error) {
     console.error("[createProduct] insert error:", JSON.stringify(error));
     throw error;
@@ -356,10 +392,15 @@ export async function updateProduct(id: number, input: UpdateProductInput): Prom
 
   const title = input.title ?? existing.title;
   const slug = await resolveUniqueSlug(title, id);
+  const nextCategory = input.category ?? existing.category;
   const merged = {
     slug,
     title,
-    category: input.category ?? existing.category,
+    category: nextCategory,
+    clothingType:
+      nextCategory === "clothing"
+        ? ("clothingType" in input ? (input.clothingType ?? undefined) : existing.clothingType)
+        : undefined,
     brand: input.brand ?? existing.brand,
     badge: input.badge ?? existing.badge,
     sizes: input.sizes ?? existing.sizes,
@@ -386,7 +427,11 @@ export async function updateProduct(id: number, input: UpdateProductInput): Prom
 
   const row = productToDbRow(merged, primaryImg);
   const supabase = getSupabaseAdmin();
-  const { error } = await supabase.from("products").update(row).eq("id", id);
+  let { error } = await supabase.from("products").update(row).eq("id", id);
+  if (isMissingClothingTypeColumn(error)) {
+    const retry = await supabase.from("products").update(rowWithoutClothingType(row)).eq("id", id);
+    error = retry.error;
+  }
   if (error) throw error;
 
   const cropById = new Map(

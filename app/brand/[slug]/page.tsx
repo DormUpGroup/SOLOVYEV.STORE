@@ -28,6 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const count = filterProducts(products, {
     category: "all",
+    clothingType: "",
     brand,
     search: "",
     size: "",

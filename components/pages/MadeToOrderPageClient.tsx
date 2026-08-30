@@ -16,13 +16,12 @@ import { FaqModal } from "@/components/modals/FaqModal";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { useI18n } from "@/components/providers/I18nProvider";
 import type { Product, ProductCategory } from "@/lib/types";
-
-function parseCategory(param: string | null): "all" | ProductCategory {
-  if (param === "sneakers" || param === "clothing" || param === "accessories") {
-    return param;
-  }
-  return "all";
-}
+import type { ClothingType } from "@/lib/clothing-types";
+import {
+  buildCatalogUrl,
+  parseClothingType,
+  parseProductCategory,
+} from "@/lib/catalog-url";
 
 interface MadeToOrderPageClientProps {
   products: Product[];
@@ -33,15 +32,27 @@ export function MadeToOrderPageClient({ products }: MadeToOrderPageClientProps) 
   const searchParams = useSearchParams();
   const { dict } = useI18n();
   const activeCategory = useMemo(
-    () => parseCategory(searchParams.get("category")),
+    () => parseProductCategory(searchParams.get("category")),
     [searchParams],
+  );
+  const activeClothingType = useMemo(
+    () =>
+      activeCategory === "clothing" ? parseClothingType(searchParams.get("type")) : "",
+    [activeCategory, searchParams],
   );
 
   const onCategoryChange = useCallback(
     (category: "all" | ProductCategory) => {
-      const url =
-        category === "all" ? "/made-to-order" : `/made-to-order?category=${category}`;
-      router.replace(url, { scroll: false });
+      router.replace(buildCatalogUrl("/made-to-order", category), { scroll: false });
+    },
+    [router],
+  );
+
+  const onClothingTypeChange = useCallback(
+    (type: "" | ClothingType) => {
+      router.replace(buildCatalogUrl("/made-to-order", "clothing", type), {
+        scroll: false,
+      });
     },
     [router],
   );
@@ -59,6 +70,8 @@ export function MadeToOrderPageClient({ products }: MadeToOrderPageClientProps) 
         <CatalogSection
           activeCategory={activeCategory}
           onCategoryChange={onCategoryChange}
+          activeClothingType={activeClothingType}
+          onClothingTypeChange={onClothingTypeChange}
           productsOverride={products}
           sectionTitle={dict.catalog.madeToOrderTitle}
         />

@@ -1,3 +1,6 @@
+import type { ClothingType } from "@/lib/clothing-types";
+
+export type { ClothingType };
 export type ProductCategory = "sneakers" | "clothing" | "accessories";
 export type ProductStatus =
   | "available"
@@ -59,6 +62,7 @@ export interface Product {
   slug: string;
   title: string;
   category: ProductCategory;
+  clothingType?: ClothingType;
   price: number;
   originalPrice?: number;
   condition: string;
@@ -130,6 +134,7 @@ export interface CustomerOrder {
 
 export interface ActiveFilters {
   category: "all" | ProductCategory;
+  clothingType: "" | ClothingType;
   brand: string;
   search: string;
   size: string;

@@ -167,6 +167,7 @@ export function AdminClient({
         title: formProduct.title,
         slug: formProduct.slug,
         category: formProduct.category,
+        clothingType: formProduct.category === "clothing" ? (formProduct.clothingType ?? null) : null,
         brand: formProduct.brand,
         badge: formProduct.badge,
         sizes: formProduct.sizes,

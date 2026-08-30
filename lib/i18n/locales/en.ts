@@ -68,6 +68,13 @@ export const en: Dictionary = {
     brandNewTitle: "BRAND NEW.",
     brandNewIntro:
       "Deadstock and unworn pieces — 10/10 condition. Authenticity verified before listing.",
+    clothingTypes: {
+      pants: "PANTS",
+      shorts: "SHORTS",
+      tshirts: "T-SHIRTS",
+      sweaters: "HOODIES",
+      jackets: "JACKETS",
+    },
   },
   cart: {
     title: "YOUR CART.",

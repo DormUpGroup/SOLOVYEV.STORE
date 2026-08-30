@@ -67,6 +67,13 @@ export const he: Dictionary = {
     brandNewTitle: "חדש.",
     brandNewIntro:
       "דדסטוק ופריטים חדשים — מצב 10/10. אותנטיות מאומתת לפני פרסום.",
+    clothingTypes: {
+      pants: "מכנסיים",
+      shorts: "שורטים",
+      tshirts: "טישרטים",
+      sweaters: "קפוצ'ונים",
+      jackets: "מעילים",
+    },
   },
   cart: {
     title: "העגלה שלך.",

@@ -5,8 +5,10 @@ import {
   createProduct,
   fetchProductsAdmin,
   validateCategory,
+  validateClothingType,
   validateStatus,
 } from "@/lib/supabase-products";
+import type { ClothingType } from "@/lib/clothing-types";
 import type { ProductCategory, ProductStatus } from "@/lib/types";
 
 export async function GET() {
@@ -21,6 +23,7 @@ type PostBody = {
   title: string;
   slug?: string;
   category: ProductCategory;
+  clothingType?: ClothingType | null;
   brand: string;
   badge?: string;
   sizes?: string[];
@@ -52,6 +55,9 @@ export async function POST(request: Request) {
   }
   if (!validateCategory(body.category)) {
     return NextResponse.json({ error: "Invalid category" }, { status: 400 });
+  }
+  if (!validateClothingType(body.clothingType)) {
+    return NextResponse.json({ error: "Invalid clothing type" }, { status: 400 });
   }
   if (body.status && !validateStatus(body.status)) {
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });

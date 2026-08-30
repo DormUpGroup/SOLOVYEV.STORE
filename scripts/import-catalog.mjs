@@ -81,6 +81,7 @@ function toRow(p, uploadedImageUrl) {
     slug: p.slug,
     title: p.title,
     category: p.category,
+    clothing_type: p.category === "clothing" ? (p.clothingType ?? null) : null,
     price: p.price ?? 0,
     original_price: p.originalPrice ?? null,
     condition: p.condition ?? "See description",

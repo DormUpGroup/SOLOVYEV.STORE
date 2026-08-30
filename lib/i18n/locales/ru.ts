@@ -68,6 +68,13 @@ export const ru: Dictionary = {
     brandNewTitle: "НОВЫЕ.",
     brandNewIntro:
       "Дедсток и новые вещи — состояние 10/10. Аутентичность проверена перед публикацией.",
+    clothingTypes: {
+      pants: "ШТАНЫ",
+      shorts: "ШОРТЫ",
+      tshirts: "ФУТБОЛКИ",
+      sweaters: "КОФТЫ",
+      jackets: "КУРТКИ",
+    },
   },
   cart: {
     title: "КОРЗИНА.",

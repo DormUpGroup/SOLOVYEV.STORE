@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   filterProducts,
   getAvailableSizes,
@@ -11,6 +11,7 @@ import { useStore } from "@/components/providers/StoreProvider";
 import { trackFilterApply } from "@/lib/analytics";
 import { useI18n } from "@/components/providers/I18nProvider";
 import { ProductCard } from "./ProductCard";
+import { CLOTHING_TYPES, type ClothingType } from "@/lib/clothing-types";
 import type { ActiveFilters, Product, ProductCategory } from "@/lib/types";
 
 const categoryKeys: Record<ProductCategory, "sneakers" | "clothing" | "accessories"> = {
@@ -22,6 +23,8 @@ const categoryKeys: Record<ProductCategory, "sneakers" | "clothing" | "accessori
 interface CatalogSectionProps {
   activeCategory: "all" | ProductCategory;
   onCategoryChange: (category: "all" | ProductCategory) => void;
+  activeClothingType?: "" | ClothingType;
+  onClothingTypeChange?: (type: "" | ClothingType) => void;
   initialBrand?: string;
   brandPageTitle?: string;
   productsOverride?: Product[];
@@ -68,6 +71,8 @@ export function NewestArrivals() {
 export function CatalogSection({
   activeCategory,
   onCategoryChange,
+  activeClothingType,
+  onClothingTypeChange,
   initialBrand = "",
   brandPageTitle,
   productsOverride,
@@ -77,17 +82,37 @@ export function CatalogSection({
   const products = productsOverride ?? storeProducts;
   const { dict } = useI18n();
   const { catalog, categories } = dict;
+  const [localClothingType, setLocalClothingType] = useState<"" | ClothingType>("");
   const [filters, setFilters] = useState<ActiveFilters>({
     category: activeCategory,
+    clothingType: "",
     brand: initialBrand,
     search: "",
     size: "",
     sort: "",
   });
 
+  useEffect(() => {
+    if (!onClothingTypeChange && activeCategory !== "clothing") {
+      setLocalClothingType("");
+    }
+  }, [activeCategory, onClothingTypeChange]);
+
+  const clothingType: "" | ClothingType =
+    activeCategory !== "clothing"
+      ? ""
+      : onClothingTypeChange
+        ? (activeClothingType ?? "")
+        : localClothingType;
+
   const mergedFilters = useMemo(
-    () => ({ ...filters, category: activeCategory, brand: initialBrand || filters.brand }),
-    [filters, activeCategory, initialBrand],
+    () => ({
+      ...filters,
+      category: activeCategory,
+      clothingType,
+      brand: initialBrand || filters.brand,
+    }),
+    [filters, activeCategory, clothingType, initialBrand],
   );
 
   const filtered = useMemo(
@@ -103,6 +128,12 @@ export function CatalogSection({
   const setCategory = (cat: "all" | ProductCategory) => {
     onCategoryChange(cat);
     trackFilterApply("category", cat);
+  };
+
+  const setClothingType = (type: "" | ClothingType) => {
+    if (onClothingTypeChange) onClothingTypeChange(type);
+    else setLocalClothingType(type);
+    trackFilterApply("clothingType", type || "all");
   };
 
   return (
@@ -133,6 +164,28 @@ export function CatalogSection({
             </button>
           ))}
         </div>
+
+        {activeCategory === "clothing" ? (
+          <div className="filter-container clothing-type-filters" role="group" aria-label="Clothing type">
+            <button
+              type="button"
+              className={`filter-btn ${clothingType === "" ? "active" : ""}`}
+              onClick={() => setClothingType("")}
+            >
+              {catalog.all}
+            </button>
+            {CLOTHING_TYPES.map((type) => (
+              <button
+                key={type}
+                type="button"
+                className={`filter-btn ${clothingType === type ? "active" : ""}`}
+                onClick={() => setClothingType(type)}
+              >
+                {catalog.clothingTypes[type]}
+              </button>
+            ))}
+          </div>
+        ) : null}
 
         <div className="catalog-brands-bar">
           {initialBrand ? (

@@ -1,6 +1,7 @@
 "use client";
 
 import type { Product, ProductCategory, ProductStatus, StoreConfig } from "@/lib/types";
+import { CLOTHING_TYPES, type ClothingType } from "@/lib/clothing-types";
 import { slugify } from "@/lib/slug";
 import { ImageManager, type TempImage } from "./ImageManager";
 import { ProductPreview } from "./ProductPreview";
@@ -12,6 +13,13 @@ const STATUSES: ProductStatus[] = [
   "draft",
 ];
 const CATEGORIES: ProductCategory[] = ["sneakers", "clothing", "accessories"];
+const CLOTHING_TYPE_LABELS: Record<ClothingType, string> = {
+  pants: "Pants",
+  shorts: "Shorts",
+  tshirts: "T-shirts",
+  sweaters: "Hoodies / sweaters",
+  jackets: "Jackets",
+};
 
 export type FormProduct = Product & { slug: string };
 
@@ -125,7 +133,14 @@ export function ProductForm({
             <select
               className="admin-input mt-1.5"
               value={product.category}
-              onChange={(e) => onChange({ ...product, category: e.target.value as ProductCategory })}
+              onChange={(e) => {
+                const category = e.target.value as ProductCategory;
+                onChange({
+                  ...product,
+                  category,
+                  clothingType: category === "clothing" ? product.clothingType : undefined,
+                });
+              }}
             >
               {(config?.categories ?? CATEGORIES.map((id) => ({ id, label: id }))).map((c) => (
                 <option key={c.id} value={c.id}>
@@ -134,6 +149,28 @@ export function ProductForm({
               ))}
             </select>
           </label>
+          {product.category === "clothing" ? (
+            <label className="block">
+              <span className="text-sm font-medium text-admin-muted">Clothing type</span>
+              <select
+                className="admin-input mt-1.5"
+                value={product.clothingType ?? ""}
+                onChange={(e) =>
+                  onChange({
+                    ...product,
+                    clothingType: (e.target.value || undefined) as ClothingType | undefined,
+                  })
+                }
+              >
+                <option value="">Select type</option>
+                {CLOTHING_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {CLOTHING_TYPE_LABELS[type]}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
           <label className="block">
             <span className="text-sm font-medium text-admin-muted">Price</span>
             <input

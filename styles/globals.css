@@ -3356,6 +3356,10 @@ body {
   flex: 1 1 100%;
 }
 
+.catalog-controls .clothing-type-filters {
+  margin-top: -8px;
+}
+
 .brand-filter-row {
   display: none;
 }

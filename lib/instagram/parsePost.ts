@@ -1,4 +1,5 @@
 import type { Product, ProductCategory, ProductStatus } from "@/lib/types";
+import { inferClothingType } from "@/lib/clothing-types";
 
 const SELL_KEYWORDS =
   /₪|ILS|for sale|available|in stock|\bDM\b|whatsapp|למכירה|מידה|מחיר|size\s*[:.]|\bEU\s*\d|\bUS\s*\d|Price\s*:/i;
@@ -131,11 +132,14 @@ export function parseInstagramPost(input: {
   imageUrl: string;
 }): Omit<Product, "id"> {
   const { shortcode, caption, imageUrl } = input;
+  const title = parseTitle(caption, shortcode);
+  const category = parseCategory(caption);
   const sold = isSoldCaption(caption);
   return {
-    slug: slugify(parseTitle(caption, shortcode)),
-    title: parseTitle(caption, shortcode),
-    category: parseCategory(caption),
+    slug: slugify(title),
+    title,
+    category,
+    clothingType: category === "clothing" ? inferClothingType(title, caption) : undefined,
     price: parsePrice(caption),
     condition: parseCondition(caption),
     brand: parseBrand(caption),

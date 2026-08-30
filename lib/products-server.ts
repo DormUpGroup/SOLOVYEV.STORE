@@ -2,13 +2,22 @@ import { unstable_cache } from "next/cache";
 import productsData from "@/data/products.json";
 import type { Product } from "@/lib/types";
 import { isBrandNewProduct } from "@/lib/products";
+import { inferClothingType } from "@/lib/clothing-types";
 import { fetchProductsForPublic, fetchProductBySlug, fetchMadeToOrderProducts, fetchBrandNewProducts } from "@/lib/supabase-products";
 import { isSupabaseConfigured, hasSupabaseServiceRole } from "@/lib/supabase";
 
 export const STORE_TAG = "store";
 
+function withClothingType(product: Product): Product {
+  if (product.category !== "clothing") return product;
+  return {
+    ...product,
+    clothingType: product.clothingType ?? inferClothingType(product.title, product.description),
+  };
+}
+
 function jsonFallbackProducts(): Product[] {
-  return (productsData as Product[]).filter((p) => p.source === "instagram");
+  return (productsData as Product[]).filter((p) => p.source === "instagram").map(withClothingType);
 }
 
 async function fetchProductsCached(): Promise<Product[]> {
@@ -37,6 +46,7 @@ export const getMadeToOrderProducts = unstable_cache(
 function jsonFallbackBrandNewProducts(): Product[] {
   return (productsData as Product[])
     .filter((p) => p.source === "instagram")
+    .map(withClothingType)
     .filter(isBrandNewProduct);
 }
 
