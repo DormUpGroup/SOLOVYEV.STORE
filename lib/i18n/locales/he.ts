@@ -306,8 +306,6 @@ export const he: Dictionary = {
     ],
     photoAlt: "סטריטוור וסניקרס ב-SOLOVYEV STORE",
     contactsTitle: "צור קשר",
-    locationTitle: "מיקום",
-    openInMaps: "פתח במפות",
     instagramHandle: "@solovyev.store",
   },
 };

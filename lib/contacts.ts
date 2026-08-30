@@ -1,8 +1,3 @@
-import configData from "@/data/config.json";
-import type { StoreConfig } from "./types";
-
-const defaultConfig = configData as StoreConfig;
-
 export function formatDisplayPhone(phone: string): string {
   const digits = phone.replace(/\D/g, "");
   if (digits.startsWith("972") && digits.length >= 11) {
@@ -10,20 +5,4 @@ export function formatDisplayPhone(phone: string): string {
     return `+972 ${local.slice(0, 2)}-${local.slice(2, 5)}-${local.slice(5)}`;
   }
   return digits ? `+${digits}` : phone;
-}
-
-export function buildMapEmbedUrl(lat: number, lng: number, padding = 0.04): string {
-  const bbox = [lng - padding, lat - padding, lng + padding, lat + padding].join(
-    ",",
-  );
-  return `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${lat}%2C${lng}`;
-}
-
-export function buildMapsSearchUrl(query: string): string {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-}
-
-export function getStoreLocationLabel(cfg: StoreConfig = defaultConfig): string {
-  const { city, country } = cfg.location;
-  return country ? `${city}, ${country}` : city;
 }

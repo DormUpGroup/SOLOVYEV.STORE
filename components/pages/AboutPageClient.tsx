@@ -13,23 +13,11 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { QuickViewModal } from "@/components/modals/QuickViewModal";
 import { useI18n } from "@/components/providers/I18nProvider";
 import { useStore } from "@/components/providers/StoreProvider";
-import {
-  buildMapEmbedUrl,
-  buildMapsSearchUrl,
-  formatDisplayPhone,
-  getStoreLocationLabel,
-} from "@/lib/contacts";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export function AboutPageClient() {
   const { config } = useStore();
   const { dict } = useI18n();
   const { about, hero } = dict;
-  const phone = config.contacts.whatsappPhone;
-  const phoneDisplay = formatDisplayPhone(phone);
-  const locationLabel = getStoreLocationLabel(config);
-  const mapEmbedUrl = buildMapEmbedUrl(config.location.lat, config.location.lng);
-  const mapsUrl = buildMapsSearchUrl(locationLabel);
 
   return (
     <>
@@ -94,46 +82,7 @@ export function AboutPageClient() {
                   </svg>
                   <span>{about.instagramHandle}</span>
                 </a>
-                <a
-                  href={buildWhatsAppUrl(
-                    dict.common.hiGreeting.replace(
-                      "{name}",
-                      config.contacts.managerName,
-                    ),
-                    config,
-                  )}
-                  className="about-contact-link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <svg className="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                  </svg>
-                  <span>{phoneDisplay}</span>
-                </a>
               </div>
-            </section>
-
-            <section className="about-map" aria-labelledby="about-location-title">
-              <h2 id="about-location-title" className="about-meta-title">
-                {about.locationTitle} · {config.location.city.toUpperCase()}
-              </h2>
-              <div className="about-map-frame">
-                <iframe
-                  title={`${locationLabel} map`}
-                  src={mapEmbedUrl}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
-              <a
-                href={mapsUrl}
-                className="about-map-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {locationLabel} — {about.openInMaps}
-              </a>
             </section>
           </div>
         </div>

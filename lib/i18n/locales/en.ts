@@ -307,8 +307,6 @@ export const en: Dictionary = {
     ],
     photoAlt: "Featured streetwear and sneakers at SOLOVYEV STORE",
     contactsTitle: "CONTACT",
-    locationTitle: "LOCATION",
-    openInMaps: "Open in Maps",
     instagramHandle: "@solovyev.store",
   },
 };

@@ -307,8 +307,6 @@ export const ru: Dictionary = {
     ],
     photoAlt: "Стритвир и кроссовки в SOLOVYEV STORE",
     contactsTitle: "КОНТАКТЫ",
-    locationTitle: "ЛОКАЦИЯ",
-    openInMaps: "Открыть на карте",
     instagramHandle: "@solovyev.store",
   },
 };

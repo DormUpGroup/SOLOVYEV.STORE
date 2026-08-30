@@ -261,8 +261,6 @@ export interface Dictionary {
     paragraphs: string[];
     photoAlt: string;
     contactsTitle: string;
-    locationTitle: string;
-    openInMaps: string;
     instagramHandle: string;
   };
 }
