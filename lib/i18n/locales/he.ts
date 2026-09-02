@@ -212,7 +212,7 @@ export const he: Dictionary = {
     firstOrderDiscount: "15% הנחה להזמנה הראשונה",
   },
   registerPromo: {
-    title: "15% הנחה להזמנה הראשונה",
+    title: "הנחה להזמנה הראשונה",
     body: "צרו חשבון וקבלו 15% הנחה על ההזמנה הראשונה.",
     cta: "יצירת חשבון",
     close: "סגירה",

@@ -2023,9 +2023,9 @@ main {
 }
 
 .register-promo-content {
-  width: min(90%, 420px);
+  width: min(92%, 480px);
   max-height: min(92vh, 640px);
-  padding: 52px 28px 32px;
+  padding: 52px 24px 32px;
   text-align: center;
   overflow-y: auto;
 }
@@ -2047,9 +2047,10 @@ main {
 .register-promo-content h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(22px, 4vw, 28px);
-  letter-spacing: 0.08em;
+  font-size: clamp(16px, 4.2vw, 24px);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .register-promo-text {

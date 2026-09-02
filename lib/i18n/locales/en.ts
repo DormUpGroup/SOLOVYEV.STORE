@@ -213,7 +213,7 @@ export const en: Dictionary = {
     firstOrderDiscount: "First order 15% off",
   },
   registerPromo: {
-    title: "15% off your first order",
+    title: "off your first order",
     body: "Create an account and get 15% off your first order.",
     cta: "CREATE ACCOUNT",
     close: "Close",
