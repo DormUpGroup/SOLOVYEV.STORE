@@ -15,6 +15,7 @@ import { useI18n } from "@/components/providers/I18nProvider";
 import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { checkoutLoginHref } from "@/lib/customer-auth";
+import { applyFirstOrderDiscount } from "@/lib/first-order-discount";
 
 export function CartDrawer() {
   const { products, config } = useStore();
@@ -26,7 +27,7 @@ export function CartDrawer() {
     removeFromCart,
     clearCart,
   } = useCart();
-  const { user } = useAuth();
+  const { user, firstOrderDiscountEligible, consumeFirstOrderDiscount } = useAuth();
   const [checkingOut, setCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const { dict } = useI18n();
@@ -38,6 +39,11 @@ export function CartDrawer() {
       return sum + (product ? product.price * item.quantity : 0);
     }, 0);
   }, [cart, products]);
+
+  const discount = firstOrderDiscountEligible && subtotal > 0
+    ? applyFirstOrderDiscount(subtotal)
+    : null;
+  const showDiscount = Boolean(discount && discount.discountAmount > 0);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -73,6 +79,7 @@ export function CartDrawer() {
         return;
       }
       if (!response.ok || !data.whatsappUrl) throw new Error(data.error || "Checkout failed");
+      consumeFirstOrderDiscount();
       clearCart();
       window.open(data.whatsappUrl, "_blank", "noopener,noreferrer");
     } catch (error) {
@@ -195,9 +202,26 @@ export function CartDrawer() {
         </div>
 
         <div className="cart-drawer-footer">
-          <div className="cart-subtotal-row">
-            {cartText.subtotal}: <span id="cart-subtotal">{formatPrice(subtotal, config.currency.symbol)}</span>
-          </div>
+          {showDiscount && discount ? (
+            <>
+              <div className="cart-subtotal-row cart-subtotal-original">
+                {cartText.subtotal}: <span>{formatPrice(discount.original, config.currency.symbol)}</span>
+              </div>
+              <div className="cart-subtotal-row cart-discount-row">
+                {cartText.firstOrderDiscount}: <span>-{formatPrice(discount.discountAmount, config.currency.symbol)}</span>
+              </div>
+              <div className="cart-subtotal-row">
+                {cartText.total}: <span id="cart-subtotal">{formatPrice(discount.total, config.currency.symbol)}</span>
+              </div>
+            </>
+          ) : (
+            <div className="cart-subtotal-row">
+              {cartText.subtotal}: <span id="cart-subtotal">{formatPrice(subtotal, config.currency.symbol)}</span>
+            </div>
+          )}
+          {!user && cart.length > 0 ? (
+            <p className="cart-discount-hint">{cartText.guestDiscountHint}</p>
+          ) : null}
           <button
             type="button"
             className={`btn-primary cart-checkout-btn ${cart.length === 0 ? "disabled" : ""}`}

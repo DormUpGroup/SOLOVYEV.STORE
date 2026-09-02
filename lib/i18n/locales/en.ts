@@ -90,6 +90,9 @@ export const en: Dictionary = {
     decreaseQty: "Decrease quantity",
     increaseQty: "Increase quantity",
     removeItem: "Remove item",
+    firstOrderDiscount: "First order 15% off",
+    total: "Total",
+    guestDiscountHint: "Create an account for 15% off your first order.",
   },
   product: {
     condition: "Condition",
@@ -136,7 +139,7 @@ export const en: Dictionary = {
     noAccount: "New to SOLOVYEV STORE?",
     createAccount: "CREATE ACCOUNT",
     registerTitle: "Create account",
-    registerHelp: "Create an account to save favorites, sync your cart, and track orders.",
+    registerHelp: "Get 15% off your first order. Save favorites, sync your cart, and track orders.",
     registerButton: "CREATE ACCOUNT",
     haveAccount: "Already have an account?",
     passwordRequirements: "Use at least 8 characters with a letter and a number.",
@@ -207,6 +210,13 @@ export const en: Dictionary = {
     termsLink: "Terms of Service",
     privacyLink: "Privacy Policy",
     andWord: "and",
+    firstOrderDiscount: "First order 15% off",
+  },
+  registerPromo: {
+    title: "15% off your first order",
+    body: "Create an account and get 15% off your first order.",
+    cta: "CREATE ACCOUNT",
+    close: "Close",
   },
   footer: {
     privacy: "Privacy Policy",

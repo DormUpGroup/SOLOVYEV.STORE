@@ -90,6 +90,9 @@ export const ru: Dictionary = {
     decreaseQty: "Уменьшить количество",
     increaseQty: "Увеличить количество",
     removeItem: "Удалить товар",
+    firstOrderDiscount: "Скидка 15% на первый заказ",
+    total: "Итого",
+    guestDiscountHint: "Создайте аккаунт — 15% на первый заказ.",
   },
   product: {
     condition: "Состояние",
@@ -136,7 +139,7 @@ export const ru: Dictionary = {
     noAccount: "Впервые в SOLOVYEV STORE?",
     createAccount: "СОЗДАТЬ АККАУНТ",
     registerTitle: "Создать аккаунт",
-    registerHelp: "Сохраняйте избранное, синхронизируйте корзину и отслеживайте заказы.",
+    registerHelp: "15% на первый заказ. Избранное, синхронизация корзины и история заказов.",
     registerButton: "СОЗДАТЬ АККАУНТ",
     haveAccount: "Уже есть аккаунт?",
     passwordRequirements: "Минимум 8 символов, одна буква и одна цифра.",
@@ -207,6 +210,13 @@ export const ru: Dictionary = {
     termsLink: "Пользовательское соглашение",
     privacyLink: "Политику конфиденциальности",
     andWord: "и",
+    firstOrderDiscount: "Скидка 15% на первый заказ",
+  },
+  registerPromo: {
+    title: "15% на первый заказ",
+    body: "Создайте аккаунт и получите 15% скидку на первый заказ.",
+    cta: "СОЗДАТЬ АККАУНТ",
+    close: "Закрыть",
   },
   footer: {
     privacy: "Политика конфиденциальности",

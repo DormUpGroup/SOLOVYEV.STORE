@@ -489,10 +489,25 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
                   </table>
                 </div>
                 <p style={{ marginTop: 12 }}>
-                  <strong>
-                    Subtotal: {selected.currencySymbol}
-                    {selected.subtotal.toFixed(0)}
-                  </strong>
+                  {selected.discountAmount > 0 ? (
+                    <>
+                      Subtotal: {selected.currencySymbol}
+                      {(selected.subtotal + selected.discountAmount).toFixed(0)}
+                      <br />
+                      First order {selected.discountPercent}% off: -{selected.currencySymbol}
+                      {selected.discountAmount.toFixed(0)}
+                      <br />
+                      <strong>
+                        Total: {selected.currencySymbol}
+                        {selected.subtotal.toFixed(0)}
+                      </strong>
+                    </>
+                  ) : (
+                    <strong>
+                      Subtotal: {selected.currencySymbol}
+                      {selected.subtotal.toFixed(0)}
+                    </strong>
+                  )}
                 </p>
               </>
             )}

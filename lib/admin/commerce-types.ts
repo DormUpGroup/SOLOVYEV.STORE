@@ -65,6 +65,8 @@ export interface AdminOrderRow {
   currencyCode: string;
   currencySymbol: string;
   subtotal: number;
+  discountPercent: number;
+  discountAmount: number;
   itemCount: number;
   createdAt: string;
   updatedAt: string;

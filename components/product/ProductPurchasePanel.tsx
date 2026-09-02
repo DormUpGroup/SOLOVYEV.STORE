@@ -29,7 +29,7 @@ export function ProductPurchasePanel({
   const { dict } = useI18n();
   const { product: copy } = dict;
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, consumeFirstOrderDiscount } = useAuth();
   const [checkoutBusy, setCheckoutBusy] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const unavailable = isProductUnavailable(product);
@@ -58,6 +58,7 @@ export function ProductPurchasePanel({
         return;
       }
       if (!response.ok || !data.whatsappUrl) throw new Error(data.error || "Checkout failed");
+      consumeFirstOrderDiscount();
       window.open(data.whatsappUrl, "_blank", "noopener,noreferrer");
     } catch (error) {
       setCheckoutError(error instanceof Error ? error.message : "Checkout failed");

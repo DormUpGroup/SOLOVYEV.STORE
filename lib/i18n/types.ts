@@ -92,6 +92,9 @@ export interface Dictionary {
     decreaseQty: string;
     increaseQty: string;
     removeItem: string;
+    firstOrderDiscount: string;
+    total: string;
+    guestDiscountHint: string;
   };
   product: {
     condition: string;
@@ -207,6 +210,13 @@ export interface Dictionary {
     termsLink: string;
     privacyLink: string;
     andWord: string;
+    firstOrderDiscount: string;
+  };
+  registerPromo: {
+    title: string;
+    body: string;
+    cta: string;
+    close: string;
   };
   footer: {
     privacy: string;

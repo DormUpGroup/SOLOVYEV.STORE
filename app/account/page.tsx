@@ -36,6 +36,8 @@ interface AccountData {
     status: string;
     currency_symbol: string;
     subtotal: number;
+    discount_percent?: number;
+    discount_amount?: number;
     created_at: string;
     order_items: Array<{
       id: number;
@@ -308,6 +310,24 @@ export default function AccountPage() {
                         </li>
                       );
                     })}</ul>
+                    {Number(order.discount_amount) > 0 ? (
+                      <div className="account-order-totals">
+                        <p>
+                          {dict.cart.subtotal}: {formatPrice(
+                            Number(order.subtotal) + Number(order.discount_amount),
+                            order.currency_symbol,
+                          )}
+                        </p>
+                        <p>
+                          {copy.firstOrderDiscount}: -{formatPrice(Number(order.discount_amount), order.currency_symbol)}
+                        </p>
+                        <p>
+                          <strong>
+                            {copy.total}: {formatPrice(Number(order.subtotal), order.currency_symbol)}
+                          </strong>
+                        </p>
+                      </div>
+                    ) : null}
                   </article>
                 ))}</div>
               ) : (

@@ -17,6 +17,8 @@ interface AuthContextValue {
   displayName: string | null;
   loading: boolean;
   configured: boolean;
+  firstOrderDiscountEligible: boolean;
+  consumeFirstOrderDiscount: () => void;
   refreshProfile: () => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -29,20 +31,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [loading, setLoading] = useState(configured);
+  const [firstOrderDiscountEligible, setFirstOrderDiscountEligible] = useState(false);
 
   const loadProfile = useCallback(
     async (userId: string | undefined) => {
       if (!supabase || !userId) {
         setDisplayName(null);
+        setFirstOrderDiscountEligible(false);
         return;
       }
-      const { data } = await supabase
-        .from("profiles")
-        .select("display_name")
-        .eq("id", userId)
-        .maybeSingle();
+      const [{ data }, orders] = await Promise.all([
+        supabase.from("profiles").select("display_name").eq("id", userId).maybeSingle(),
+        supabase
+          .from("orders")
+          .select("id", { count: "exact", head: true })
+          .neq("status", "cancelled"),
+      ]);
       const name = data?.display_name?.trim() || null;
       setDisplayName(name);
+      setFirstOrderDiscountEligible(!orders.error && (orders.count ?? 0) === 0);
     },
     [supabase],
   );
@@ -63,7 +70,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      setLoading(false);
       void loadProfile(session?.user?.id);
     });
 
@@ -77,19 +83,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await loadProfile(user?.id);
   }, [loadProfile, user?.id]);
 
+  const consumeFirstOrderDiscount = useCallback(() => {
+    setFirstOrderDiscountEligible(false);
+  }, []);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
       displayName,
       loading,
       configured,
+      firstOrderDiscountEligible,
+      consumeFirstOrderDiscount,
       refreshProfile,
       signOut: async () => {
         if (supabase) await supabase.auth.signOut();
         setDisplayName(null);
+        setFirstOrderDiscountEligible(false);
       },
     }),
-    [configured, displayName, loading, refreshProfile, supabase, user],
+    [
+      configured,
+      consumeFirstOrderDiscount,
+      displayName,
+      firstOrderDiscountEligible,
+      loading,
+      refreshProfile,
+      supabase,
+      user,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

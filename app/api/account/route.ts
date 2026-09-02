@@ -16,7 +16,7 @@ export async function GET() {
     supabase.from("cart_items").select("product_id,size,quantity").order("created_at"),
     supabase
       .from("orders")
-      .select("id,order_ref,status,currency_code,currency_symbol,subtotal,created_at,order_items(*)")
+      .select("id,order_ref,status,currency_code,currency_symbol,subtotal,discount_percent,discount_amount,created_at,order_items(*)")
       .order("created_at", { ascending: false }),
   ]);
 

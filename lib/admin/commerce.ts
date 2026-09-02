@@ -30,6 +30,8 @@ type OrderRow = {
   currency_code: string;
   currency_symbol: string;
   subtotal: number | string;
+  discount_percent?: number | string;
+  discount_amount?: number | string;
   whatsapp_url?: string | null;
   customer_phone?: string | null;
   admin_notes?: string | null;
@@ -80,6 +82,8 @@ function mapOrderRow(
     currencyCode: row.currency_code,
     currencySymbol: row.currency_symbol,
     subtotal: Number(row.subtotal),
+    discountPercent: Number(row.discount_percent ?? 0),
+    discountAmount: Number(row.discount_amount ?? 0),
     itemCount,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -215,7 +219,7 @@ export async function getAdminUser(id: string): Promise<AdminUserDetail | null> 
   const { data: orders, error: ordersError } = await admin
     .from("orders")
     .select(
-      "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,created_at,updated_at,order_items(id)",
+      "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,discount_percent,discount_amount,created_at,updated_at,order_items(id)",
     )
     .eq("user_id", id)
     .order("created_at", { ascending: false })
@@ -248,7 +252,7 @@ export async function listAdminOrders(options: {
   let query = admin
     .from("orders")
     .select(
-      "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,created_at,updated_at,order_items(id)",
+      "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,discount_percent,discount_amount,created_at,updated_at,order_items(id)",
       { count: "exact" },
     )
     .order("created_at", { ascending: false })
@@ -282,7 +286,7 @@ export async function listAdminOrders(options: {
       let emailQuery = admin
         .from("orders")
         .select(
-          "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,created_at,updated_at,order_items(id)",
+          "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,discount_percent,discount_amount,created_at,updated_at,order_items(id)",
           { count: "exact" },
         )
         .in("user_id", userIds)
@@ -341,7 +345,7 @@ export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null
   const { data, error } = await admin
     .from("orders")
     .select(
-      "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,whatsapp_url,customer_phone,admin_notes,tracking_code,shipping_method,assignee,created_at,updated_at,order_items(*)",
+      "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,discount_percent,discount_amount,whatsapp_url,customer_phone,admin_notes,tracking_code,shipping_method,assignee,created_at,updated_at,order_items(*)",
     )
     .eq("id", id)
     .maybeSingle();

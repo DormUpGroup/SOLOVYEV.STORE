@@ -1,4 +1,5 @@
 import configData from "@/data/config.json";
+import { qualifiesForFreeShipping } from "./first-order-discount";
 import { formatPrice, formatPriceOrDm } from "./products";
 import type { CartItem, Product, SellTradeFormData, StoreConfig } from "./types";
 
@@ -8,6 +9,11 @@ export type WhatsAppCustomer = {
   displayName?: string | null;
   phone?: string | null;
   email?: string | null;
+};
+
+export type WhatsAppOrderDiscount = {
+  percent: number;
+  amount: number;
 };
 
 export function generateOrderRef(): string {
@@ -109,6 +115,7 @@ export function buildCartMessage(
   cfg: StoreConfig = defaultConfig,
   orderRef?: string,
   customer?: WhatsAppCustomer | null,
+  discount?: WhatsAppOrderDiscount | null,
 ): string {
   const sym = cfg.currency.symbol;
   const ref = orderRef || generateOrderRef();
@@ -126,8 +133,16 @@ export function buildCartMessage(
     message += `   🔗 ${siteUrl}/product/${product.slug}\n\n`;
   });
 
+  const discountAmount = Math.max(0, Number(discount?.amount ?? 0));
+  const discountPercent = Math.max(0, Number(discount?.percent ?? 0));
+  const total = Math.max(0, subtotal - discountAmount);
+
   message += `💰 Subtotal: ${subtotal > 0 ? formatPrice(subtotal, sym) : formatPriceOrDm(0, sym)}\n`;
-  if (subtotal >= 1000) {
+  if (discountAmount > 0) {
+    message += `🎁 First order ${discountPercent}% off: -${formatPrice(discountAmount, sym)}\n`;
+    message += `💰 Total: ${total > 0 ? formatPrice(total, sym) : formatPriceOrDm(0, sym)}\n`;
+  }
+  if (qualifiesForFreeShipping(subtotal)) {
     message += `🚚 Free shipping (orders over ₪1000)\n`;
   } else {
     message += `🚚 Shipping: ₪25 locker / ₪50 door-to-door\n`;

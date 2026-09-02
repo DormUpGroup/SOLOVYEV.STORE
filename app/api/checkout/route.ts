@@ -36,7 +36,15 @@ export async function POST(request: NextRequest) {
   }
 
   const products = await getProducts();
-  const order = data[0] as { order_id: string; order_ref: string; subtotal: number };
+  const order = data[0] as {
+    order_id: string;
+    order_ref: string;
+    subtotal: number;
+    discount_percent?: number;
+    discount_amount?: number;
+  };
+  const discountPercent = Number(order.discount_percent ?? 0);
+  const discountAmount = Number(order.discount_amount ?? 0);
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -55,6 +63,9 @@ export async function POST(request: NextRequest) {
       phone: profile?.phone ?? null,
       email: profile?.email ?? user.email ?? null,
     },
+    discountAmount > 0
+      ? { percent: discountPercent, amount: discountAmount }
+      : null,
   );
   const whatsappUrl = buildWhatsAppUrl(message, config);
   const customerPhone = profile?.phone?.trim() || null;
@@ -79,6 +90,8 @@ export async function POST(request: NextRequest) {
     orderId: order.order_id,
     orderRef: order.order_ref,
     subtotal: Number(order.subtotal),
+    discountPercent,
+    discountAmount,
     whatsappUrl,
   });
 }

@@ -8,6 +8,7 @@ import {
   StoreProvider,
   type StoreContextValue,
 } from "@/components/providers/StoreProvider";
+import { RegisterPromoModal } from "@/components/modals/RegisterPromoModal";
 
 export function AppProviders({
   children,
@@ -23,7 +24,10 @@ export function AppProviders({
           <AuthProvider>
             <FavoritesProvider>
               <CartProvider>
-                <UIProvider>{children}</UIProvider>
+                <UIProvider>
+                  {children}
+                  <RegisterPromoModal />
+                </UIProvider>
               </CartProvider>
             </FavoritesProvider>
           </AuthProvider>

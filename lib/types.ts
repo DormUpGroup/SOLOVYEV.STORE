@@ -128,6 +128,8 @@ export interface CustomerOrder {
   currencyCode: string;
   currencySymbol: string;
   subtotal: number;
+  discountPercent: number;
+  discountAmount: number;
   createdAt: string;
   items: CustomerOrderItem[];
 }

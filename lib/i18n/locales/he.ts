@@ -89,6 +89,9 @@ export const he: Dictionary = {
     decreaseQty: "הקטנת כמות",
     increaseQty: "הגדלת כמות",
     removeItem: "הסרת פריט",
+    firstOrderDiscount: "15% הנחה להזמנה הראשונה",
+    total: "סה״כ",
+    guestDiscountHint: "צרו חשבון וקבלו 15% הנחה בהזמנה הראשונה.",
   },
   product: {
     condition: "מצב",
@@ -135,7 +138,7 @@ export const he: Dictionary = {
     noAccount: "חדשים ב-SOLOVYEV STORE?",
     createAccount: "יצירת חשבון",
     registerTitle: "יצירת חשבון",
-    registerHelp: "שמרו מועדפים, סנכרנו את העגלה ועקבו אחר הזמנות.",
+    registerHelp: "15% הנחה להזמנה הראשונה. שמרו מועדפים, סנכרנו את העגלה ועקבו אחר הזמנות.",
     registerButton: "יצירת חשבון",
     haveAccount: "כבר יש לכם חשבון?",
     passwordRequirements: "לפחות 8 תווים, אות אחת ומספר אחד.",
@@ -206,6 +209,13 @@ export const he: Dictionary = {
     termsLink: "תנאי השימוש",
     privacyLink: "מדיניות הפרטיות",
     andWord: "ואת",
+    firstOrderDiscount: "15% הנחה להזמנה הראשונה",
+  },
+  registerPromo: {
+    title: "15% הנחה להזמנה הראשונה",
+    body: "צרו חשבון וקבלו 15% הנחה על ההזמנה הראשונה.",
+    cta: "יצירת חשבון",
+    close: "סגירה",
   },
   footer: {
     privacy: "מדיניות פרטיות",

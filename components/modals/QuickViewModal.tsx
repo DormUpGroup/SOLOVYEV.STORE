@@ -23,7 +23,7 @@ export function QuickViewModal() {
   const { activeModal, selectedProduct, closeAll } = useUI();
   const { addToCart } = useCart();
   const { dict } = useI18n();
-  const { user } = useAuth();
+  const { user, consumeFirstOrderDiscount } = useAuth();
   const { product, sellTrade } = dict;
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeImg, setActiveImg] = useState<string>("");
@@ -99,6 +99,7 @@ export function QuickViewModal() {
         return;
       }
       if (!response.ok || !data.whatsappUrl) throw new Error(data.error || "Checkout failed");
+      consumeFirstOrderDiscount();
       window.open(data.whatsappUrl, "_blank", "noopener,noreferrer");
     } catch (error) {
       setCheckoutError(error instanceof Error ? error.message : "Checkout failed");
