@@ -2107,6 +2107,26 @@ main {
   font-size: 11px;
 }
 
+@keyframes register-promo-bounce {
+  0%,
+  12% {
+    transform: translateY(0);
+  }
+  18% {
+    transform: translateY(-8px);
+  }
+  24% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-5px);
+  }
+  36%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
 .register-promo-fab {
   position: fixed;
   z-index: 2100;
@@ -2131,15 +2151,18 @@ main {
   text-align: center;
   line-height: 1.2;
   box-shadow: 0 8px 24px var(--shadow-color);
+  animation: register-promo-bounce 3.8s cubic-bezier(0.34, 1.4, 0.64, 1) infinite;
 }
 
 .register-promo-fab-short {
   display: none;
 }
 
-.register-promo-fab:hover {
+.register-promo-fab:hover,
+.register-promo-fab:focus-visible {
   background-color: var(--text-primary);
   color: var(--bg-color);
+  animation-play-state: paused;
 }
 
 body.has-register-promo-fab main {
@@ -5198,7 +5221,8 @@ body.no-scroll {
   .newest-arrivals-track,
   .about-photo-float,
   .floating-sneaker-container,
-  .site-header-shell {
+  .site-header-shell,
+  .register-promo-fab {
     animation: none !important;
   }
 
