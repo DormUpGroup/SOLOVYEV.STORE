@@ -15,6 +15,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { checkoutLoginHref } from "@/lib/customer-auth";
 import { ProductImageLoupe } from "@/components/ui/ProductImageLoupe";
 import { FavoriteButton } from "@/components/catalog/FavoriteButton";
+import { GuestDiscountLink } from "@/components/promo/GuestDiscountLink";
 import type { ProductStatus } from "@/lib/types";
 import { productImageCropStyle } from "@/lib/image-crop";
 
@@ -182,6 +183,7 @@ export function QuickViewModal() {
               <p className="modal-price" id="modal-product-price">
                 {formatPriceOrDm(selectedProduct.price, config.currency.symbol)}
               </p>
+              <GuestDiscountLink />
               <FavoriteButton productId={selectedProduct.id} variant="inline" />
             </div>
 

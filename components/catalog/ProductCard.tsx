@@ -14,6 +14,7 @@ import { useI18n } from "@/components/providers/I18nProvider";
 import { ProductImageLoupe } from "@/components/ui/ProductImageLoupe";
 import type { Product } from "@/lib/types";
 import { FavoriteButton } from "@/components/catalog/FavoriteButton";
+import { GuestDiscountLink } from "@/components/promo/GuestDiscountLink";
 
 interface ProductCardProps {
   product: Product;
@@ -85,14 +86,17 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         </Link>
 
         <div className="product-footer">
-          <Link href={href} className="product-price-block">
-            <span className="product-price">{formatPriceOrDm(product.price, sym)}</span>
-            {product.originalPrice ? (
-              <span className="original-price">
-                {formatPrice(product.originalPrice, sym)}
-              </span>
-            ) : null}
-          </Link>
+          <div className="product-price-block">
+            <Link href={href} className="product-price-main">
+              <span className="product-price">{formatPriceOrDm(product.price, sym)}</span>
+              {product.originalPrice ? (
+                <span className="original-price">
+                  {formatPrice(product.originalPrice, sym)}
+                </span>
+              ) : null}
+            </Link>
+            <GuestDiscountLink />
+          </div>
           <button
             type="button"
             className="quick-view-btn"

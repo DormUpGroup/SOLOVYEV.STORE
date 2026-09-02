@@ -216,6 +216,9 @@ export const he: Dictionary = {
     body: "צרו חשבון וקבלו 15% הנחה על ההזמנה הראשונה.",
     cta: "יצירת חשבון",
     close: "סגירה",
+    fab: "קבלו 15% הנחה",
+    fabShort: "15% הנחה",
+    priceOffer: "15% הנחה!",
   },
   footer: {
     privacy: "מדיניות פרטיות",

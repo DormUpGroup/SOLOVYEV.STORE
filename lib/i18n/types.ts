@@ -217,6 +217,9 @@ export interface Dictionary {
     body: string;
     cta: string;
     close: string;
+    fab: string;
+    fabShort: string;
+    priceOffer: string;
   };
   footer: {
     privacy: string;

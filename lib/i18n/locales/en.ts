@@ -217,6 +217,9 @@ export const en: Dictionary = {
     body: "Create an account and get 15% off your first order.",
     cta: "CREATE ACCOUNT",
     close: "Close",
+    fab: "GET YOUR 15% DISCOUNT",
+    fabShort: "GET 15% OFF",
+    priceOffer: "GET 15% OFF!",
   },
   footer: {
     privacy: "Privacy Policy",

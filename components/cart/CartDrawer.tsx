@@ -16,6 +16,7 @@ import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { checkoutLoginHref } from "@/lib/customer-auth";
 import { applyFirstOrderDiscount } from "@/lib/first-order-discount";
+import { GuestDiscountLink } from "@/components/promo/GuestDiscountLink";
 
 export function CartDrawer() {
   const { products, config } = useStore();
@@ -162,6 +163,7 @@ export function CartDrawer() {
                     </p>
                     <div className="cart-item-price">
                       {formatPrice(product.price, config.currency.symbol)}
+                      <GuestDiscountLink />
                     </div>
                   </div>
                   <div className="cart-item-actions">

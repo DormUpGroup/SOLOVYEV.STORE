@@ -13,6 +13,7 @@ import { useI18n } from "@/components/providers/I18nProvider";
 import { FavoriteButton } from "@/components/catalog/FavoriteButton";
 import { ProductPurchasePanel } from "@/components/product/ProductPurchasePanel";
 import { ProductImageLoupe } from "@/components/ui/ProductImageLoupe";
+import { GuestDiscountLink } from "@/components/promo/GuestDiscountLink";
 import type { Product } from "@/lib/types";
 
 interface ProductPageDetailsProps {
@@ -114,6 +115,7 @@ export function ProductPageDetails({
             <p className="modal-price">
               {formatPriceOrDm(product.price, currencySymbol)}
             </p>
+            <GuestDiscountLink />
             <FavoriteButton productId={product.id} variant="inline" />
           </div>
           {product.description ? (
