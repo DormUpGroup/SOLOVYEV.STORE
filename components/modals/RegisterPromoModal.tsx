@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FIRST_ORDER_DISCOUNT_PERCENT } from "@/lib/first-order-discount";
 import { lockBodyScroll, unlockBodyScroll } from "@/lib/scroll-lock";
 import { useI18n } from "@/components/providers/I18nProvider";
@@ -12,16 +12,30 @@ import {
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 
+const REGISTER_PROMO_DELAY_MS = 3000;
+
 export function RegisterPromoModal() {
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const { dict } = useI18n();
   const copy = dict.registerPromo;
   const { dismissed, dismiss } = useRegisterPromo();
+  const [delayElapsed, setDelayElapsed] = useState(false);
 
   const onAdminPage =
     typeof document !== "undefined" && Boolean(document.querySelector(".admin-cms"));
-  const open = !loading && !user && !dismissed && !isRegisterPromoHiddenPath(pathname) && !onAdminPage;
+  const eligible =
+    !loading && !user && !dismissed && !isRegisterPromoHiddenPath(pathname) && !onAdminPage;
+  const open = eligible && delayElapsed;
+
+  useEffect(() => {
+    if (!eligible) {
+      setDelayElapsed(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setDelayElapsed(true), REGISTER_PROMO_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [eligible]);
 
   useEffect(() => {
     if (!open) return;

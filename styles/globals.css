@@ -2190,9 +2190,18 @@ body.has-register-promo-fab main {
 }
 
 @media (max-width: 768px) {
+  #register-promo-modal.modal.open {
+    align-items: center;
+    justify-content: center;
+    height: 100dvh;
+    padding: max(12px, env(safe-area-inset-top, 0px)) 12px
+      max(12px, env(safe-area-inset-bottom, 0px));
+  }
+
   .register-promo-content {
     width: min(calc(100% - 24px), 480px);
-    max-height: min(88vh, 640px);
+    max-height: min(88dvh, 640px);
+    margin-block: auto;
     padding: 48px 16px 24px;
   }
 
