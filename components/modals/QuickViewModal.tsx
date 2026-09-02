@@ -183,7 +183,10 @@ export function QuickViewModal() {
               <p className="modal-price" id="modal-product-price">
                 {formatPriceOrDm(selectedProduct.price, config.currency.symbol)}
               </p>
-              <GuestDiscountLink />
+              <GuestDiscountLink
+                price={selectedProduct.price}
+                symbol={config.currency.symbol}
+              />
               <FavoriteButton productId={selectedProduct.id} variant="inline" />
             </div>
 

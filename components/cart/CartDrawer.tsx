@@ -163,7 +163,10 @@ export function CartDrawer() {
                     </p>
                     <div className="cart-item-price">
                       {formatPrice(product.price, config.currency.symbol)}
-                      <GuestDiscountLink />
+                      <GuestDiscountLink
+                        price={product.price}
+                        symbol={config.currency.symbol}
+                      />
                     </div>
                   </div>
                   <div className="cart-item-actions">

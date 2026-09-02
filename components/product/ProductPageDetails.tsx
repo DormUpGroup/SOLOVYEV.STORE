@@ -115,7 +115,7 @@ export function ProductPageDetails({
             <p className="modal-price">
               {formatPriceOrDm(product.price, currencySymbol)}
             </p>
-            <GuestDiscountLink />
+            <GuestDiscountLink price={product.price} symbol={currencySymbol} />
             <FavoriteButton productId={product.id} variant="inline" />
           </div>
           {product.description ? (

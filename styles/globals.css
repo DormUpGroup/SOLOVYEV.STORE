@@ -2078,29 +2078,49 @@ main {
 
 .guest-discount-link {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.05em;
   line-height: 1.2;
   text-transform: uppercase;
   color: var(--text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.guest-discount-link > span:first-child {
   text-decoration: underline;
   text-underline-offset: 2px;
-  white-space: nowrap;
 }
 
 .guest-discount-link:hover {
   color: var(--text-primary);
 }
 
+.guest-discount-price {
+  color: var(--text-mute);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  white-space: nowrap;
+}
+
 .product-price-block .guest-discount-link {
   padding: 2px 0;
+  white-space: normal;
 }
 
 .modal-price-row .guest-discount-link {
   font-size: 13px;
   flex-shrink: 0;
+}
+
+.modal-price-row .guest-discount-price {
+  font-size: 16px;
 }
 
 .cart-item-price .guest-discount-link {
@@ -3134,6 +3154,10 @@ body.has-register-promo-fab main {
     letter-spacing: 0.03em;
     white-space: normal;
     max-width: 100%;
+  }
+
+  .product-price-block .guest-discount-price {
+    font-size: 11px;
   }
 
   .quick-view-btn {

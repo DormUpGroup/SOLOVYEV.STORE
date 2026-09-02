@@ -95,7 +95,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
                 </span>
               ) : null}
             </Link>
-            <GuestDiscountLink />
+            <GuestDiscountLink price={product.price} symbol={sym} />
           </div>
           <button
             type="button"
