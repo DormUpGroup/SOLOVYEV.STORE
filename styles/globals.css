@@ -3890,41 +3890,7 @@ html[dir="rtl"] .cart-drawer.open {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 12px;
   padding-top: 2px;
-}
-
-.cart-qty-ctrl {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-card);
-}
-
-.cart-qty-ctrl button {
-  background: none;
-  border: none;
-  color: var(--text-primary);
-  width: 44px;
-  height: 44px;
-  cursor: pointer;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s;
-}
-
-.cart-qty-ctrl button:hover {
-  background-color: var(--accent-glow);
-}
-
-.cart-item-qty {
-  font-family: var(--font-display);
-  font-size: 14px;
-  min-width: 28px;
-  text-align: center;
-  line-height: 1;
 }
 
 .remove-btn {

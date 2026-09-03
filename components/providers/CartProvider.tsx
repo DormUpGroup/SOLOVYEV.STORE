@@ -30,7 +30,6 @@ interface CartContextValue {
   openCart: () => void;
   closeCart: () => void;
   addToCart: (id: number, size: string) => boolean;
-  updateQuantity: (id: number, size: string, delta: number) => void;
   removeFromCart: (id: number, size: string) => void;
   clearCart: () => void;
   showToast: (message: string, type?: "success" | "error") => void;
@@ -40,10 +39,7 @@ interface CartContextValue {
 const CartContext = createContext<CartContextValue | null>(null);
 
 function normalizeCart(raw: CartItem[]): CartItem[] {
-  return raw.map((item) => {
-    const q = item.quantity ?? item.qty ?? 1;
-    return { ...item, quantity: q, qty: q };
-  });
+  return raw.map((item) => ({ ...item, quantity: 1, qty: 1 }));
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
@@ -90,12 +86,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       .then(async (data: { items?: Array<{ product_id: number; size: string; quantity: number }> }) => {
         if (cancelled) return;
         const merged = new Map<string, CartItem>();
-        for (const item of cart) merged.set(`${item.id}:${item.size}`, item);
+        for (const item of cart) merged.set(`${item.id}:${item.size}`, { ...item, quantity: 1, qty: 1 });
         for (const item of data.items ?? []) {
           const key = `${item.product_id}:${item.size}`;
-          const existing = merged.get(key);
-          const quantity = Math.max(existing?.quantity ?? 0, item.quantity);
-          merged.set(key, { id: item.product_id, size: item.size, quantity, qty: quantity });
+          merged.set(key, { id: item.product_id, size: item.size, quantity: 1, qty: 1 });
         }
         const next = [...merged.values()];
         setCart(next);
@@ -142,45 +136,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
         return false;
       }
 
+      let alreadyInCart = false;
       setCart((prev) => {
-        const existing = prev.find((i) => i.id === id && i.size === size);
-        if (existing) {
-          return prev.map((i) =>
-            i.id === id && i.size === size
-              ? {
-                  ...i,
-                  quantity: i.quantity + 1,
-                  qty: i.quantity + 1,
-                }
-              : i,
-          );
+        if (prev.some((i) => i.id === id && i.size === size)) {
+          alreadyInCart = true;
+          return prev;
         }
         return [...prev, { id, size, quantity: 1, qty: 1 }];
       });
 
-      trackAddToCart({
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        size: size || "One Size",
-      });
-      showToast(cartText.added);
+      if (!alreadyInCart) {
+        trackAddToCart({
+          id: product.id,
+          title: product.title,
+          price: product.price,
+          size: size || "One Size",
+        });
+      }
+      showToast(alreadyInCart ? cartText.alreadyInCart : cartText.added);
       return true;
     },
-    [showToast, cartText.added, cartText.selectSize, products],
+    [showToast, cartText.added, cartText.alreadyInCart, cartText.selectSize, products],
   );
-
-  const updateQuantity = useCallback((id: number, size: string, delta: number) => {
-    setCart((prev) =>
-      prev
-        .map((item) => {
-          if (item.id !== id || item.size !== size) return item;
-          const nextQty = item.quantity + delta;
-          return { ...item, quantity: nextQty, qty: nextQty };
-        })
-        .filter((item) => item.quantity > 0),
-    );
-  }, []);
 
   const removeFromCart = useCallback((id: number, size: string) => {
     setCart((prev) => prev.filter((i) => !(i.id === id && i.size === size)));
@@ -205,7 +182,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
         openCart,
         closeCart,
         addToCart,
-        updateQuantity,
         removeFromCart,
         clearCart: () => setCart([]),
         showToast,

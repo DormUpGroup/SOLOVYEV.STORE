@@ -129,7 +129,7 @@ export function buildCartMessage(
     subtotal += lineTotal;
     message += `${index + 1}. ${product.title}\n`;
     message += `   Size: ${item.size || "One Size"}\n`;
-    message += `   ${formatPriceOrDm(product.price, sym)} × ${item.quantity} = ${product.price > 0 ? formatPrice(lineTotal, sym) : formatPriceOrDm(0, sym)}\n`;
+    message += `   ${product.price > 0 ? formatPrice(lineTotal, sym) : formatPriceOrDm(0, sym)}\n`;
     message += `   🔗 ${siteUrl}/product/${product.slug}\n\n`;
   });
 

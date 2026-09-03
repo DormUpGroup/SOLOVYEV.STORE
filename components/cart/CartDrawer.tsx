@@ -24,7 +24,6 @@ export function CartDrawer() {
     cart,
     isOpen,
     closeCart,
-    updateQuantity,
     removeFromCart,
     clearCart,
   } = useCart();
@@ -170,25 +169,6 @@ export function CartDrawer() {
                     </div>
                   </div>
                   <div className="cart-item-actions">
-                    <div className="cart-qty-ctrl">
-                      <button
-                        type="button"
-                        className="qty-minus"
-                        aria-label={cartText.decreaseQty}
-                        onClick={() => updateQuantity(item.id, item.size, -1)}
-                      >
-                        &minus;
-                      </button>
-                      <span className="cart-item-qty">{item.quantity}</span>
-                      <button
-                        type="button"
-                        className="qty-plus"
-                        aria-label={cartText.increaseQty}
-                        onClick={() => updateQuantity(item.id, item.size, 1)}
-                      >
-                        +
-                      </button>
-                    </div>
                     <button
                       type="button"
                       className="remove-btn"

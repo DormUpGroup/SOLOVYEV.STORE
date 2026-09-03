@@ -18,10 +18,10 @@ export async function POST(request: NextRequest) {
     id: Number(item.id),
     product_id: Number(item.id),
     size: String(item.size ?? "").slice(0, 40),
-    quantity: Number(item.quantity),
-    qty: Number(item.quantity),
+    quantity: 1,
+    qty: 1,
   }));
-  if (items.some((item) => !Number.isInteger(item.id) || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99)) {
+  if (items.some((item) => !Number.isInteger(item.id))) {
     return NextResponse.json({ error: "Invalid cart item" }, { status: 400 });
   }
 

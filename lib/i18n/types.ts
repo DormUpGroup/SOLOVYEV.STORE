@@ -88,9 +88,8 @@ export interface Dictionary {
     creatingOrder: string;
     close: string;
     added: string;
+    alreadyInCart: string;
     selectSize: string;
-    decreaseQty: string;
-    increaseQty: string;
     removeItem: string;
     firstOrderDiscount: string;
     total: string;

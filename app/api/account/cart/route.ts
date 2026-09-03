@@ -28,9 +28,9 @@ export async function PUT(request: NextRequest) {
     user_id: user.id,
     product_id: Number(item.id ?? item.product_id),
     size: String(item.size ?? "").slice(0, 40),
-    quantity: Number(item.quantity),
+    quantity: 1,
   }));
-  if (items.some((item) => !Number.isInteger(item.product_id) || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99)) {
+  if (items.some((item) => !Number.isInteger(item.product_id))) {
     return NextResponse.json({ error: "Invalid cart item" }, { status: 400 });
   }
 
