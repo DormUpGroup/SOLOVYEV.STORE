@@ -34,6 +34,7 @@ export interface Dictionary {
     allDrops: string;
     madeToOrder: string;
     brandNew: string;
+    mysteryBox: string;
     brands: string;
     aboutUs: string;
     sellTrade: string;
@@ -274,5 +275,36 @@ export interface Dictionary {
     photoAlt: string;
     contactsTitle: string;
     instagramHandle: string;
+  };
+  mysteryBox: {
+    title: string;
+    backLink: string;
+    backToMysteryBox: string;
+    pageIntro: string;
+    soldOut: string;
+    authenticity: string;
+    authenticityGuaranteed: string;
+    disclaimer: string;
+    tagline: string;
+    previewMedium: string;
+    previewLarge: string;
+    viewOtherMedium: string;
+    viewOtherLarge: string;
+    medium: {
+      title: string;
+      intro: string;
+      includesLead: string;
+      items: string[];
+      contentsAlt: string;
+      boxAlt: string;
+    };
+    large: {
+      title: string;
+      intro: string;
+      includesLead: string;
+      items: string[];
+      contentsAlt: string;
+      boxAlt: string;
+    };
   };
 }

@@ -30,6 +30,7 @@ export const en: Dictionary = {
     allDrops: "ALL DROPS",
     madeToOrder: "MADE TO ORDER",
     brandNew: "BRAND NEW",
+    mysteryBox: "MYSTERY BOX",
     brands: "BRANDS",
     aboutUs: "ABOUT US",
     sellTrade: "SELL / TRADE",
@@ -320,5 +321,53 @@ export const en: Dictionary = {
     photoAlt: "Featured streetwear and sneakers at SOLOVYEV STORE",
     contactsTitle: "CONTACT",
     instagramHandle: "@solovyev.store",
+  },
+  mysteryBox: {
+    title: "MYSTERY BOX.",
+    backLink: "← BACK TO STORE",
+    backToMysteryBox: "← BACK TO MYSTERY BOX",
+    pageIntro:
+      "Discover a curated selection of premium streetwear and sneakers with our SOLOVYEV.STORE Mystery Box.",
+    soldOut: "SOLD OUT",
+    authenticity: "Every item is carefully selected and 100% authentic.",
+    authenticityGuaranteed: "Authenticity guaranteed.",
+    disclaimer:
+      "Please note: The items shown in the photos are examples of what you may receive and are intended to illustrate the possible contents of the Mystery Box. The exact brands, models, colors, and items will vary from box to box.",
+    tagline: "Your box. Your surprise. Curated by SOLOVYEV.STORE.",
+    previewMedium: "MEDIUM BOX",
+    previewLarge: "LARGE BOX",
+    viewOtherMedium: "← MEDIUM BOX",
+    viewOtherLarge: "LARGE BOX →",
+    medium: {
+      title: "MEDIUM BOX",
+      intro:
+        "Discover a curated selection of premium streetwear and sneakers with our SOLOVYEV.STORE Mystery Box.",
+      includesLead: "Each box includes carefully selected authentic pieces:",
+      items: [
+        "1 pair of shoes",
+        "1 outerwear item",
+        "2 T-shirts",
+        "1 pair of jeans",
+        "1 accessory",
+      ],
+      contentsAlt: "Medium Mystery Box contents example — what's inside",
+      boxAlt: "SOLOVYEV.STORE Medium Mystery Box packaging",
+    },
+    large: {
+      title: "LARGE BOX",
+      intro:
+        "Discover a curated selection of premium streetwear and sneakers with our SOLOVYEV.STORE Mystery Box.",
+      includesLead:
+        "Each box includes carefully selected authentic pieces from a variety of sought-after brands and categories:",
+      items: [
+        "2 pairs of shoes",
+        "1 outerwear item",
+        "3 T-shirts",
+        "1 pair of jeans",
+        "2 accessories",
+      ],
+      contentsAlt: "Large Mystery Box contents example — what's inside",
+      boxAlt: "SOLOVYEV.STORE Large Mystery Box packaging",
+    },
   },
 };

@@ -30,6 +30,7 @@ export const he: Dictionary = {
     allDrops: "כל הדרופים",
     madeToOrder: "בהזמנה",
     brandNew: "חדש",
+    mysteryBox: "MYSTERY BOX",
     brands: "מותגים",
     aboutUs: "אודותינו",
     sellTrade: "מכירה / החלפה",
@@ -319,5 +320,53 @@ export const he: Dictionary = {
     photoAlt: "סטריטוור וסניקרס ב-SOLOVYEV STORE",
     contactsTitle: "צור קשר",
     instagramHandle: "@solovyev.store",
+  },
+  mysteryBox: {
+    title: "MYSTERY BOX.",
+    backLink: "← חזרה לחנות",
+    backToMysteryBox: "← חזרה ל-MYSTERY BOX",
+    pageIntro:
+      "גלו מבחר קורטוריאלי של סטריטוור וסניקרס פרימיום עם Mystery Box של SOLOVYEV.STORE.",
+    soldOut: "SOLD OUT",
+    authenticity: "כל פריט נבחר בקפידה והוא אותנטי ב-100%.",
+    authenticityGuaranteed: "אותנטיות מובטחת.",
+    disclaimer:
+      "שימו לב: הפריטים בתמונות הם דוגמאות למה שעשוי להתקבל ומיועדים להמחיש את תוכן ה-Mystery Box האפשרי. המותגים, הדגמים, הצבעים והפריטים המדויקים ישתנו מקופסה לקופסה.",
+    tagline: "הקופסה שלכם. ההפתעה שלכם. קורטוריה של SOLOVYEV.STORE.",
+    previewMedium: "MEDIUM BOX",
+    previewLarge: "LARGE BOX",
+    viewOtherMedium: "← MEDIUM BOX",
+    viewOtherLarge: "LARGE BOX →",
+    medium: {
+      title: "MEDIUM BOX",
+      intro:
+        "גלו מבחר קורטוריאלי של סטריטוור וסניקרס פרימיום עם Mystery Box של SOLOVYEV.STORE.",
+      includesLead: "כל קופסה כוללת פריטים אותנטיים שנבחרו בקפידה:",
+      items: [
+        "זוג נעליים אחד",
+        "פריט עליון אחד",
+        "2 חולצות",
+        "זוג ג'ינס אחד",
+        "אביזר אחד",
+      ],
+      contentsAlt: "דוגמה לתוכן Medium Mystery Box",
+      boxAlt: "אריזת Medium Mystery Box של SOLOVYEV.STORE",
+    },
+    large: {
+      title: "LARGE BOX",
+      intro:
+        "גלו מבחר קורטוריאלי של סטריטוור וסניקרס פרימיום עם Mystery Box של SOLOVYEV.STORE.",
+      includesLead:
+        "כל קופסה כוללת פריטים אותנטיים שנבחרו בקפידה ממגוון מותגים וקטגוריות מבוקשים:",
+      items: [
+        "2 זוגות נעליים",
+        "פריט עליון אחד",
+        "3 חולצות",
+        "זוג ג'ינס אחד",
+        "2 אביזרים",
+      ],
+      contentsAlt: "דוגמה לתוכן Large Mystery Box",
+      boxAlt: "אריזת Large Mystery Box של SOLOVYEV.STORE",
+    },
   },
 };

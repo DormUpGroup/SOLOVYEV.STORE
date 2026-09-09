@@ -6,6 +6,7 @@ const REVALIDATE_PATHS = [
   "/drops",
   "/brand-new",
   "/made-to-order",
+  "/mystery-box",
   "/brands",
   "/faq",
   "/about",

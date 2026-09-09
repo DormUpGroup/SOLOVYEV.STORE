@@ -30,6 +30,7 @@ export const ru: Dictionary = {
     allDrops: "ВСЕ ДРОПЫ",
     madeToOrder: "ПОД ЗАКАЗ",
     brandNew: "НОВЫЕ",
+    mysteryBox: "MYSTERY BOX",
     brands: "БРЕНДЫ",
     aboutUs: "О НАС",
     sellTrade: "ПРОДАТЬ / ОБМЕН",
@@ -320,5 +321,53 @@ export const ru: Dictionary = {
     photoAlt: "Стритвир и кроссовки в SOLOVYEV STORE",
     contactsTitle: "КОНТАКТЫ",
     instagramHandle: "@solovyev.store",
+  },
+  mysteryBox: {
+    title: "MYSTERY BOX.",
+    backLink: "← НАЗАД В МАГАЗИН",
+    backToMysteryBox: "← НАЗАД К MYSTERY BOX",
+    pageIntro:
+      "Откройте для себя кураторскую подборку премиального стритвира и кроссовок с Mystery Box от SOLOVYEV.STORE.",
+    soldOut: "SOLD OUT",
+    authenticity: "Каждая вещь тщательно отобрана и на 100% аутентична.",
+    authenticityGuaranteed: "Аутентичность гарантирована.",
+    disclaimer:
+      "Обратите внимание: вещи на фото — примеры возможного содержимого Mystery Box. Точные бренды, модели, цвета и позиции в каждой коробке будут разными.",
+    tagline: "Ваша коробка. Ваш сюрприз. Кураторство SOLOVYEV.STORE.",
+    previewMedium: "MEDIUM BOX",
+    previewLarge: "LARGE BOX",
+    viewOtherMedium: "← MEDIUM BOX",
+    viewOtherLarge: "LARGE BOX →",
+    medium: {
+      title: "MEDIUM BOX",
+      intro:
+        "Откройте для себя кураторскую подборку премиального стритвира и кроссовок с Mystery Box от SOLOVYEV.STORE.",
+      includesLead: "В каждой коробке — тщательно отобранные аутентичные вещи:",
+      items: [
+        "1 пара обуви",
+        "1 верхняя одежда",
+        "2 футболки",
+        "1 пара джинсов",
+        "1 аксессуар",
+      ],
+      contentsAlt: "Пример содержимого Medium Mystery Box",
+      boxAlt: "Упаковка Medium Mystery Box SOLOVYEV.STORE",
+    },
+    large: {
+      title: "LARGE BOX",
+      intro:
+        "Откройте для себя кураторскую подборку премиального стритвира и кроссовок с Mystery Box от SOLOVYEV.STORE.",
+      includesLead:
+        "В каждой коробке — тщательно отобранные аутентичные вещи из востребованных брендов и категорий:",
+      items: [
+        "2 пары обуви",
+        "1 верхняя одежда",
+        "3 футболки",
+        "1 пара джинсов",
+        "2 аксессуара",
+      ],
+      contentsAlt: "Пример содержимого Large Mystery Box",
+      boxAlt: "Упаковка Large Mystery Box SOLOVYEV.STORE",
+    },
   },
 };

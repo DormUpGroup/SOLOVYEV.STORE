@@ -129,7 +129,7 @@ function Header() {
     setMenuOpen((prev) => !prev);
   };
 
-  const dropsNavActive = onDropsPage;
+  const dropsNavActive = onDropsPage || pathname === "/brand-new";
 
   const dropsCategoryClass = (category: ProductCategory) =>
     `nav-dropdown-link${onDropsPage && activeCategory === category ? " active" : ""}`;
@@ -137,8 +137,17 @@ function Header() {
   const mobileDropsCategoryClass = (category: ProductCategory) =>
     `mobile-nav-sublink${onDropsPage && activeCategory === category ? " active" : ""}`;
 
+  const brandNewDropdownClass = `nav-dropdown-link${pathname === "/brand-new" ? " active" : ""}`;
+  const brandNewMobileClass = `mobile-nav-sublink${pathname === "/brand-new" ? " active" : ""}`;
+
   const sectionLinkClass = (href: string) =>
-    `nav-link${pathname === href || pathname.startsWith(`${href}?`) ? " active" : ""}`;
+    `nav-link${
+      pathname === href ||
+      pathname.startsWith(`${href}/`) ||
+      pathname.startsWith(`${href}?`)
+        ? " active"
+        : ""
+    }`;
 
   const shellClassName = [
     "site-header-shell",
@@ -174,13 +183,20 @@ function Header() {
                   {categories[categoryKeys[cat.id]]}
                 </Link>
               ))}
+              <Link
+                href="/brand-new"
+                className={brandNewMobileClass}
+                onClick={closeMenu}
+              >
+                {header.brandNew}
+              </Link>
             </div>
           </div>
-          <Link href="/brand-new" className="mobile-nav-link" onClick={closeMenu}>
-            {header.brandNew}
-          </Link>
           <Link href="/made-to-order" className="mobile-nav-link" onClick={closeMenu}>
             {header.madeToOrder}
+          </Link>
+          <Link href="/mystery-box" className="mobile-nav-link" onClick={closeMenu}>
+            {header.mysteryBox}
           </Link>
           <Link href="/brands" className="mobile-nav-link" onClick={closeMenu}>
             {header.brands}
@@ -267,13 +283,20 @@ function Header() {
                         {categories[categoryKeys[cat.id]]}
                       </Link>
                     ))}
+                    <Link
+                      href="/brand-new"
+                      className={brandNewDropdownClass}
+                      role="menuitem"
+                    >
+                      {header.brandNew}
+                    </Link>
                   </div>
                 </div>
-                <Link href="/brand-new" className={sectionLinkClass("/brand-new")}>
-                  {header.brandNew}
-                </Link>
                 <Link href="/made-to-order" className={sectionLinkClass("/made-to-order")}>
                   {header.madeToOrder}
+                </Link>
+                <Link href="/mystery-box" className={sectionLinkClass("/mystery-box")}>
+                  {header.mysteryBox}
                 </Link>
                 <Link
                   href="/brands"

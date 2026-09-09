@@ -17,6 +17,7 @@ export function MinimalFooter() {
     { href: "/drops", label: header.allDrops },
     { href: "/made-to-order", label: header.madeToOrder },
     { href: "/brand-new", label: header.brandNew },
+    { href: "/mystery-box", label: header.mysteryBox },
     { href: "/drops?category=sneakers", label: categories.sneakers },
     { href: "/drops?category=clothing", label: categories.clothing },
     { href: "/drops?category=accessories", label: categories.accessories },
