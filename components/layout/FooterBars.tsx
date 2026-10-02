@@ -27,7 +27,7 @@ export function MinimalFooter() {
   const infoLinks = [
     { href: "/about", label: header.aboutUs },
     { href: "/faq", label: footer.faq },
-    { href: "/sell-trade", label: header.sellTrade },
+    { href: "/marketplace", label: header.sellTrade },
     { href: "/terms", label: footer.terms },
     { href: "/privacy", label: footer.privacy },
   ];

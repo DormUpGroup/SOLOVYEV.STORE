@@ -25,6 +25,9 @@ export async function middleware(request: NextRequest) {
   const isAdminApi =
     pathname.startsWith("/api/admin") &&
     !pathname.startsWith("/api/admin/login");
+  const isMarketplaceLogin = pathname === "/marketplace/login";
+  const isMarketplace =
+    pathname === "/marketplace" || pathname.startsWith("/marketplace/");
 
   if (isSecretAdmin) {
     const rewritePath =
@@ -44,6 +47,30 @@ export async function middleware(request: NextRequest) {
     const authed = await isAuthed(request);
     if (!authed) {
       return new NextResponse(null, { status: 404 });
+    }
+  }
+
+
+  // Marketplace demo: admin session required (login page stays public)
+  if (isMarketplaceLogin) {
+    const authed = await isAuthed(request);
+    if (authed) {
+      const next = request.nextUrl.searchParams.get("next");
+      const target =
+        next &&
+        next.startsWith("/marketplace") &&
+        !next.startsWith("//") &&
+        !next.includes("://")
+          ? next
+          : "/marketplace";
+      return NextResponse.redirect(new URL(target, request.url));
+    }
+  } else if (isMarketplace) {
+    const authed = await isAuthed(request);
+    if (!authed) {
+      const loginUrl = new URL("/marketplace/login", request.url);
+      loginUrl.searchParams.set("next", `${pathname}${request.nextUrl.search}`);
+      return NextResponse.redirect(loginUrl);
     }
   }
 

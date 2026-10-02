@@ -4,12 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useStore } from "@/components/providers/StoreProvider";
-import { useUI } from "@/components/providers/UIProvider";
 import { useI18n } from "@/components/providers/I18nProvider";
 
 export function HeroSection() {
   const { config } = useStore();
-  const { openSellTrade } = useUI();
   const { dict } = useI18n();
   const { hero } = dict;
   const heroVideo = config.images.heroVideo?.trim();
@@ -93,10 +91,7 @@ export function HeroSection() {
             <Link href="/drops" className="btn-primary">
               {hero.shopAll}
             </Link>
-            <button type="button" className="btn-secondary" onClick={openSellTrade}>
-              {hero.sellTrade}
-            </button>
-            <Link href="/sell-trade" className="visually-hidden">
+            <Link href="/marketplace" className="btn-secondary">
               {hero.sellTrade}
             </Link>
           </div>
