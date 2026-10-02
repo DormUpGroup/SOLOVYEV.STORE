@@ -86,7 +86,7 @@ export function MarketplaceHeader() {
               <LanguageSwitcher />
               <Link
                 href="/marketplace/me"
-                className="mp-icon-btn"
+                className="mp-icon-btn mp-icon-fav"
                 aria-label={mp.nav.favorites}
               >
                 <svg viewBox="0 0 24 24" aria-hidden>
@@ -98,7 +98,7 @@ export function MarketplaceHeader() {
               </Link>
               <Link
                 href="/marketplace/me"
-                className="mp-icon-btn"
+                className="mp-icon-btn mp-icon-profile"
                 aria-label={mp.nav.profile}
               >
                 <svg viewBox="0 0 24 24" aria-hidden>

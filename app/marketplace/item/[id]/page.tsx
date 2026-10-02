@@ -202,34 +202,36 @@ export default function MarketplaceItemPage() {
           </Link>
 
           <div className="mp-pdp-actions">
-            {isOwn ? (
-              <Link href="/marketplace/me" className="mp-btn mp-btn-primary mp-btn-block">
-                {mp.sell.viewMyListings}
-              </Link>
-            ) : listing.status === "sold" ? (
-              <button type="button" className="mp-btn mp-btn-primary" disabled>
-                {mp.item.sold}
-              </button>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  className="mp-btn mp-btn-primary mp-btn-block"
-                  onClick={() =>
-                    router.push(`/marketplace/checkout/${listing.id}`)
-                  }
-                >
-                  {mp.item.buyNow}
+            <div className="mp-pdp-actions-primary">
+              {isOwn ? (
+                <Link href="/marketplace/me" className="mp-btn mp-btn-primary mp-btn-block">
+                  {mp.sell.viewMyListings}
+                </Link>
+              ) : listing.status === "sold" ? (
+                <button type="button" className="mp-btn mp-btn-primary" disabled>
+                  {mp.item.sold}
                 </button>
-                <button
-                  type="button"
-                  className="mp-btn mp-btn-secondary mp-btn-block"
-                  onClick={() => setOfferOpen(true)}
-                >
-                  {mp.item.makeOffer}
-                </button>
-              </>
-            )}
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="mp-btn mp-btn-primary mp-btn-block"
+                    onClick={() =>
+                      router.push(`/marketplace/checkout/${listing.id}`)
+                    }
+                  >
+                    {mp.item.buyNow}
+                  </button>
+                  <button
+                    type="button"
+                    className="mp-btn mp-btn-secondary mp-btn-block"
+                    onClick={() => setOfferOpen(true)}
+                  >
+                    {mp.item.makeOffer}
+                  </button>
+                </>
+              )}
+            </div>
             <div className="mp-pdp-row">
               <button
                 type="button"
