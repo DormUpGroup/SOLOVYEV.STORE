@@ -219,7 +219,7 @@ export function QuickViewModal() {
                 disabled={unavailable}
                 onClick={handleBuyNow}
               >
-                {product.orderWhatsApp}
+                {product.buyNow}
               </button>
             </div>
           </div>

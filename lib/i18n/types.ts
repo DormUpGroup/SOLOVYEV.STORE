@@ -107,7 +107,7 @@ export interface Dictionary {
     outOfStock: string;
     contactForSize: string;
     addToCart: string;
-    orderWhatsApp: string;
+    buyNow: string;
     statusNewDrop: string;
     statusReserved: string;
     statusSold: string;
@@ -541,6 +541,7 @@ export interface Dictionary {
     notConfigured: string;
     phoneRequired: string;
     paymentFailed: string;
+    orderFailed: string;
     free: string;
     osekNote: string;
   };

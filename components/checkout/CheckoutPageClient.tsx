@@ -94,7 +94,9 @@ export function CheckoutPageClient() {
             ? copy.notConfigured
             : response.status === 400 && data.error === "Israeli mobile phone required"
               ? copy.phoneRequired
-              : data.error || copy.paymentFailed,
+              : data.error === "order_failed"
+                ? copy.orderFailed
+                : copy.paymentFailed,
         );
       }
       consumeFirstOrderDiscount();

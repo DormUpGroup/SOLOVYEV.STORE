@@ -78,7 +78,7 @@ export function ProductPurchasePanel({
             disabled={unavailable}
             onClick={handleBuyNow}
           >
-            {copy.orderWhatsApp}
+            {copy.buyNow}
           </button>
         </div>
       </div>

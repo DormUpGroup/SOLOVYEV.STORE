@@ -711,8 +711,9 @@ grant select (
 
 drop function if exists create_whatsapp_order(jsonb, text, text);
 drop function if exists create_whatsapp_order(jsonb, text, text, text, numeric);
+drop function if exists create_checkout_order(jsonb, text, text, text, numeric);
 
-create or replace function create_whatsapp_order(
+create or replace function create_checkout_order(
   p_items jsonb,
   p_currency_code text,
   p_currency_symbol text,
@@ -789,7 +790,7 @@ begin
 end;
 $$;
 
-revoke all on function create_whatsapp_order(jsonb, text, text, text, numeric) from public;
-grant execute on function create_whatsapp_order(jsonb, text, text, text, numeric) to authenticated;
+revoke all on function create_checkout_order(jsonb, text, text, text, numeric) from public;
+grant execute on function create_checkout_order(jsonb, text, text, text, numeric) to authenticated;
 
 

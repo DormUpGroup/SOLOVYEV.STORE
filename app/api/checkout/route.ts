@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
   }
 
   const config = await getConfig();
-  const { data, error } = await supabase.rpc("create_whatsapp_order", {
+  const { data, error } = await supabase.rpc("create_checkout_order", {
     p_items: items.map(({ id, size, quantity }) => ({ product_id: id, size, quantity })),
     p_currency_code: config.currency.code,
     p_currency_symbol: config.currency.symbol,
@@ -68,7 +68,8 @@ export async function POST(request: NextRequest) {
     p_shipping_amount: 0,
   });
   if (error || !data?.[0]) {
-    return NextResponse.json({ error: error?.message || "Could not create order" }, { status: 400 });
+    console.error("create_checkout_order failed:", error);
+    return NextResponse.json({ error: "order_failed" }, { status: 400 });
   }
 
   const order = data[0] as {
