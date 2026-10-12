@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import type { User } from "@supabase/supabase-js";
+import { FIRST_ORDER_DISCOUNT_USED_FILTER } from "@/lib/first-order-discount";
 import { createClient, hasSupabaseBrowserConfig } from "@/utils/supabase/client";
 
 interface AuthContextValue {
@@ -45,7 +46,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         supabase
           .from("orders")
           .select("id", { count: "exact", head: true })
-          .neq("status", "cancelled"),
+          .neq("status", "cancelled")
+          .or(FIRST_ORDER_DISCOUNT_USED_FILTER),
       ]);
       const name = data?.display_name?.trim() || null;
       setDisplayName(name);

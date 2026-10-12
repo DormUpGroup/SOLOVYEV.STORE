@@ -599,7 +599,13 @@ begin
 
   select exists (
     select 1 from orders
-    where orders.user_id = v_user_id and orders.status <> 'cancelled'
+    where orders.user_id = v_user_id
+      and orders.id <> v_order_id
+      and orders.status <> 'cancelled'
+      and (
+        orders.discount_amount > 0
+        or orders.status in ('paid', 'shipped', 'completed')
+      )
   ) into v_has_prior;
 
   select count(*), coalesce(sum(p.price * i.quantity), 0)
@@ -755,7 +761,13 @@ begin
 
   select exists (
     select 1 from orders
-    where orders.user_id = v_user_id and orders.status <> 'cancelled'
+    where orders.user_id = v_user_id
+      and orders.id <> v_order_id
+      and orders.status <> 'cancelled'
+      and (
+        orders.discount_amount > 0
+        or orders.status in ('paid', 'shipped', 'completed')
+      )
   ) into v_has_prior;
 
   select count(*), coalesce(sum(p.price * i.quantity), 0)

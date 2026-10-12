@@ -16,6 +16,10 @@ import {
   israelPhoneLocal,
 } from "@/lib/grow/client";
 import { createMakePaymentLink } from "@/lib/grow/make";
+import {
+  applyFirstOrderDiscount,
+  FIRST_ORDER_DISCOUNT_USED_FILTER,
+} from "@/lib/first-order-discount";
 
 export async function POST(request: NextRequest) {
   if (!isGrowConfigured()) {
@@ -76,12 +80,39 @@ export async function POST(request: NextRequest) {
     order_id: string;
     order_ref: string;
     subtotal: number;
+    discount_percent?: number;
+    discount_amount?: number;
   };
-  const productSubtotal = Number(order.subtotal);
+  let productSubtotal = Number(order.subtotal);
+  const admin = createServiceClient();
+  if (Number(order.discount_amount ?? 0) <= 0) {
+    const prior = await admin
+      .from("orders")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .neq("id", order.order_id)
+      .neq("status", "cancelled")
+      .or(FIRST_ORDER_DISCOUNT_USED_FILTER);
+    if (!prior.error && (prior.count ?? 0) === 0) {
+      const sale = applyFirstOrderDiscount(productSubtotal);
+      productSubtotal = sale.total;
+      const { error: discountError } = await admin
+        .from("orders")
+        .update({
+          subtotal: sale.total,
+          discount_percent: sale.discountPercent,
+          discount_amount: sale.discountAmount,
+        })
+        .eq("id", order.order_id);
+      if (discountError) {
+        await admin.from("orders").update({ status: "cancelled" }).eq("id", order.order_id);
+        return NextResponse.json({ error: "order_failed" }, { status: 400 });
+      }
+    }
+  }
   const shippingAmount = shippingAmountFor(body.shippingMethod, productSubtotal);
   const chargeAmount = orderChargeAmount(productSubtotal, shippingAmount);
 
-  const admin = createServiceClient();
   const { error: shippingError } = await admin
     .from("orders")
     .update({

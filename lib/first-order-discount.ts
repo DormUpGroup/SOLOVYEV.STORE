@@ -1,6 +1,10 @@
 export const FIRST_ORDER_DISCOUNT_PERCENT = 15;
 export const FREE_SHIPPING_THRESHOLD = 1000;
 
+/** An earlier order already consumed the account discount. */
+export const FIRST_ORDER_DISCOUNT_USED_FILTER =
+  "discount_amount.gt.0,status.in.(paid,shipped,completed)";
+
 export type FirstOrderDiscount = {
   original: number;
   discountPercent: number;
