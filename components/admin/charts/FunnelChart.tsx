@@ -27,7 +27,7 @@ interface FunnelChartProps {
 export function FunnelChart({ views, cart, whatsapp }: FunnelChartProps) {
   const data = useMemo(
     () => ({
-      labels: ["Product views", "Add to cart", "WhatsApp checkout"],
+      labels: ["Product views", "Add to cart", "Checkout"],
       datasets: [
         {
           data: [views, cart, whatsapp],

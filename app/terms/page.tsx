@@ -6,7 +6,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
-    "Terms of Service for SOLOVYEV STORE — orders via WhatsApp, authenticity, shipping, returns, and Sell / Trade.",
+    "Terms of Service for SOLOVYEV STORE — card checkout via Grow, authenticity, shipping, returns, and Sell / Trade.",
   alternates: { canonical: `${siteUrl}/terms` },
 };
 

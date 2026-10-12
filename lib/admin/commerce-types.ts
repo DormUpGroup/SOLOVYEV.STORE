@@ -1,6 +1,7 @@
 import type { OrderStatus } from "@/lib/types";
 
 export const ORDER_STATUSES: OrderStatus[] = [
+  "pending_payment",
   "pending_whatsapp",
   "in_chat",
   "paid",
@@ -11,6 +12,7 @@ export const ORDER_STATUSES: OrderStatus[] = [
 
 /** Display labels for order statuses (admin UI + PDF reports). */
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  pending_payment: "Pending payment",
   pending_whatsapp: "Pending WhatsApp",
   in_chat: "In chat",
   paid: "Paid",
@@ -79,6 +81,10 @@ export interface AdminOrderDetail extends AdminOrderRow {
   adminNotes: string | null;
   trackingCode: string | null;
   shippingMethod: string | null;
+  shippingAmount: number;
+  cardLast4: string | null;
+  growTransactionId: string | null;
+  paidAt: string | null;
   assignee: string | null;
   items: AdminOrderItemRow[];
 }

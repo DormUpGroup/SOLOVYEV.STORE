@@ -2,6 +2,7 @@ import type { OrderStatus } from "@/lib/types";
 import styles from "@/app/admin/admin.module.css";
 
 const LABELS: Record<OrderStatus, string> = {
+  pending_payment: "Pending pay",
   pending_whatsapp: "Pending WA",
   in_chat: "In chat",
   paid: "Paid",
@@ -18,7 +19,7 @@ export function OrderStatusBadge({ status }: { status: OrderStatus }) {
         ? styles.badgeSold
         : status === "paid" || status === "shipped"
           ? styles.badgeNew
-          : status === "in_chat"
+          : status === "pending_payment" || status === "in_chat"
             ? styles.badgeReserved
             : styles.badge;
 

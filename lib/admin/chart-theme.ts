@@ -13,6 +13,7 @@ export const ADMIN_CHART_COLORS = {
 };
 
 export const ORDER_STATUS_CHART_COLORS: Record<OrderStatus, string> = {
+  pending_payment: "#64d2ff",
   pending_whatsapp: "#98989d",
   in_chat: "#ffd60a",
   paid: "#0a84ff",

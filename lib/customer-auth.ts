@@ -33,7 +33,7 @@ export function postAuthPath(options: {
 }): string {
   const query = buildAuthQuery({ next: options.next, checkout: options.checkout });
   if (!options.hasDisplayName) return `/onboarding${query}`;
-  if (options.checkout) return `/welcome${query}`;
+  if (options.checkout) return "/checkout";
   return safeAuthNext(options.next ?? null);
 }
 

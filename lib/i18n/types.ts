@@ -516,4 +516,32 @@ export interface Dictionary {
       tagline: string;
     };
   };
+  checkout: {
+    title: string;
+    empty: string;
+    shop: string;
+    delivery: string;
+    pickup: string;
+    pickupHint: string;
+    locker: string;
+    lockerHint: string;
+    courier: string;
+    courierHint: string;
+    courierFree: string;
+    shipping: string;
+    payer: string;
+    payerName: string;
+    payerPhone: string;
+    pay: string;
+    redirecting: string;
+    confirming: string;
+    successTitle: string;
+    successBody: string;
+    viewOrders: string;
+    notConfigured: string;
+    phoneRequired: string;
+    paymentFailed: string;
+    free: string;
+    osekNote: string;
+  };
 }

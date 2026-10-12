@@ -20,7 +20,7 @@ function WelcomeContent() {
   const { dict } = useI18n();
   const copy = dict.account;
   const { products } = useStore();
-  const { cart, clearCart, openCart } = useCart();
+  const { cart, openCart } = useCart();
   const checkout = isCheckoutIntent(params.get("checkout"));
   const next = params.get("next");
   const authQuery = buildAuthQuery({ next, checkout });
@@ -59,35 +59,14 @@ function WelcomeContent() {
       .catch((reason) => setError(reason instanceof Error ? reason.message : copy.configError));
   }, [authQuery, copy.configError, router]);
 
-  const continueCheckout = async () => {
+  const continueCheckout = () => {
     if (cart.length === 0) {
       openCart();
       router.replace(safeAuthNext(next, "/"));
       return;
     }
-    setBusy(true);
-    setError("");
-    try {
-      trackBeginCheckout(subtotal, cart.length);
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ items: cart }),
-      });
-      const data = await response.json() as { whatsappUrl?: string; error?: string };
-      if (response.status === 401) {
-        router.replace(`/login${buildAuthQuery({ next, checkout: true })}`);
-        return;
-      }
-      if (!response.ok || !data.whatsappUrl) throw new Error(data.error || "Checkout failed");
-      clearCart();
-      window.open(data.whatsappUrl, "_blank", "noopener,noreferrer");
-      router.replace("/account");
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Checkout failed");
-    } finally {
-      setBusy(false);
-    }
+    trackBeginCheckout(subtotal, cart.length);
+    router.replace("/checkout");
   };
 
   return (
@@ -102,7 +81,7 @@ function WelcomeContent() {
             type="button"
             className="btn-primary"
             disabled={busy || !name}
-            onClick={() => void continueCheckout()}
+            onClick={continueCheckout}
           >
             {busy ? copy.wait : copy.continueCheckout}
           </button>

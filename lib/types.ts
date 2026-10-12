@@ -103,6 +103,7 @@ export interface CustomerProfile {
 }
 
 export type OrderStatus =
+  | "pending_payment"
   | "pending_whatsapp"
   | "in_chat"
   | "paid"

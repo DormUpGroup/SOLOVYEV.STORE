@@ -37,6 +37,10 @@ type OrderRow = {
   admin_notes?: string | null;
   tracking_code?: string | null;
   shipping_method?: string | null;
+  shipping_amount?: number | string | null;
+  card_last4?: string | null;
+  grow_transaction_id?: string | null;
+  paid_at?: string | null;
   assignee?: string | null;
   created_at: string;
   updated_at: string;
@@ -71,7 +75,7 @@ function mapOrderRow(
   profile: { email?: string | null; display_name?: string | null } | null,
   itemCount = 0,
 ): AdminOrderRow {
-  const status = isOrderStatus(row.status) ? row.status : "pending_whatsapp";
+  const status = isOrderStatus(row.status) ? row.status : "pending_payment";
   return {
     id: row.id,
     orderRef: row.order_ref,
@@ -345,7 +349,7 @@ export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null
   const { data, error } = await admin
     .from("orders")
     .select(
-      "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,discount_percent,discount_amount,whatsapp_url,customer_phone,admin_notes,tracking_code,shipping_method,assignee,created_at,updated_at,order_items(*)",
+      "id,user_id,order_ref,status,currency_code,currency_symbol,subtotal,discount_percent,discount_amount,whatsapp_url,customer_phone,admin_notes,tracking_code,shipping_method,shipping_amount,card_last4,grow_transaction_id,paid_at,assignee,created_at,updated_at,order_items(*)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -374,6 +378,10 @@ export async function getAdminOrder(id: string): Promise<AdminOrderDetail | null
     adminNotes: row.admin_notes ?? null,
     trackingCode: row.tracking_code ?? null,
     shippingMethod: row.shipping_method ?? null,
+    shippingAmount: Number(row.shipping_amount ?? 0),
+    cardLast4: row.card_last4 ?? null,
+    growTransactionId: row.grow_transaction_id ?? null,
+    paidAt: row.paid_at ?? null,
     assignee: row.assignee ?? null,
     items,
   };
@@ -403,7 +411,7 @@ export async function getCommerceSummary(daysInput = 7): Promise<CommerceSummary
   const { data: orders, error } = await admin
     .from("orders")
     .select(
-      "id,status,subtotal,currency_symbol,created_at,order_items(product_id,product_title,product_slug,quantity,unit_price)",
+      "id,status,subtotal,shipping_amount,currency_symbol,created_at,order_items(product_id,product_title,product_slug,quantity,unit_price)",
     )
     .gte("created_at", sinceIso)
     .order("created_at", { ascending: true });
@@ -414,6 +422,7 @@ export async function getCommerceSummary(daysInput = 7): Promise<CommerceSummary
     id: string;
     status: string;
     subtotal: number | string;
+    shipping_amount?: number | string | null;
     currency_symbol: string;
     created_at: string;
     order_items?: Array<{
@@ -453,17 +462,19 @@ export async function getCommerceSummary(daysInput = 7): Promise<CommerceSummary
   let currencySymbol = "₪";
 
   for (const order of rows) {
-    const status = isOrderStatus(order.status) ? order.status : "pending_whatsapp";
+    const status = isOrderStatus(order.status) ? order.status : "pending_payment";
     byStatus[status] += 1;
     const subtotal = Number(order.subtotal) || 0;
+    const shippingAmount = Number(order.shipping_amount ?? 0) || 0;
+    const paidTotal = subtotal + shippingAmount;
     currencySymbol = order.currency_symbol || currencySymbol;
     const day = order.created_at.slice(0, 10);
     const bucket = dailyMap.get(day) ?? { count: 0, revenue: 0 };
     bucket.count += 1;
     if (status === "paid") {
       paidOrdersCount += 1;
-      revenueSum += subtotal;
-      bucket.revenue += subtotal;
+      revenueSum += paidTotal;
+      bucket.revenue += paidTotal;
 
       for (const item of order.order_items ?? []) {
         const key = String(item.product_id ?? item.product_slug);

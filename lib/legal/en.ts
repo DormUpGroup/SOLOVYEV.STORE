@@ -4,7 +4,7 @@ export const en: LegalBundle = {
   backToStore: "← BACK TO STORE",
   privacy: {
     title: "Privacy Policy",
-    lastUpdated: "Last updated: July 29, 2026",
+    lastUpdated: "Last updated: September 20, 2026",
     sections: [
       {
         id: "who",
@@ -20,14 +20,14 @@ export const en: LegalBundle = {
         paragraphs: [
           "Account data: email address, password (hashed by our auth provider — we never store plaintext passwords), display name, and phone number if you provide one.",
           "Marketing preferences: whether you opted in to marketing emails, when that preference last changed, and an audit record of consent changes (granted or withdrawn, privacy-policy version, source, and language).",
-          "Orders: cart contents, sizes, quantities, order amounts, order status, and the WhatsApp checkout link associated with your order.",
+          "Orders: cart contents, sizes, quantities, order amounts, delivery method, order status, and payment confirmation from our card processor (Grow). We do not receive or store full card numbers.",
           "Favorites and cart: product identifiers, sizes, and quantities synced to your account when you are signed in.",
           "Technical data: authentication session cookies; for store administrators, a separate secure admin session cookie.",
           "Browser local storage: guest cart items, theme preference (dark/light), language preference, and whether you dismissed our storage notice.",
           "Analytics: if Google Analytics 4 is enabled on the Site, we collect usage data such as pages viewed, product views, add-to-cart, and checkout clicks. We also record limited first-party analytics events (event type and optional product id) on our servers; these events are not tied to your user id in our analytics table.",
           "Sell / Trade submissions: category, brand/model, size, condition, wanted price, and notes are sent via WhatsApp only and are not stored as a separate application record in our database.",
           "Messages you send us on WhatsApp or Instagram (including photos or delivery details) are processed on those platforms.",
-          "We do not collect payment card details on the Site. Online card payments are not processed on this website.",
+          "Card payments on the Site are processed by Grow. Card number, expiry, and CVV are entered on Grow’s payment page and are not stored on our servers. We may store the last four digits, a transaction id, and payment status to fulfil the order.",
         ],
       },
       {
@@ -61,7 +61,8 @@ export const en: LegalBundle = {
           "Supabase — database, authentication, file storage, and password-reset emails.",
           "Vercel — website hosting and content delivery.",
           "Google Analytics 4 — website analytics when configured.",
-          "WhatsApp (Meta) — order and Sell / Trade conversations after you leave the Site.",
+          "Grow — card payment processing on their PCI-certified payment page.",
+          "WhatsApp (Meta) — customer support and Sell / Trade conversations after you leave the Site.",
           "Instagram (Meta) — social media communication.",
           "OpenStreetMap / Google Maps — map display or location links on the About page.",
           "Courier or locker services (such as Boxit or Cheetah) — only when we share delivery details needed to ship your order.",
@@ -117,7 +118,7 @@ export const en: LegalBundle = {
         id: "transfers",
         title: "International transfers",
         paragraphs: [
-          "Service providers such as Supabase, Vercel, Google, and Meta may process data on servers outside Israel. By using the Site you understand that your information may be transferred internationally as needed to operate the service.",
+          "Service providers such as Supabase, Vercel, Google, Meta, and Grow may process data on servers outside Israel. By using the Site you understand that your information may be transferred internationally as needed to operate the service.",
         ],
       },
       {
@@ -138,7 +139,7 @@ export const en: LegalBundle = {
   },
   terms: {
     title: "Terms of Service",
-    lastUpdated: "Last updated: July 29, 2026",
+    lastUpdated: "Last updated: September 20, 2026",
     sections: [
       {
         id: "general",
@@ -154,7 +155,7 @@ export const en: LegalBundle = {
         title: "Products and authenticity",
         paragraphs: [
           "We sell sneakers, clothing, and accessories, including drops, brand-new / deadstock items, and made-to-order listings, and we offer Sell / Trade valuation.",
-          "Prices are shown in Israeli shekels (ILS, ₪). Descriptions, photos, sizes, and availability statuses are informational; final availability is confirmed when we accept your order on WhatsApp.",
+          "Prices are shown in Israeli shekels (ILS, ₪). Descriptions, photos, sizes, and availability statuses are informational; final availability is confirmed when we accept your paid order.",
           "Authenticity: every item is checked (labels, stitching, materials, UV where applicable, and comparison with known authentic references). If we cannot verify an item at 100%, we do not list it. If an item is proven counterfeit, we will make it right (refund or equivalent remedy as agreed).",
         ],
       },
@@ -173,9 +174,8 @@ export const en: LegalBundle = {
         title: "Cart and orders",
         paragraphs: [
           "Adding items to your cart does not reserve stock and does not create a purchase contract.",
-          "Checkout creates an order record and opens WhatsApp with your order details. You must be signed in to check out.",
-          "No card payments are processed on the Site. Payment method, reservation, and handover are agreed in WhatsApp or in person.",
-          "A binding sale is formed only when we expressly confirm the order (for example, confirming status or clear acceptance in chat) and you agree payment and delivery terms.",
+          "Checkout creates an order record and you pay by card on the Site. You must be signed in to check out.",
+          "A binding sale is formed when card payment is successfully captured. Delivery method is chosen at checkout.",
           "Items marked sold or reserved may no longer be available. In that case we may cancel the order. If you already paid, we will refund that payment.",
         ],
       },
@@ -183,8 +183,8 @@ export const en: LegalBundle = {
         id: "payment",
         title: "Payment",
         paragraphs: [
-          "Payment options are communicated when we confirm your order (for example cash on meetup, bank transfer, or other methods we offer at that time).",
-          "We do not store payment card details on the Site.",
+          "You pay by debit or credit card on the Site through Grow. We operate as an Israeli exempt dealer (עוסק פטור): prices are without VAT, and you receive a receipt (קבלה), not a tax invoice (חשבונית מס).",
+          "We do not store full payment card details on the Site. Grow processes the charge on its PCI-certified payment page.",
         ],
       },
       {

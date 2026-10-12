@@ -6,7 +6,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://solovyev.store";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "Privacy Policy for SOLOVYEV STORE — how we handle account data, analytics, WhatsApp checkout, and cookies on solovyev.store.",
+    "Privacy Policy for SOLOVYEV STORE — how we handle account data, analytics, card checkout, and cookies on solovyev.store.",
   alternates: { canonical: `${siteUrl}/privacy` },
 };
 

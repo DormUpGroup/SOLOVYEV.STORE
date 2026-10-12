@@ -79,6 +79,8 @@ export async function middleware(request: NextRequest) {
   const needsCustomer =
     pathname === "/account" ||
     pathname.startsWith("/account/") ||
+    pathname === "/checkout" ||
+    pathname.startsWith("/checkout/") ||
     pathname === "/onboarding" ||
     pathname === "/welcome";
 

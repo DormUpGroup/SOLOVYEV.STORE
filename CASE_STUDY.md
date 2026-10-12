@@ -46,7 +46,7 @@ JSON catalog → next build → static HTML/JS → CDN
 | Metric | Before | After |
 |--------|--------|-------|
 | Google indexed pages | ~0 | _TBD_ |
-| WhatsApp checkout clicks / drop | _unknown_ | _TBD_ |
+| Checkout starts / drop | _unknown_ | _TBD_ |
 | Time to mark item sold on site | _manual_ | _TBD_ |
 | Sell/Trade lead quality | _low_ | _TBD_ |
 

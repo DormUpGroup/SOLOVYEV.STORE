@@ -216,8 +216,8 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
           </div>
         </div>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>Pending WhatsApp</div>
-          <div className={styles.statValue}>{summary?.byStatus.pending_whatsapp ?? 0}</div>
+          <div className={styles.statLabel}>Pending payment</div>
+          <div className={styles.statValue}>{summary?.byStatus.pending_payment ?? 0}</div>
         </div>
       </div>
 
@@ -461,8 +461,22 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
                   ) : null}
                 </div>
                 <p className={styles.hint} style={{ marginTop: 0 }}>
-                  Find chat: WhatsApp search → paste order ref (after customer sent the order).
+                  Card checkout. After payment the status becomes Paid automatically.
                 </p>
+                {selected.shippingMethod ? (
+                  <p className={styles.hint}>
+                    Shipping: {selected.shippingMethod}
+                    {selected.shippingAmount > 0
+                      ? ` · ${selected.currencySymbol}${selected.shippingAmount.toFixed(0)}`
+                      : " · free"}
+                  </p>
+                ) : null}
+                {selected.cardLast4 ? (
+                  <p className={styles.hint}>Card •••• {selected.cardLast4}</p>
+                ) : null}
+                {selected.growTransactionId ? (
+                  <p className={styles.hint}>Grow: {selected.growTransactionId}</p>
+                ) : null}
                 <div className={styles.tableWrap}>
                   <table className={styles.table}>
                     <thead>
@@ -499,13 +513,13 @@ export function OrdersTab({ showToast }: OrdersTabProps) {
                       <br />
                       <strong>
                         Total: {selected.currencySymbol}
-                        {selected.subtotal.toFixed(0)}
+                        {(selected.subtotal + selected.shippingAmount).toFixed(0)}
                       </strong>
                     </>
                   ) : (
                     <strong>
-                      Subtotal: {selected.currencySymbol}
-                      {selected.subtotal.toFixed(0)}
+                      Total: {selected.currencySymbol}
+                      {(selected.subtotal + selected.shippingAmount).toFixed(0)}
                     </strong>
                   )}
                 </p>

@@ -24,12 +24,10 @@ export function QuickViewModal() {
   const { activeModal, selectedProduct, closeAll } = useUI();
   const { addToCart } = useCart();
   const { dict } = useI18n();
-  const { user, consumeFirstOrderDiscount } = useAuth();
+  const { user } = useAuth();
   const { product, sellTrade } = dict;
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeImg, setActiveImg] = useState<string>("");
-  const [checkoutBusy, setCheckoutBusy] = useState(false);
-  const [checkoutError, setCheckoutError] = useState("");
 
   const galleryImages = useMemo(() => {
     if (!selectedProduct) return [];
@@ -50,7 +48,6 @@ export function QuickViewModal() {
 
   useEffect(() => {
     setSelectedSize(null);
-    setCheckoutError("");
     if (selectedProduct && activeModal === "quickView") {
       setActiveImg(selectedProduct.img || selectedProduct.images?.[0]?.imageUrl || "");
       trackViewItem(selectedProduct);
@@ -74,39 +71,11 @@ export function QuickViewModal() {
       (image) => image.imageUrl === (activeImg || selectedProduct.img),
     ) ?? selectedProduct.images?.[0];
 
-  const handleWhatsApp = async () => {
+  const handleBuyNow = () => {
     if (unavailable) return;
-    if (selectedProduct.sizes.length > 0 && !selectedSize) return;
-    if (!user) {
-      addToCart(selectedProduct.id, selectedSize || "");
-      window.location.href = checkoutLoginHref(window.location.pathname);
-      return;
-    }
-    setCheckoutBusy(true);
-    setCheckoutError("");
+    if (!addToCart(selectedProduct.id, selectedSize || "")) return;
     trackBeginCheckout(selectedProduct.price, 1);
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          items: [{ id: selectedProduct.id, size: selectedSize || "", quantity: 1, qty: 1 }],
-        }),
-      });
-      const data = await response.json() as { whatsappUrl?: string; error?: string };
-      if (response.status === 401) {
-        addToCart(selectedProduct.id, selectedSize || "");
-        window.location.href = checkoutLoginHref(window.location.pathname);
-        return;
-      }
-      if (!response.ok || !data.whatsappUrl) throw new Error(data.error || "Checkout failed");
-      consumeFirstOrderDiscount();
-      window.open(data.whatsappUrl, "_blank", "noopener,noreferrer");
-    } catch (error) {
-      setCheckoutError(error instanceof Error ? error.message : "Checkout failed");
-    } finally {
-      setCheckoutBusy(false);
-    }
+    window.location.href = user ? "/checkout" : checkoutLoginHref("/checkout");
   };
 
   return (
@@ -245,15 +214,14 @@ export function QuickViewModal() {
               </button>
               <button
                 type="button"
-                className={`btn-secondary whatsapp-cta ${unavailable ? "disabled" : ""}`}
-                id="whatsapp-order-btn"
-                disabled={unavailable || checkoutBusy}
-                onClick={() => void handleWhatsApp()}
+                className={`btn-secondary ${unavailable ? "disabled" : ""}`}
+                id="buy-now-btn"
+                disabled={unavailable}
+                onClick={handleBuyNow}
               >
-                {checkoutBusy ? dict.cart.creatingOrder : product.orderWhatsApp}
+                {product.orderWhatsApp}
               </button>
             </div>
-            {checkoutError ? <p className="account-error" role="alert">{checkoutError}</p> : null}
           </div>
         </div>
       </div>

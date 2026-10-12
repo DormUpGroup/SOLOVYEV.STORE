@@ -18,7 +18,8 @@
     "import:brand-logos": "node scripts/download-brand-logos.mjs",
     "import:catalog": "node scripts/import-catalog.mjs",
     "seed:supabase": "node scripts/seed-supabase.mjs",
-    "setup:supabase": "node scripts/setup-supabase.mjs"
+    "setup:supabase": "node scripts/setup-supabase.mjs",
+    "apply:migration": "node scripts/apply-migration.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

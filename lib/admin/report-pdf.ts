@@ -94,7 +94,7 @@ export async function buildSalesReportPdf(data: SalesReportData): Promise<Buffer
     drawSectionTitle(doc, "Site engagement");
     doc.text(`Product views: ${analytics.views}`);
     doc.text(`Add to cart: ${analytics.cart}`);
-    doc.text(`Begin checkout (WhatsApp): ${analytics.wa}`);
+    doc.text(`Begin checkout: ${analytics.wa}`);
     doc.text(`Sell / trade submits: ${analytics.sell}`);
 
     drawSectionTitle(doc, "Top sold products (paid)");

@@ -29,42 +29,14 @@ export function ProductPurchasePanel({
   const { dict } = useI18n();
   const { product: copy } = dict;
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const { user, consumeFirstOrderDiscount } = useAuth();
-  const [checkoutBusy, setCheckoutBusy] = useState(false);
-  const [checkoutError, setCheckoutError] = useState("");
+  const { user } = useAuth();
   const unavailable = isProductUnavailable(product);
 
-  const handleWhatsApp = async () => {
+  const handleBuyNow = () => {
     if (unavailable) return;
-    if (product.sizes.length > 0 && !selectedSize) return;
-    if (!user) {
-      addToCart(product.id, selectedSize || "");
-      window.location.href = checkoutLoginHref(window.location.pathname);
-      return;
-    }
-    setCheckoutBusy(true);
-    setCheckoutError("");
+    if (!addToCart(product.id, selectedSize || "")) return;
     trackBeginCheckout(product.price, 1);
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ items: [{ id: product.id, size: selectedSize || "", quantity: 1, qty: 1 }] }),
-      });
-      const data = await response.json() as { whatsappUrl?: string; error?: string };
-      if (response.status === 401) {
-        addToCart(product.id, selectedSize || "");
-        window.location.href = checkoutLoginHref(window.location.pathname);
-        return;
-      }
-      if (!response.ok || !data.whatsappUrl) throw new Error(data.error || "Checkout failed");
-      consumeFirstOrderDiscount();
-      window.open(data.whatsappUrl, "_blank", "noopener,noreferrer");
-    } catch (error) {
-      setCheckoutError(error instanceof Error ? error.message : "Checkout failed");
-    } finally {
-      setCheckoutBusy(false);
-    }
+    window.location.href = user ? "/checkout" : checkoutLoginHref("/checkout");
   };
 
   return (
@@ -102,11 +74,11 @@ export function ProductPurchasePanel({
           </button>
           <button
             type="button"
-            className="btn-secondary whatsapp-cta"
-            disabled={unavailable || checkoutBusy}
-            onClick={() => void handleWhatsApp()}
+            className="btn-secondary"
+            disabled={unavailable}
+            onClick={handleBuyNow}
           >
-            {checkoutBusy ? dict.cart.creatingOrder : copy.orderWhatsApp}
+            {copy.orderWhatsApp}
           </button>
         </div>
       </div>
@@ -121,7 +93,6 @@ export function ProductPurchasePanel({
           </button>
         ) : null}
       </div>
-      {checkoutError ? <p className="account-error" role="alert">{checkoutError}</p> : null}
       <p className="product-page-price-note">{formatPriceOrDm(product.price, config.currency.symbol)}</p>
     </div>
   );
